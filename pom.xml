@@ -711,7 +711,7 @@
 
 		<!-- Dependency Versions -->
 		<activation_api_version>1.2.0</activation_api_version>
-		<apache_karaf_version>4.2.5</apache_karaf_version>
+		<apache_karaf_version>4.0.2</apache_karaf_version>
 		<aries_spifly_version>1.2</aries_spifly_version>
 		<caffeine_version>2.7.0</caffeine_version>
 		<commons_codec_version>1.14</commons_codec_version>
@@ -724,21 +724,21 @@
 		<error_prone_annotations_version>2.3.4</error_prone_annotations_version>
 		<error_prone_core_version>2.3.4</error_prone_core_version>
 		<nullaway_version>0.7.9</nullaway_version>
-		<guava_version>29.0-jre</guava_version>
+		<guava_version>28.0-jre</guava_version>
 		<gson_version>2.8.5</gson_version>
 		<jaxb_bundle_version>2.2.11_1</jaxb_bundle_version>
 		<jaxb_api_version>2.3.1</jaxb_api_version>
 		<jaxb_core_version>2.3.0.1</jaxb_core_version>
 		<jaxb_runtime_version>2.3.1</jaxb_runtime_version>
 		<jena_version>3.16.0</jena_version>
-		<jersey_version>2.25.1</jersey_version>
+		<jersey_version>2.26</jersey_version>
 		<!-- 9.4.17 seems to have issues -->
-		<jetty_version>9.4.30.v20200611</jetty_version>
+		<jetty_version>9.4.25.v20191220</jetty_version>
 		<jsr305_version>3.0.2</jsr305_version>
 		<junit_version>5.6.2</junit_version>
 		<flyway_version>6.5.4</flyway_version>
 		<!--<hibernate_version>5.2.10.Final</hibernate_version>-->
-		<hibernate_version>5.4.22.Final</hibernate_version>
+		<hibernate_version>5.4.14.Final</hibernate_version>
 		<!-- Update lucene version when you update hibernate-search version -->
 		<hibernate_search_version>5.11.5.Final</hibernate_search_version>
 		<lucene_version>5.5.5</lucene_version>
@@ -756,7 +756,7 @@
 		<servicemix_saxon_version>9.8.0-15</servicemix_saxon_version>
 		<servicemix_xmlresolver_version>1.2_5</servicemix_xmlresolver_version>
 		<slf4j_version>1.7.28</slf4j_version>
-		<spring_version>5.2.9.RELEASE</spring_version>
+		<spring_version>5.2.3.RELEASE</spring_version>
 		<!-- FYI: Spring Data JPA 2.1.9 causes test failures due to unexpected cascading deletes -->
 		<spring_data_version>2.2.0.RELEASE</spring_data_version>
 		<spring_batch_version>4.2.3.RELEASE</spring_batch_version>
@@ -1476,7 +1476,7 @@
 			<dependency>
 				<groupId>org.postgresql</groupId>
 				<artifactId>postgresql</artifactId>
-				<version>42.2.13</version>
+				<version>42.2.9</version>
 			</dependency>
 			<dependency>
 				<groupId>org.quartz-scheduler</groupId>
@@ -2545,9 +2545,11 @@
 				<module>example-projects/hapi-fhir-jpaserver-dynamic</module>
 				<module>example-projects/hapi-fhir-jpaserver-example-postgres</module>
 				-->
+				<!-- 
 				<module>tests/hapi-fhir-base-test-jaxrsserver-kotlin</module>
 				<module>tests/hapi-fhir-base-test-mindeps-client</module>
 				<module>tests/hapi-fhir-base-test-mindeps-server</module>
+				-->
 				<module>hapi-fhir-spring-boot</module>
 				<!--<module>hapi-fhir-osgi-core</module>-->
 			</modules>
