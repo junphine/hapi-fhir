@@ -150,6 +150,7 @@
 			<artifactId>hapi-fhir-jpaserver-batch</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+ 		
 		<dependency>
 			<groupId>ca.uhn.hapi.fhir</groupId>
 			<artifactId>hapi-fhir-elasticsearch-6</artifactId>
@@ -162,7 +163,7 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-
+ 
 		<dependency>
 			<groupId>net.ttddyy</groupId>
 			<artifactId>datasource-proxy</artifactId>
@@ -578,11 +579,14 @@
 			<artifactId>greenmail-spring</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<!-- 
 		<dependency>
 			<groupId>pl.allegro.tech</groupId>
 			<artifactId>embedded-elasticsearch</artifactId>
 			<version>2.10.0</version>
-		</dependency>
+			<scope>test</scope>
+		</dependency> 
+		-->
 		<dependency>
 			<groupId>org.hl7.fhir.testcases</groupId>
 			<artifactId>fhir-test-cases</artifactId>

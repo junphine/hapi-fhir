@@ -16,8 +16,9 @@ import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import ca.uhn.fhir.jpa.api.config.DaoConfig;
 import ca.uhn.fhir.jpa.config.BaseJavaConfigDstu2;
-import ca.uhn.fhir.jpa.dao.DaoConfig;
+
 import ca.uhn.fhir.jpa.util.SubscriptionsRequireManualActivationInterceptorDstu2;
 import ca.uhn.fhir.rest.server.interceptor.IServerInterceptor;
 
@@ -61,7 +62,7 @@ public class FhirServerConfigDstu2 extends BaseJavaConfigDstu2 {
 	@SuppressWarnings("deprecation")
 	@Bean
 	public DaoConfig daoConfig() {
-	return FhirServerConfigCommon.getDaoConfig();
+		return FhirServerConfigCommon.getDaoConfig();
 	}
 
 	/**

@@ -117,19 +117,7 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		<dependency>
-			<groupId>fr.inria.lille.shexjava</groupId>
-			<artifactId>shexjava-core</artifactId>
-			<version>${shexjava_version}</version>
-			<scope>test</scope>
-			<exclusions>
-				<!-- If this is included it confused the RDFParser -->
-				<exclusion>
-					<groupId>org.apache.commons</groupId>
-					<artifactId>commons-rdf-jena</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
+		
 
 
 		<!--

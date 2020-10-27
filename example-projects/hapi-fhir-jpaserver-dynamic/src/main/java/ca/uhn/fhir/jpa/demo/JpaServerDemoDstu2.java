@@ -3,21 +3,24 @@ package ca.uhn.fhir.jpa.demo;
 
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.context.FhirVersionEnum;
-import ca.uhn.fhir.jpa.dao.DaoConfig;
-import ca.uhn.fhir.jpa.dao.IFhirSystemDao;
+import ca.uhn.fhir.jpa.api.config.DaoConfig;
+import ca.uhn.fhir.jpa.api.dao.IFhirSystemDao;
 import ca.uhn.fhir.jpa.provider.JpaConformanceProviderDstu2;
 import ca.uhn.fhir.jpa.provider.JpaSystemProviderDstu2;
 import ca.uhn.fhir.jpa.provider.dstu3.JpaConformanceProviderDstu3;
 import ca.uhn.fhir.jpa.provider.dstu3.JpaSystemProviderDstu3;
 import ca.uhn.fhir.jpa.search.DatabaseBackedPagingProvider;
-import ca.uhn.fhir.jpa.subscription.SubscriptionInterceptorLoader;
-import ca.uhn.fhir.jpa.util.ResourceProviderFactory;
+import ca.uhn.fhir.jpa.searchparam.registry.SearchParamRegistryImpl;
+import ca.uhn.fhir.jpa.subscription.match.registry.SubscriptionLoader;
+import ca.uhn.fhir.jpa.subscription.submit.interceptor.SubscriptionSubmitInterceptorLoader;
 import ca.uhn.fhir.model.dstu2.composite.MetaDt;
 import ca.uhn.fhir.narrative.DefaultThymeleafNarrativeGenerator;
 import ca.uhn.fhir.rest.api.EncodingEnum;
 import ca.uhn.fhir.rest.server.ETagSupportEnum;
 import ca.uhn.fhir.rest.server.IResourceProvider;
 import ca.uhn.fhir.rest.server.RestfulServer;
+import ca.uhn.fhir.rest.server.provider.ResourceProviderFactory;
+
 import org.hl7.fhir.dstu3.model.Bundle;
 import org.hl7.fhir.dstu3.model.Meta;
 import org.springframework.web.context.ContextLoaderListener;
@@ -92,8 +95,9 @@ public class JpaServerDemoDstu2 extends RestfulServer {
 			setServerConformanceProvider(confProvider);
 		} else if (fhirVersion == FhirVersionEnum.DSTU3) {
 			IFhirSystemDao<Bundle, Meta> systemDao = myAppCtx.getBean("mySystemDaoDstu3", IFhirSystemDao.class);
+			SearchParamRegistryImpl ourSearchParamRegistry = myAppCtx.getBean(SearchParamRegistryImpl.class);
 			JpaConformanceProviderDstu3 confProvider = new JpaConformanceProviderDstu3(this, systemDao,
-			myAppCtx.getBean(DaoConfig.class));
+			myAppCtx.getBean(DaoConfig.class),ourSearchParamRegistry);
 			confProvider.setImplementationDescription("Example Server");
 			setServerConformanceProvider(confProvider);
 		} else {
@@ -129,8 +133,8 @@ public class JpaServerDemoDstu2 extends RestfulServer {
 		/*
 		 * Register interceptors for the server based on DaoConfig.getSupportedSubscriptionTypes()
 		 */
-		SubscriptionInterceptorLoader subscriptionInterceptorLoader = myAppCtx.getBean(SubscriptionInterceptorLoader.class);
-		subscriptionInterceptorLoader.registerInterceptors();
+		SubscriptionSubmitInterceptorLoader subscriptionInterceptorLoader = myAppCtx.getBean(SubscriptionSubmitInterceptorLoader.class);
+		subscriptionInterceptorLoader.start();
 
 		/*
 		 * If you are hosting this server at a specific DNS name, the server will try to 
