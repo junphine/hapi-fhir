@@ -133,11 +133,43 @@
 			<version>${spring_boot_version}</version>
 		</dependency>
 		
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+			<version>${spring_boot_version}</version>
+		</dependency>
+		
+		<dependency>
+		     <groupId>org.springframework.boot</groupId>
+		     <artifactId>spring-boot-starter-tomcat</artifactId>
+		     <!--<scope>provided</scope>-->
+		     <version>${spring_boot_version}</version>
+		</dependency>
+		
         <!--  <dependency>
             <groupId>ca.uhn.hapi.fhir</groupId>
        		<artifactId>hapi-fhir-spring-boot-starter</artifactId>
        		<version>${project.version}</version>
         </dependency> -->
+        
+        <dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt</artifactId>
+			<version>0.9.1</version>
+		</dependency>
+		
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-ldap</artifactId>
+            <version>${spring_version}</version>
+        </dependency>
+       
+        <dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>1.18.8</version>
+			<optional>true</optional>
+		</dependency>
        
 
         <!-- HAPI-FHIR uses Logback for logging support. The logback library is included automatically by Maven as a part of the hapi-fhir-base dependency, but you also need to include a logging library. Logback

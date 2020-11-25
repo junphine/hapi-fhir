@@ -1,4 +1,7 @@
 spring:
+  server:
+    port: 18080
+  
   datasource:    
     url: 'jdbc:postgresql://localhost:5432/drupal_his_db?currentSchema=fhir'
     username: junphine
@@ -12,7 +15,7 @@ spring:
       hibernate.dialect: org.hibernate.dialect.PostgreSQL10Dialect
       hibernate.search.model_mapping: ca.uhn.fhir.jpa.search.LuceneSearchMappingFactory
       hibernate.format_sql: false
-      hibernate.show_sql: true
+      hibernate.show_sql: false
       hibernate.hbm2ddl.auto: update
       hibernate.jdbc.batch_size: 20
       hibernate.cache.use_query_cache: false
@@ -130,3 +133,7 @@ hapi:
 #  rest_url: 'http://localhost:9200'
 #  schema_management_strategy: CREATE
 #  username: SomeUsername
+
+jwt:
+  secret: 123456
+

@@ -6,6 +6,8 @@ Note that this project is specifically intended for end users of the HAPI FHIR J
 
 Need Help? Please see: https://github.com/jamesagnew/hapi-fhir/wiki/Getting-Help
 
+quickstart: mvn clean spring-boot:run -Pboot
+
 ## Prerequisites
 
 In order to use this sample, you should have:
