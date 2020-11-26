@@ -60,10 +60,10 @@ public abstract class AbstractJaxRsProvider implements IRestfulServerDefaults {
 	private UriInfo myUriInfo;
 
 	/**
-	 * Default is DSTU2. Use {@link AbstractJaxRsProvider#AbstractJaxRsProvider(FhirContext)} to specify a DSTU3 context.
+	 * Default is r4. Use {@link AbstractJaxRsProvider#AbstractJaxRsProvider(FhirContext)} to specify a DSTU3 context.
 	 */
 	protected AbstractJaxRsProvider() {
-		CTX = FhirContext.forDstu2();
+		CTX = FhirContext.forR4();
 	}
 
 	/**

@@ -24,9 +24,10 @@ import ca.uhn.fhir.model.api.TemporalPrecisionEnum;
 import com.google.common.annotations.VisibleForTesting;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.Validate;
-import org.hl7.fhir.dstu2.model.Subscription;
+
 import org.hl7.fhir.instance.model.api.IPrimitiveType;
 import org.hl7.fhir.r4.model.DateTimeType;
+import org.hl7.fhir.r4.model.Subscription;
 
 import java.util.Arrays;
 import java.util.Collections;

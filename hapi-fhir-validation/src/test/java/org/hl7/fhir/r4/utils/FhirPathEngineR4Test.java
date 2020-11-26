@@ -4,7 +4,7 @@ import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.context.support.DefaultProfileValidationSupport;
 import ca.uhn.fhir.parser.IParser;
 import ca.uhn.fhir.util.TestUtil;
-import org.hl7.fhir.dstu3.utils.FhirPathEngineTest;
+
 import org.hl7.fhir.exceptions.FHIRException;
 import org.hl7.fhir.r4.hapi.ctx.HapiWorkerContext;
 import org.hl7.fhir.r4.model.*;
@@ -22,7 +22,7 @@ public class FhirPathEngineR4Test {
 
 	private static FhirContext ourCtx = FhirContext.forR4();
 	private static FHIRPathEngine ourEngine;
-	private static final org.slf4j.Logger ourLog = org.slf4j.LoggerFactory.getLogger(FhirPathEngineTest.class);
+	private static final org.slf4j.Logger ourLog = org.slf4j.LoggerFactory.getLogger(FhirPathEngineR4Test.class);
 
 	@Test
 	public void testCrossResourceBoundaries() throws FHIRException {

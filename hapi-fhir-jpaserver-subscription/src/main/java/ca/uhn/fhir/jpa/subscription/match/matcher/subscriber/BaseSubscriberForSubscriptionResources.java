@@ -22,9 +22,10 @@ package ca.uhn.fhir.jpa.subscription.match.matcher.subscriber;
 
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.jpa.subscription.model.ResourceModifiedMessage;
-import ca.uhn.fhir.model.dstu2.valueset.ResourceTypeEnum;
+
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.instance.model.api.IIdType;
+import org.hl7.fhir.r4.model.Enumerations.ResourceType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.MessageHandler;
 
@@ -48,7 +49,7 @@ public abstract class BaseSubscriberForSubscriptionResources implements MessageH
 			}
 		}
 
-		return ResourceTypeEnum.SUBSCRIPTION.getCode().equals(payloadIdType);
+		return ResourceType.SUBSCRIPTION.toCode().equals(payloadIdType);
 	}
 
 }

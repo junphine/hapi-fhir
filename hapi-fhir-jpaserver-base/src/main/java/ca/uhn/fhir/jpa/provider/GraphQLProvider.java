@@ -78,13 +78,7 @@ public class GraphQLProvider {
 		Validate.notNull(theStorageServices, "theStorageServices must not be null");
 
 		switch (theFhirContext.getVersion().getVersion()) {
-			case DSTU3: {
-				IValidationSupport validationSupport = theValidationSupport;
-				validationSupport = ObjectUtils.defaultIfNull(validationSupport, new DefaultProfileValidationSupport(theFhirContext));
-				org.hl7.fhir.dstu3.hapi.ctx.HapiWorkerContext workerContext = new org.hl7.fhir.dstu3.hapi.ctx.HapiWorkerContext(theFhirContext, validationSupport);
-				engineFactory = () -> new org.hl7.fhir.dstu3.utils.GraphQLEngine(workerContext);
-				break;
-			}
+			
 			case R4: {
 				IValidationSupport validationSupport = theValidationSupport;
 				validationSupport = ObjectUtils.defaultIfNull(validationSupport, new DefaultProfileValidationSupport(theFhirContext));

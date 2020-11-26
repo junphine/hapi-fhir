@@ -8,7 +8,6 @@ import ca.uhn.fhir.rest.client.apache.ApacheRestfulClientFactory;
 import ca.uhn.fhir.rest.server.RestfulServer;
 import ca.uhn.fhir.rest.server.interceptor.IServerInterceptor;
 import ca.uhn.fhir.rest.server.interceptor.RequestValidatingInterceptor;
-import ca.uhn.fhir.spring.boot.autoconfigure.FhirAutoConfiguration.FhirJpaServerConfiguration.Dstu3;
 import org.assertj.core.util.Arrays;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Disabled;
@@ -82,7 +81,7 @@ public class FhirAutoConfigurationTest {
 			"hapi.fhir.version:DSTU3", "spring.jpa.properties.hibernate.search.default.indexBase:target/lucenefiles", "spring.jpa.properties.hibernate.search.model_mapping:ca.uhn.fhir.jpa.search.LuceneSearchMappingFactory");
 
 		assertThat(this.context.getBeansOfType(DaoConfig.class)).hasSize(1);
-		assertThat(this.context.getBeansOfType(Dstu3.class)).hasSize(1);
+		
 	}
 
 	@Test

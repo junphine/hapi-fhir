@@ -21,11 +21,12 @@ package ca.uhn.fhir.jpa.dao.r4;
  */
 
 import ca.uhn.fhir.jpa.dao.BaseHapiFhirSystemDao;
-import ca.uhn.fhir.jpa.dao.FhirResourceDaoMessageHeaderDstu2;
+
 import ca.uhn.fhir.jpa.dao.TransactionProcessor;
 import ca.uhn.fhir.jpa.model.entity.TagDefinition;
 import ca.uhn.fhir.rest.api.RestOperationTypeEnum;
 import ca.uhn.fhir.rest.api.server.RequestDetails;
+import ca.uhn.fhir.rest.server.exceptions.NotImplementedOperationException;
 import ca.uhn.fhir.rest.server.interceptor.IServerInterceptor.ActionRequestDetails;
 import org.hl7.fhir.instance.model.api.IBaseBundle;
 import org.hl7.fhir.r4.model.Bundle;
@@ -70,7 +71,7 @@ public class FhirSystemDaoR4 extends BaseHapiFhirSystemDao<Bundle, Meta> {
 
 	@Override
 	public IBaseBundle processMessage(RequestDetails theRequestDetails, IBaseBundle theMessage) {
-		return FhirResourceDaoMessageHeaderDstu2.throwProcessMessageNotImplemented();
+		throw new NotImplementedOperationException("This operation is not yet implemented on this server");
 	}
 
 

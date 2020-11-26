@@ -23,7 +23,7 @@ package ca.uhn.fhir.cli;
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.context.support.DefaultProfileValidationSupport;
 import ca.uhn.fhir.context.support.IValidationSupport;
-import ca.uhn.fhir.igpacks.parser.IgPackParserDstu2;
+
 import ca.uhn.fhir.igpacks.parser.IgPackParserDstu3;
 import ca.uhn.fhir.parser.DataFormatException;
 import ca.uhn.fhir.parser.LenientErrorHandler;
@@ -156,26 +156,7 @@ public class ValidateCommand extends BaseCommand {
 
 		if (theCommandLine.hasOption("p")) {
 			switch (ctx.getVersion().getVersion()) {
-				case DSTU2: {
-					ValidationSupportChain validationSupport = new ValidationSupportChain(
-						new DefaultProfileValidationSupport(ctx), new InMemoryTerminologyServerValidationSupport(ctx));
-					if (igPack != null) {
-						FhirContext hl7orgCtx = FhirContext.forDstu2Hl7Org();
-						hl7orgCtx.setParserErrorHandler(new LenientErrorHandler(false));
-						IgPackParserDstu2 parser = new IgPackParserDstu2(hl7orgCtx);
-						IValidationSupport igValidationSupport = parser.parseIg(igPack, igpackFilename);
-						validationSupport.addValidationSupport(igValidationSupport);
-					}
-
-					if (theCommandLine.hasOption("r")) {
-						validationSupport.addValidationSupport((IValidationSupport) new LoadingValidationSupportDstu2());
-					}
-					FhirInstanceValidator instanceValidator;
-					instanceValidator = new FhirInstanceValidator(validationSupport);
-					val.registerValidatorModule(instanceValidator);
-
-					break;
-				}
+				
 				case DSTU3: {
 					FhirInstanceValidator instanceValidator = new FhirInstanceValidator(ctx);
 					val.registerValidatorModule(instanceValidator);

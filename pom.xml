@@ -1921,13 +1921,16 @@
 				<module>hapi-fhir-converter</module>
 				<module>hapi-fhir-validation</module>
 				<!--<module>hapi-fhir-narrativegenerator</module>-->
+				
+				<!-- 
 				<module>hapi-fhir-structures-dstu2</module>
 				<module>hapi-fhir-structures-hl7org-dstu2</module>
 				<module>hapi-fhir-validation-resources-dstu2</module>
 				<module>hapi-fhir-structures-dstu2.1</module>
 				<module>hapi-fhir-validation-resources-dstu2.1</module>
 				<module>hapi-fhir-structures-dstu3</module>
-				<module>hapi-fhir-validation-resources-dstu3</module>
+				<module>hapi-fhir-validation-resources-dstu3</module> 
+				-->
 				<module>hapi-fhir-structures-r4</module>
 				<module>hapi-fhir-validation-resources-r4</module>
 				<module>hapi-fhir-structures-r5</module>
@@ -1949,7 +1952,7 @@
 				<module>hapi-fhir-jpaserver-uhnfhirtest</module>
 				<module>hapi-fhir-client-okhttp</module>
 				<module>hapi-fhir-android</module>
-				<module>hapi-fhir-cli</module>
+				<!-- <module>hapi-fhir-cli</module> -->
 				<module>hapi-fhir-dist</module>
 				<!--<module>osgi</module>-->
 				<!--<module>osgi/hapi-fhir-karaf-features</module>

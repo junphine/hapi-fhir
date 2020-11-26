@@ -22,10 +22,7 @@ package ca.uhn.fhir.cli;
 
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.context.FhirVersionEnum;
-import ca.uhn.fhir.model.dstu2.resource.Bundle;
-import ca.uhn.fhir.model.dstu2.resource.Bundle.Entry;
-import ca.uhn.fhir.model.dstu2.resource.StructureDefinition;
-import ca.uhn.fhir.model.dstu2.resource.ValueSet;
+
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.server.exceptions.BaseServerResponseException;
 import ca.uhn.fhir.rest.server.exceptions.UnprocessableEntityException;
@@ -57,20 +54,6 @@ public class ValidationDataUploader extends BaseCommand {
 
 	private ArrayList<IIdType> myExcludes = new ArrayList<>();
 
-	private void filterBundle(ca.uhn.fhir.model.dstu2.resource.Bundle theBundle) {
-		for (Iterator<Entry> iter = theBundle.getEntry().iterator(); iter.hasNext(); ) {
-			IBaseResource next = iter.next().getResource();
-			for (IIdType nextExclude : myExcludes) {
-				if (nextExclude.hasResourceType() && nextExclude.toUnqualifiedVersionless().getValue().equals(next.getIdElement().toUnqualifiedVersionless().getValue())) {
-					iter.remove();
-					continue;
-				} else if (nextExclude.getIdPart().equals(next.getIdElement().getIdPart())) {
-					iter.remove();
-					continue;
-				}
-			}
-		}
-	}
 
 	private void filterBundle(org.hl7.fhir.dstu3.model.Bundle theBundle) {
 		for (Iterator<BundleEntryComponent> iter = theBundle.getEntry().iterator(); iter.hasNext(); ) {
@@ -156,9 +139,7 @@ public class ValidationDataUploader extends BaseCommand {
 			}
 		}
 
-		if (ctx.getVersion().getVersion() == FhirVersionEnum.DSTU2) {
-			uploadDefinitionsDstu2(theCommandLine, ctx);
-		} else if (ctx.getVersion().getVersion() == FhirVersionEnum.DSTU3) {
+		if (ctx.getVersion().getVersion() == FhirVersionEnum.DSTU3) {
 			uploadDefinitionsDstu3(theCommandLine, ctx);
 		} else if (ctx.getVersion().getVersion() == FhirVersionEnum.R4) {
 			uploadDefinitionsR4(theCommandLine, ctx);
@@ -166,105 +147,6 @@ public class ValidationDataUploader extends BaseCommand {
 
 	}
 
-	private void uploadDefinitionsDstu2(CommandLine theCommandLine, FhirContext ctx) throws CommandFailureException, ParseException {
-		IGenericClient client = newClient(theCommandLine);
-
-		ourLog.info("Uploading definitions to server");
-
-		long start = System.currentTimeMillis();
-
-		String vsContents;
-		try {
-			ctx.getVersion().getPathToSchemaDefinitions();
-			vsContents = IOUtils.toString(ValidationDataUploader.class.getResourceAsStream("/org/hl7/fhir/instance/model/valueset/" + "valuesets.xml"), "UTF-8");
-		} catch (IOException e) {
-			throw new CommandFailureException(e.toString());
-		}
-		Bundle bundle = ctx.newXmlParser().parseResource(Bundle.class, vsContents);
-
-		int total = bundle.getEntry().size();
-		int count = 1;
-		for (Entry i : bundle.getEntry()) {
-			ValueSet next = (ValueSet) i.getResource();
-			next.setId(next.getIdElement().toUnqualifiedVersionless());
-
-			ourLog.info("Uploading ValueSet {}/{} : {}", new Object[] {count, total, next.getIdElement().getValue()});
-			client.update().resource(next).execute();
-
-			count++;
-		}
-
-		try {
-			vsContents = IOUtils.toString(ValidationDataUploader.class.getResourceAsStream("/org/hl7/fhir/instance/model/valueset/" + "v3-codesystems.xml"), "UTF-8");
-		} catch (IOException e) {
-			throw new CommandFailureException(e.toString());
-		}
-
-		bundle = ctx.newXmlParser().parseResource(Bundle.class, vsContents);
-		total = bundle.getEntry().size();
-		count = 1;
-		for (Entry i : bundle.getEntry()) {
-			ValueSet next = (ValueSet) i.getResource();
-			next.setId(next.getIdElement().toUnqualifiedVersionless());
-
-			ourLog.info("Uploading v3-codesystems ValueSet {}/{} : {}", new Object[] {count, total, next.getIdElement().getValue()});
-			client.update().resource(next).execute();
-
-			count++;
-		}
-
-		try {
-			vsContents = IOUtils.toString(ValidationDataUploader.class.getResourceAsStream("/org/hl7/fhir/instance/model/valueset/" + "v2-tables.xml"), "UTF-8");
-		} catch (IOException e) {
-			throw new CommandFailureException(e.toString());
-		}
-		bundle = ctx.newXmlParser().parseResource(Bundle.class, vsContents);
-		total = bundle.getEntry().size();
-		count = 1;
-		for (Entry i : bundle.getEntry()) {
-			ValueSet next = (ValueSet) i.getResource();
-			next.setId(next.getIdElement().toUnqualifiedVersionless());
-
-			ourLog.info("Uploading v2-tables ValueSet {}/{} : {}", new Object[] {count, total, next.getIdElement().getValue()});
-			client.update().resource(next).execute();
-			count++;
-		}
-
-		ourLog.info("Finished uploading ValueSets");
-
-		ResourcePatternResolver patternResolver = new PathMatchingResourcePatternResolver();
-		Resource[] mappingLocations;
-		try {
-			mappingLocations = patternResolver.getResources("classpath*:org/hl7/fhir/instance/model/profile/" + "*.profile.xml");
-		} catch (IOException e) {
-			throw new CommandFailureException(e.toString());
-		}
-		total = mappingLocations.length;
-		count = 1;
-		for (Resource i : mappingLocations) {
-			StructureDefinition next;
-			try {
-				next = ctx.newXmlParser().parseResource(StructureDefinition.class, IOUtils.toString(i.getInputStream(), "UTF-8"));
-			} catch (Exception e) {
-				throw new CommandFailureException(e.toString());
-			}
-			next.setId(next.getIdElement().toUnqualifiedVersionless());
-
-			ourLog.info("Uploading StructureDefinition {}/{} : {}", new Object[] {count, total, next.getIdElement().getValue()});
-			try {
-				client.update().resource(next).execute();
-			} catch (Exception e) {
-				ourLog.warn("Failed to upload {} - {}", next.getIdElement().getValue(), e.getMessage());
-			}
-			count++;
-		}
-
-		ourLog.info("Finished uploading ValueSets");
-
-		long delay = System.currentTimeMillis() - start;
-
-		ourLog.info("Finished uploading definitions to server (took {} ms)", delay);
-	}
 
 	private void uploadDefinitionsDstu3(CommandLine theCommandLine, FhirContext theCtx) throws CommandFailureException, ParseException {
 		IGenericClient client = newClient(theCommandLine);

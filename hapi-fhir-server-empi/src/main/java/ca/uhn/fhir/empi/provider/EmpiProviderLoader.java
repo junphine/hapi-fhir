@@ -47,9 +47,7 @@ public class EmpiProviderLoader {
 
 	public void loadProvider() {
 		switch (myFhirContext.getVersion().getVersion()) {
-			case DSTU3:
-				myResourceProviderFactory.addSupplier(() -> new EmpiProviderDstu3(myFhirContext, myEmpiControllerSvc, myEmpiMatchFinderSvc, myEmpiResetSvc, myEmpiBatchSvc));
-				break;
+			
 			case R4:
 				myResourceProviderFactory.addSupplier(() -> new EmpiProviderR4(myFhirContext, myEmpiControllerSvc, myEmpiMatchFinderSvc, myEmpiResetSvc, myEmpiBatchSvc));
 				break;

@@ -10,18 +10,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TerminologyUploaderProviderTest extends BaseTest {
-	@Test
-	public void testCanonicalizeR3() {
-		TerminologyUploaderProvider provider = new TerminologyUploaderProvider();
-		provider.setContext(FhirContext.forCached(FhirVersionEnum.DSTU3));
-
-		org.hl7.fhir.dstu3.model.CodeSystem input = new org.hl7.fhir.dstu3.model.CodeSystem();
-		input.addConcept().setCode("FOO").setDisplay("Foo");
-
-		CodeSystem canonical = provider.canonicalizeCodeSystem(input);
-
-		assertEquals("FOO", canonical.getConcept().get(0).getCode());
-	}
+	
 
 	@Test
 	public void testCanonicalizeR4() {

@@ -23,10 +23,12 @@ package ca.uhn.fhir.jpa.util;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
-import org.hl7.fhir.dstu3.model.DateTimeType;
+
 
 import java.io.IOException;
 import java.util.Date;
+
+import org.hl7.fhir.r4.model.DateTimeType;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 

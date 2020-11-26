@@ -23,10 +23,12 @@ package ca.uhn.fhir.jpa.util;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
-import org.hl7.fhir.dstu3.model.InstantType;
+
 
 import java.io.IOException;
 import java.util.Date;
+
+import org.hl7.fhir.r4.model.InstantType;
 
 public class JsonDateSerializer extends JsonSerializer<Date> {
 

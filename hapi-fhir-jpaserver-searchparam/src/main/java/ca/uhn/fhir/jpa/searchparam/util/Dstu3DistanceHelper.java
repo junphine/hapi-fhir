@@ -24,7 +24,7 @@ import ca.uhn.fhir.jpa.searchparam.SearchParameterMap;
 import ca.uhn.fhir.model.api.IQueryParameterType;
 import ca.uhn.fhir.rest.param.QuantityParam;
 import ca.uhn.fhir.rest.param.ReferenceParam;
-import org.hl7.fhir.dstu3.model.Location;
+import org.hl7.fhir.r4.model.Location;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 
 import java.util.Collection;
@@ -40,13 +40,13 @@ import java.util.List;
  */
 public class Dstu3DistanceHelper {
 	public static void setNearDistance(Class<? extends IBaseResource> theResourceType, SearchParameterMap theParams) {
-		if (theResourceType == Location.class && theParams.containsKey(Location.SP_NEAR_DISTANCE)) {
-			List<List<IQueryParameterType>> paramAndList = theParams.get(Location.SP_NEAR_DISTANCE);
+		if (theResourceType == Location.class && theParams.containsKey(Location.SP_NEAR)) {
+			List<List<IQueryParameterType>> paramAndList = theParams.get(Location.SP_NEAR);
 			QuantityParam quantityParam = getNearDistanceParam(paramAndList);
 			theParams.setNearDistanceParam(quantityParam);
 
 			// Need to remove near-distance or it we'll get a hashcode predicate for it
-			theParams.remove(Location.SP_NEAR_DISTANCE);
+			theParams.remove(Location.SP_NEAR);
 		} else if (theParams.containsKey("location")) {
 			List<List<IQueryParameterType>> paramAndList = theParams.get("location");
 			ReferenceParam referenceParam = getChainedLocationNearDistanceParam(paramAndList);
@@ -65,9 +65,9 @@ public class Dstu3DistanceHelper {
 			for (IQueryParameterType param : paramOrList) {
 				if (param instanceof ReferenceParam) {
 					ReferenceParam referenceParam = (ReferenceParam) param;
-					if (Location.SP_NEAR_DISTANCE.equals(referenceParam.getChain())) {
+					if (Location.SP_NEAR.equals(referenceParam.getChain())) {
 						if (retval != null) {
-							throw new IllegalArgumentException("Only one " + Location.SP_NEAR_DISTANCE + " parameter may be present");
+							throw new IllegalArgumentException("Only one " + Location.SP_NEAR + " parameter may be present");
 						} else {
 							retval = referenceParam;
 							orParamToRemove = param;
@@ -99,7 +99,7 @@ public class Dstu3DistanceHelper {
 			return (QuantityParam) theParamAndList.get(0).get(0);
 		// Too many near-distance params
 		} else {
-			throw new IllegalArgumentException("Only one " + Location.SP_NEAR_DISTANCE + " parameter may be present");
+			throw new IllegalArgumentException("Only one " + Location.SP_NEAR + " parameter may be present");
 		}
 	}
 }

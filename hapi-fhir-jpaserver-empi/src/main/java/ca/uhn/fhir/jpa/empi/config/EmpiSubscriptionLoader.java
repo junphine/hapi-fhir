@@ -57,10 +57,7 @@ public class EmpiSubscriptionLoader {
 		IBaseResource patientSub;
 		IBaseResource practitionerSub;
 		switch (myFhirContext.getVersion().getVersion()) {
-			case DSTU3:
-				patientSub = buildEmpiSubscriptionDstu3(EMPI_PATIENT_SUBSCRIPTION_ID, "Patient?");
-				practitionerSub = buildEmpiSubscriptionDstu3(EMPI_PRACTITIONER_SUBSCRIPTION_ID, "Practitioner?");
-				break;
+			
 			case R4:
 				patientSub = buildEmpiSubscriptionR4(EMPI_PATIENT_SUBSCRIPTION_ID, "Patient?");
 				practitionerSub = buildEmpiSubscriptionR4(EMPI_PRACTITIONER_SUBSCRIPTION_ID, "Practitioner?");
@@ -83,19 +80,7 @@ public class EmpiSubscriptionLoader {
 		}
 	}
 
-	private org.hl7.fhir.dstu3.model.Subscription buildEmpiSubscriptionDstu3(String theId, String theCriteria) {
-		org.hl7.fhir.dstu3.model.Subscription retval = new org.hl7.fhir.dstu3.model.Subscription();
-		retval.setId(theId);
-		retval.setReason("EMPI");
-		retval.setStatus(org.hl7.fhir.dstu3.model.Subscription.SubscriptionStatus.REQUESTED);
-		retval.setCriteria(theCriteria);
-		retval.getMeta().addTag().setSystem(EmpiConstants.SYSTEM_EMPI_MANAGED).setCode(EmpiConstants.CODE_HAPI_EMPI_MANAGED);
-		org.hl7.fhir.dstu3.model.Subscription.SubscriptionChannelComponent channel = retval.getChannel();
-		channel.setType(org.hl7.fhir.dstu3.model.Subscription.SubscriptionChannelType.MESSAGE);
-		channel.setEndpoint("channel:" + myChannelNamer.getChannelName(IEmpiSettings.EMPI_CHANNEL_NAME, new ChannelProducerSettings()));
-		channel.setPayload("application/json");
-		return retval;
-	}
+	
 
 	private Subscription buildEmpiSubscriptionR4(String theId, String theCriteria) {
 		Subscription retval = new Subscription();

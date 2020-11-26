@@ -31,7 +31,7 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.time.DateUtils;
-import org.hl7.fhir.dstu3.model.InstantType;
+import org.hl7.fhir.r4.model.InstantType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

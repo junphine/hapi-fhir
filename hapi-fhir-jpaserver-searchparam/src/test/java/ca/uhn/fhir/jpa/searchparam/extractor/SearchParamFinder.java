@@ -19,9 +19,7 @@ public class SearchParamFinder {
 
 	public static void main(String[] args) {
 
-		RestSearchParameterTypeEnum type = RestSearchParameterTypeEnum.STRING;
-		process(FhirContext.forDstu2(), type);
-		process(FhirContext.forDstu3(), type);
+		RestSearchParameterTypeEnum type = RestSearchParameterTypeEnum.STRING;		
 		process(FhirContext.forR4(), type);
 		process(FhirContext.forR5(), type);
 
@@ -125,7 +123,7 @@ public class SearchParamFinder {
 		BaseSearchParamExtractor extractor;
 		switch (theCtx.getVersion().getVersion()) {
 			case DSTU2:
-				extractor = new SearchParamExtractorDstu2();
+				
 				break;
 			default:
 				return;

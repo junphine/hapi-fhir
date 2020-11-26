@@ -1,5 +1,7 @@
 package ca.uhn.fhir.jpa.dao.r4;
 
+import ca.uhn.fhir.context.support.ConceptValidationOptions;
+
 /*
  * #%L
  * HAPI FHIR JPA Server
@@ -47,8 +49,6 @@ import org.hl7.fhir.r4.model.ValueSet.ValueSetExpansionContainsComponent;
 import java.util.Date;
 import java.util.List;
 
-import static ca.uhn.fhir.jpa.dao.FhirResourceDaoValueSetDstu2.toStringOrNull;
-import static ca.uhn.fhir.jpa.dao.dstu3.FhirResourceDaoValueSetDstu3.vsValidateCodeOptions;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
@@ -268,5 +268,7 @@ public class FhirResourceDaoValueSetR4 extends BaseHapiFhirResourceDao<ValueSet>
 		}
 	}
 
-
+	public static ConceptValidationOptions vsValidateCodeOptions() {
+		return new ConceptValidationOptions().setValidateDisplay(true);
+	}
 }

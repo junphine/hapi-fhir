@@ -23,8 +23,6 @@ package ca.uhn.fhir.jpa.searchparam.config;
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.jpa.searchparam.MatchUrlService;
 import ca.uhn.fhir.jpa.searchparam.extractor.ISearchParamExtractor;
-import ca.uhn.fhir.jpa.searchparam.extractor.SearchParamExtractorDstu2;
-import ca.uhn.fhir.jpa.searchparam.extractor.SearchParamExtractorDstu3;
 import ca.uhn.fhir.jpa.searchparam.extractor.SearchParamExtractorR4;
 import ca.uhn.fhir.jpa.searchparam.extractor.SearchParamExtractorR5;
 import ca.uhn.fhir.jpa.searchparam.extractor.SearchParamExtractorService;
@@ -50,11 +48,6 @@ public class SearchParamConfig {
 	@Bean
 	public ISearchParamExtractor searchParamExtractor() {
 		switch (myFhirContext.getVersion().getVersion()) {
-
-			case DSTU2:
-				return new SearchParamExtractorDstu2();
-			case DSTU3:
-				return new SearchParamExtractorDstu3();
 			case R4:
 				return new SearchParamExtractorR4();
 			case R5:

@@ -15,10 +15,10 @@ import ca.uhn.fhir.jpa.packages.PackageInstallationSpec;
 import ca.uhn.fhir.jpa.partition.PartitionManagementProvider;
 import ca.uhn.fhir.jpa.provider.GraphQLProvider;
 import ca.uhn.fhir.jpa.provider.IJpaSystemProvider;
-import ca.uhn.fhir.jpa.provider.JpaConformanceProviderDstu2;
+
 import ca.uhn.fhir.jpa.provider.SubscriptionTriggeringProvider;
 import ca.uhn.fhir.jpa.provider.TerminologyUploaderProvider;
-import ca.uhn.fhir.jpa.provider.dstu3.JpaConformanceProviderDstu3;
+
 import ca.uhn.fhir.jpa.provider.r4.JpaConformanceProviderR4;
 import ca.uhn.fhir.jpa.provider.r5.JpaConformanceProviderR5;
 import ca.uhn.fhir.jpa.search.DatabaseBackedPagingProvider;
@@ -139,20 +139,7 @@ public class BaseJpaRestfulServer extends RestfulServer {
      */
 
 
-    if (fhirVersion == FhirVersionEnum.DSTU2) {
-
-      JpaConformanceProviderDstu2 confProvider = new JpaConformanceProviderDstu2(this, fhirSystemDao,
-        daoConfig);
-      confProvider.setImplementationDescription("HAPI FHIR DSTU2 Server");
-      setServerConformanceProvider(confProvider);
-    } else {
-      if (fhirVersion == FhirVersionEnum.DSTU3) {
-
-        JpaConformanceProviderDstu3 confProvider = new JpaConformanceProviderDstu3(this, fhirSystemDao,
-          daoConfig, searchParamRegistry);
-        confProvider.setImplementationDescription("HAPI FHIR DSTU3 Server");
-        setServerConformanceProvider(confProvider);
-      } else if (fhirVersion == FhirVersionEnum.R4) {
+    if (fhirVersion == FhirVersionEnum.R4) {
 
         JpaConformanceProviderR4 confProvider = new JpaConformanceProviderR4(this, fhirSystemDao,
           daoConfig, searchParamRegistry);
@@ -167,7 +154,7 @@ public class BaseJpaRestfulServer extends RestfulServer {
       } else {
         throw new IllegalStateException();
       }
-    }
+   
 
     /*
      * ETag Support

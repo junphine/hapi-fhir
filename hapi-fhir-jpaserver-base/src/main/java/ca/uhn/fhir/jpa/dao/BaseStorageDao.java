@@ -55,6 +55,7 @@ import org.hl7.fhir.instance.model.api.IBaseBundle;
 import org.hl7.fhir.instance.model.api.IBaseOperationOutcome;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.instance.model.api.IIdType;
+import org.hl7.fhir.instance.model.api.IPrimitiveType;
 import org.hl7.fhir.r4.model.InstantType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -265,6 +266,10 @@ public abstract class BaseStorageDao {
 			}
 
 		}
+	}
+	//add@byron
+	public static String toStringOrNull(IPrimitiveType<String> thePrimitive) {
+		return thePrimitive != null ? thePrimitive.getValue() : null;
 	}
 
 }

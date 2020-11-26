@@ -9,7 +9,7 @@ import ca.uhn.fhir.jpa.subscription.channel.subscription.SubscriptionDeliveryHan
 import ca.uhn.fhir.jpa.subscription.match.deliver.email.IEmailSender;
 import ca.uhn.fhir.jpa.subscription.match.deliver.email.JavaMailEmailSender;
 import com.google.common.base.Strings;
-import org.hl7.fhir.dstu2.model.Subscription;
+import org.hl7.fhir.r4.model.Subscription;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
@@ -93,15 +93,15 @@ public class FhirServerConfigCommon {
       // Subscriptions are enabled by channel type
       if (appProperties.getSubscription().getResthook_enabled()) {
         ourLog.info("Enabling REST-hook subscriptions");
-        retVal.addSupportedSubscriptionType(org.hl7.fhir.dstu2.model.Subscription.SubscriptionChannelType.RESTHOOK);
+        retVal.addSupportedSubscriptionType(Subscription.SubscriptionChannelType.RESTHOOK);
       }
       if (appProperties.getSubscription().getEmail() != null) {
         ourLog.info("Enabling email subscriptions");
-        retVal.addSupportedSubscriptionType(org.hl7.fhir.dstu2.model.Subscription.SubscriptionChannelType.EMAIL);
+        retVal.addSupportedSubscriptionType(Subscription.SubscriptionChannelType.EMAIL);
       }
       if (appProperties.getSubscription().getWebsocket_enabled()) {
         ourLog.info("Enabling websocket subscriptions");
-        retVal.addSupportedSubscriptionType(org.hl7.fhir.dstu2.model.Subscription.SubscriptionChannelType.WEBSOCKET);
+        retVal.addSupportedSubscriptionType(Subscription.SubscriptionChannelType.WEBSOCKET);
       }
     }
 

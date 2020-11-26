@@ -24,8 +24,7 @@ package ca.uhn.fhir.spring.boot.autoconfigure;
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.jaxrs.server.AbstractJaxRsProvider;
 import ca.uhn.fhir.jpa.api.config.DaoConfig;
-import ca.uhn.fhir.jpa.config.BaseJavaConfigDstu2;
-import ca.uhn.fhir.jpa.config.BaseJavaConfigDstu3;
+
 import ca.uhn.fhir.jpa.config.BaseJavaConfigR4;
 import ca.uhn.fhir.jpa.model.config.PartitionSettings;
 import ca.uhn.fhir.jpa.model.entity.ModelConfig;
@@ -233,18 +232,8 @@ public class FhirAutoConfiguration {
 			}
 		}
 
-		@Configuration
-		@ConditionalOnMissingBean(type = "ca.uhn.fhir.jpa.config.BaseConfig")
-		@ConditionalOnProperty(name = "hapi.fhir.version", havingValue = "DSTU3")
-		static class Dstu3 extends BaseJavaConfigDstu3 {
-		}
-
-		@Configuration
-		@ConditionalOnMissingBean(type = "ca.uhn.fhir.jpa.config.BaseConfig")
-		@ConditionalOnProperty(name = "hapi.fhir.version", havingValue = "DSTU2")
-		static class Dstu2 extends BaseJavaConfigDstu2 {
-		}
-
+		
+		
 		@Configuration
 		@ConditionalOnMissingBean(type = "ca.uhn.fhir.jpa.config.BaseConfig")
 		@ConditionalOnProperty(name = "hapi.fhir.version", havingValue = "R4")

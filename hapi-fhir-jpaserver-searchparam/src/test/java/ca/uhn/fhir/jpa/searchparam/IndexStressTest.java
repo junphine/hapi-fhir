@@ -6,13 +6,13 @@ import ca.uhn.fhir.context.support.IValidationSupport;
 import ca.uhn.fhir.jpa.model.config.PartitionSettings;
 import ca.uhn.fhir.jpa.model.entity.ModelConfig;
 import ca.uhn.fhir.jpa.model.entity.ResourceIndexedSearchParamString;
-import ca.uhn.fhir.jpa.searchparam.extractor.SearchParamExtractorDstu3;
+import ca.uhn.fhir.jpa.searchparam.extractor.SearchParamExtractorR4;
 import ca.uhn.fhir.jpa.searchparam.registry.ISearchParamRegistry;
 import ca.uhn.fhir.util.StopWatch;
 import org.hl7.fhir.common.hapi.validation.support.CachingValidationSupport;
 import ca.uhn.fhir.context.support.DefaultProfileValidationSupport;
 import org.hl7.fhir.common.hapi.validation.support.ValidationSupportChain;
-import org.hl7.fhir.dstu3.model.Patient;
+import org.hl7.fhir.r4.model.Patient;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,12 +40,12 @@ public class IndexStressTest {
 		p.getMaritalStatus().setText("DDDDD");
 		p.addAddress().addLine("A").addLine("B").addLine("C");
 
-		FhirContext ctx = FhirContext.forDstu3();
+		FhirContext ctx = FhirContext.forR4();
 		IValidationSupport mockValidationSupport = mock(IValidationSupport.class);
 		when(mockValidationSupport.getFhirContext()).thenReturn(ctx);
 		IValidationSupport validationSupport = new CachingValidationSupport(new ValidationSupportChain(new DefaultProfileValidationSupport(ctx), mockValidationSupport));
 		ISearchParamRegistry searchParamRegistry = mock(ISearchParamRegistry.class);
-		SearchParamExtractorDstu3 extractor = new SearchParamExtractorDstu3(new ModelConfig(), new PartitionSettings(), ctx, validationSupport, searchParamRegistry);
+		SearchParamExtractorR4 extractor = new SearchParamExtractorR4(new ModelConfig(), new PartitionSettings(), ctx, validationSupport, searchParamRegistry);
 		extractor.start();
 
 		Map<String, RuntimeSearchParam> spMap = ctx

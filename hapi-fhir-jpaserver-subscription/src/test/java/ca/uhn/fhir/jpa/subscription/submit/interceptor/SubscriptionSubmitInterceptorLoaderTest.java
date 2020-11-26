@@ -12,7 +12,7 @@ import ca.uhn.fhir.jpa.searchparam.config.SearchParamConfig;
 import ca.uhn.fhir.jpa.searchparam.registry.ISearchParamProvider;
 import ca.uhn.fhir.jpa.subscription.channel.subscription.SubscriptionChannelFactory;
 import ca.uhn.fhir.jpa.subscription.submit.config.SubscriptionSubmitterConfig;
-import org.hl7.fhir.dstu2.model.Subscription;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +25,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+
+import org.hl7.fhir.r4.model.Subscription.SubscriptionChannelType;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {
@@ -81,7 +83,7 @@ public class SubscriptionSubmitInterceptorLoaderTest {
 		@Bean
 		public DaoConfig daoConfig() {
 			DaoConfig daoConfig = new DaoConfig();
-			daoConfig.addSupportedSubscriptionType(Subscription.SubscriptionChannelType.RESTHOOK);
+			daoConfig.addSupportedSubscriptionType(SubscriptionChannelType.RESTHOOK);
 			return daoConfig;
 		}
 

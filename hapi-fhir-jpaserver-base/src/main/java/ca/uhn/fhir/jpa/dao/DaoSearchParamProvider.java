@@ -24,8 +24,10 @@ import ca.uhn.fhir.jpa.api.dao.DaoRegistry;
 import ca.uhn.fhir.jpa.searchparam.SearchParameterMap;
 import ca.uhn.fhir.jpa.searchparam.registry.ISearchParamProvider;
 import ca.uhn.fhir.jpa.searchparam.registry.SearchParamRegistryImpl;
-import ca.uhn.fhir.model.dstu2.valueset.ResourceTypeEnum;
+
 import ca.uhn.fhir.rest.api.server.IBundleProvider;
+
+import org.hl7.fhir.r4.model.Enumerations.ResourceType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
@@ -39,7 +41,7 @@ public class DaoSearchParamProvider implements ISearchParamProvider {
 
 	@Override
 	public IBundleProvider search(SearchParameterMap theParams) {
-		return myDaoRegistry.getResourceDao(ResourceTypeEnum.SEARCHPARAMETER.getCode()).search(theParams);
+		return myDaoRegistry.getResourceDao(ResourceType.SEARCHPARAMETER.toCode()).search(theParams);
 	}
 
 	@Override

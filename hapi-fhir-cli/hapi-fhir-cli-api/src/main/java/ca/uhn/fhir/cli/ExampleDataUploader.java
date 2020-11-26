@@ -24,10 +24,7 @@ import ca.uhn.fhir.context.BaseRuntimeChildDefinition;
 import ca.uhn.fhir.context.BaseRuntimeElementCompositeDefinition;
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.model.api.IResource;
-import ca.uhn.fhir.model.dstu2.resource.Bundle;
-import ca.uhn.fhir.model.dstu2.resource.Bundle.Entry;
-import ca.uhn.fhir.model.dstu2.resource.Bundle.EntryRequest;
-import ca.uhn.fhir.model.dstu2.valueset.HTTPVerbEnum;
+
 import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.model.valueset.BundleTypeEnum;
 import ca.uhn.fhir.parser.DataFormatException;
@@ -78,8 +75,7 @@ public class ExampleDataUploader extends BaseCommand {
 
 	private IBaseBundle getBundleFromFile(Integer theLimit, File theSuppliedFile, FhirContext theCtx) throws ParseException, IOException {
 		switch (theCtx.getVersion().getVersion()) {
-			case DSTU2:
-				return getBundleFromFileDstu2(theLimit, theSuppliedFile, theCtx);
+			
 			case DSTU3:
 				return getBundleFromFileDstu3(theLimit, theSuppliedFile, theCtx);
 			case R4:
@@ -89,70 +85,6 @@ public class ExampleDataUploader extends BaseCommand {
 		}
 	}
 
-	private Bundle getBundleFromFileDstu2(Integer limit, File inputFile, FhirContext ctx) throws IOException {
-
-		Bundle bundle = new Bundle();
-
-		ZipInputStream zis = new ZipInputStream(FileUtils.openInputStream(inputFile));
-		byte[] buffer = new byte[2048];
-
-		int count = 0;
-		while (true) {
-			count++;
-			if (limit != null && count > limit) {
-				break;
-			}
-
-			ZipEntry nextEntry = zis.getNextEntry();
-			if (nextEntry == null) {
-				break;
-			}
-
-			int len;
-			ByteArrayOutputStream bos = new ByteArrayOutputStream();
-			while ((len = zis.read(buffer)) > 0) {
-				bos.write(buffer, 0, len);
-			}
-			byte[] exampleBytes = bos.toByteArray();
-			String exampleString = new String(exampleBytes, StandardCharsets.UTF_8);
-
-			if (ourLog.isTraceEnabled()) {
-				ourLog.trace("Next example: " + exampleString);
-			}
-
-			IBaseResource parsed;
-			try {
-				parsed = ctx.newJsonParser().parseResource(exampleString);
-			} catch (DataFormatException e) {
-				ourLog.info("FAILED to parse example {}", nextEntry.getName(), e);
-				continue;
-			}
-			ourLog.info("Found example {} - {} - {} chars", nextEntry.getName(), parsed.getClass().getSimpleName(), exampleString.length());
-
-			if (ctx.getResourceType(parsed).equals("Bundle")) {
-				BaseRuntimeChildDefinition entryChildDef = ctx.getResourceDefinition(parsed).getChildByName("entry");
-				BaseRuntimeElementCompositeDefinition<?> entryDef = (BaseRuntimeElementCompositeDefinition<?>) entryChildDef.getChildByName("entry");
-
-				for (IBase nextEntry1 : entryChildDef.getAccessor().getValues(parsed)) {
-					List<IBase> resources = entryDef.getChildByName("resource").getAccessor().getValues(nextEntry1);
-					if (resources == null) {
-						continue;
-					}
-					for (IBase nextResource : resources) {
-						if (!ctx.getResourceType(parsed).equals("Bundle") && ctx.getResourceType(parsed).equals("SearchParameter")) {
-							bundle.addEntry().setRequest(new EntryRequest().setMethod(HTTPVerbEnum.POST)).setResource((IResource) nextResource);
-						}
-					}
-				}
-			} else {
-				if (ctx.getResourceType(parsed).equals("SearchParameter")) {
-					continue;
-				}
-				bundle.addEntry().setRequest(new EntryRequest().setMethod(HTTPVerbEnum.POST)).setResource((IResource) parsed);
-			}
-		}
-		return bundle;
-	}
 
 	@SuppressWarnings("unchecked")
 	private org.hl7.fhir.dstu3.model.Bundle getBundleFromFileDstu3(Integer limit, File inputFile, FhirContext ctx) throws IOException {
@@ -363,9 +295,7 @@ public class ExampleDataUploader extends BaseCommand {
 
 	private void processBundle(FhirContext ctx, IBaseBundle bundle) {
 		switch (ctx.getVersion().getVersion()) {
-			case DSTU2:
-				processBundleDstu2(ctx, (Bundle) bundle);
-				break;
+			
 			case DSTU3:
 				processBundleDstu3(ctx, (org.hl7.fhir.dstu3.model.Bundle) bundle);
 				break;
@@ -377,85 +307,6 @@ public class ExampleDataUploader extends BaseCommand {
 		}
 	}
 
-	private void processBundleDstu2(FhirContext ctx, Bundle bundle) {
-
-		Set<String> fullIds = new HashSet<>();
-
-		for (Iterator<Entry> iterator = bundle.getEntry().iterator(); iterator.hasNext(); ) {
-			Entry next = iterator.next();
-
-			// DataElement have giant IDs that seem invalid, need to investigate this..
-			if ("Subscription".equals(next.getResource().getResourceName()) || "DataElement".equals(next.getResource().getResourceName())
-				|| "OperationOutcome".equals(next.getResource().getResourceName()) || "OperationDefinition".equals(next.getResource().getResourceName())) {
-				ourLog.info("Skipping " + next.getResource().getResourceName() + " example");
-				iterator.remove();
-			} else {
-				IdDt resourceId = new IdDt(next.getResource().getResourceName() + "/EX" + next.getResource().getId().getIdPart());
-				if (!fullIds.add(resourceId.toUnqualifiedVersionless().getValue())) {
-					ourLog.info("Discarding duplicate resource: " + resourceId.getValue());
-					iterator.remove();
-					continue;
-				}
-
-				String idPart = resourceId.getIdPart();
-				if (idPart != null) {
-					next.getResource().setId(resourceId);
-				} else {
-					ourLog.info("Discarding resource with not explicit ID");
-					iterator.remove();
-				}
-			}
-		}
-		Set<String> qualIds = new TreeSet<>();
-
-		for (Entry next : bundle.getEntry()) {
-			if (next.getResource().getId().getIdPart() != null) {
-				String nextId = next.getResource().getId().getValue();
-				next.getRequest().setMethod(HTTPVerbEnum.PUT);
-				next.getRequest().setUrl(nextId);
-				qualIds.add(nextId);
-			}
-		}
-
-		int goodRefs = 0;
-		for (Entry next : bundle.getEntry()) {
-			List<ResourceReferenceInfo> refs = ctx.newTerser().getAllResourceReferences(next.getResource());
-			for (ResourceReferenceInfo nextRef : refs) {
-				// if (nextRef.getResourceReference().getReferenceElement().isAbsolute()) {
-				// ourLog.info("Discarding absolute reference: {}",
-				// nextRef.getResourceReference().getReferenceElement().getValue());
-				// nextRef.getResourceReference().getReferenceElement().setValue(null);
-				// }
-				nextRef.getResourceReference().setResource(null);
-				String value = nextRef.getResourceReference().getReferenceElement().toUnqualifiedVersionless().getValue();
-
-				if (isNotBlank(value)) {
-					if (!qualIds.contains(value) && !nextRef.getResourceReference().getReferenceElement().isLocal()) {
-						ourLog.info("Discarding unknown reference: {}", value);
-						nextRef.getResourceReference().getReferenceElement().setValue(null);
-					} else {
-						goodRefs++;
-					}
-				}
-				ourLog.info("Found ref: {}", value);
-			}
-		}
-
-		// for (Entry next : bundle.getEntry()) {
-		// if (next.getResource().getId().hasIdPart() &&
-		// Character.isLetter(next.getResource().getId().getIdPart().charAt(0))) {
-		// next.getTransaction().setUrl(next.getResource().getResourceName() + '/' +
-		// next.getResource().getId().getIdPart());
-		// next.getTransaction().setMethod(HTTPVerbEnum.PUT);
-		// }
-		// }
-
-		ourLog.info("{} good references", goodRefs);
-		System.gc();
-
-		ourLog.info("Final bundle: {} entries", bundle.getEntry().size());
-
-	}
 
 	private void processBundleDstu3(FhirContext ctx, org.hl7.fhir.dstu3.model.Bundle bundle) {
 

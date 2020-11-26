@@ -19,7 +19,7 @@ public class FhirRestfulServlet extends RestfulServer {
 	private static final long serialVersionUID = -3931111342737918913L;
 
 	public FhirRestfulServlet() {
-		super(FhirContext.forDstu2()); // Support DSTU2
+		super(FhirContext.forR4()); // Support DSTU2
 	}
 
 	/**

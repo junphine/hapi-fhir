@@ -100,7 +100,7 @@
 			<artifactId>hapi-fhir-validation</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-		<dependency>
+		<!-- <dependency>
 			<groupId>ca.uhn.hapi.fhir</groupId>
 			<artifactId>hapi-fhir-structures-dstu2</artifactId>
 			<version>${project.version}</version>
@@ -109,7 +109,7 @@
 			<groupId>ca.uhn.hapi.fhir</groupId>
 			<artifactId>hapi-fhir-structures-dstu3</artifactId>
 			<version>${project.version}</version>
-		</dependency>
+		</dependency> -->
 		<dependency>
 			<groupId>ca.uhn.hapi.fhir</groupId>
 			<artifactId>hapi-fhir-structures-r4</artifactId>
@@ -120,12 +120,12 @@
 			<artifactId>hapi-fhir-structures-r5</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-		<dependency>
+		<!-- <dependency>
 			<groupId>ca.uhn.hapi.fhir</groupId>
 			<artifactId>hapi-fhir-structures-hl7org-dstu2</artifactId>
 			<version>${project.version}</version>
-		</dependency>
-		<dependency>
+		</dependency> -->
+		<!-- <dependency>
 			<groupId>ca.uhn.hapi.fhir</groupId>
 			<artifactId>hapi-fhir-validation-resources-dstu2</artifactId>
 			<version>${project.version}</version>
@@ -134,7 +134,7 @@
 			<groupId>ca.uhn.hapi.fhir</groupId>
 			<artifactId>hapi-fhir-validation-resources-dstu3</artifactId>
 			<version>${project.version}</version>
-		</dependency>
+		</dependency> -->
 		<dependency>
 			<groupId>ca.uhn.hapi.fhir</groupId>
 			<artifactId>hapi-fhir-validation-resources-r4</artifactId>
@@ -734,39 +734,7 @@
 				<artifactId>hapi-tinder-plugin</artifactId>
 				<version>${project.version}</version>
 				<executions>
-					<execution>
-						<id>build_dstu2</id>
-						<goals>
-							<goal>generate-jparest-server</goal>
-						</goals>
-						<configuration>
-							<version>dstu2</version>
-							<configPackageBase>ca.uhn.fhir.jpa.config</configPackageBase>
-							<packageBase>ca.uhn.fhir.jpa.rp.dstu2</packageBase>
-							<targetResourceSpringBeansFile>hapi-fhir-server-resourceproviders-dstu2.xml
-							</targetResourceSpringBeansFile>
-							<baseResourceNames/>
-							<excludeResourceNames>
-								<!-- <excludeResourceName>OperationDefinition</excludeResourceName> <excludeResourceName>OperationOutcome</excludeResourceName> -->
-							</excludeResourceNames>
-						</configuration>
-					</execution>
-					<execution>
-						<id>build_dstu3</id>
-						<goals>
-							<goal>generate-jparest-server</goal>
-						</goals>
-						<configuration>
-							<version>dstu3</version>
-							<configPackageBase>ca.uhn.fhir.jpa.config</configPackageBase>
-							<packageBase>ca.uhn.fhir.jpa.rp.dstu3</packageBase>
-							<targetResourceSpringBeansFile>hapi-fhir-server-resourceproviders-dstu3.xml
-							</targetResourceSpringBeansFile>
-							<baseResourceNames></baseResourceNames>
-							<excludeResourceNames>
-							</excludeResourceNames>
-						</configuration>
-					</execution>
+					
 					<execution>
 						<id>build_r4</id>
 						<goals>
@@ -800,16 +768,7 @@
 				</executions>
 
 				<dependencies>
-					<dependency>
-						<groupId>ca.uhn.hapi.fhir</groupId>
-						<artifactId>hapi-fhir-structures-dstu2</artifactId>
-						<version>${project.version}</version>
-					</dependency>
-					<dependency>
-						<groupId>ca.uhn.hapi.fhir</groupId>
-						<artifactId>hapi-fhir-structures-dstu3</artifactId>
-						<version>${project.version}</version>
-					</dependency>
+					
 					<dependency>
 						<groupId>ca.uhn.hapi.fhir</groupId>
 						<artifactId>hapi-fhir-structures-r4</artifactId>
@@ -818,7 +777,7 @@
 
 					<dependency>
 						<groupId>ca.uhn.hapi.fhir</groupId>
-						<artifactId>hapi-fhir-validation-resources-dstu3</artifactId>
+						<artifactId>hapi-fhir-validation-resources-r4</artifactId>
 						<version>${project.version}</version>
 					</dependency>
 				</dependencies>

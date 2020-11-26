@@ -28,10 +28,7 @@ public class IdentifierUtil {
 		CanonicalIdentifier retval = new CanonicalIdentifier();
 
 		// TODO add other fields like "use" etc
-		if (theIdentifier instanceof org.hl7.fhir.dstu3.model.Identifier) {
-			org.hl7.fhir.dstu3.model.Identifier ident = (org.hl7.fhir.dstu3.model.Identifier) theIdentifier;
-			retval.setSystem(ident.getSystem()).setValue(ident.getValue());
-		} else if (theIdentifier instanceof org.hl7.fhir.r4.model.Identifier) {
+		if (theIdentifier instanceof org.hl7.fhir.r4.model.Identifier) {
 			org.hl7.fhir.r4.model.Identifier ident = (org.hl7.fhir.r4.model.Identifier) theIdentifier;
 			retval.setSystem(ident.getSystem()).setValue(ident.getValue());
 		} else if (theIdentifier instanceof org.hl7.fhir.r5.model.Identifier) {

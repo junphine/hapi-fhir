@@ -162,7 +162,7 @@ public class JpaConformanceProviderR5 extends org.hl7.fhir.r5.hapi.rest.server.S
 			}
 		}
 
-		if (myDaoConfig.getSupportedSubscriptionTypes().contains(org.hl7.fhir.dstu2.model.Subscription.SubscriptionChannelType.WEBSOCKET)) {
+		if (myDaoConfig.getSupportedSubscriptionTypes().contains(org.hl7.fhir.r4.model.Subscription.SubscriptionChannelType.WEBSOCKET)) {
 			if (isNotBlank(myDaoConfig.getWebsocketContextPath())) {
 				Extension websocketExtension = new Extension();
 				websocketExtension.setUrl(Constants.CAPABILITYSTATEMENT_WEBSOCKET_URL);

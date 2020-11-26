@@ -1,13 +1,14 @@
 package ca.uhn.fhir.jpa.util;
 
 import ca.uhn.fhir.jpa.api.dao.IFhirResourceDao;
-import ca.uhn.fhir.model.dstu2.valueset.ResourceTypeEnum;
+
 import ca.uhn.fhir.rest.api.RestOperationTypeEnum;
 import ca.uhn.fhir.rest.api.server.RequestDetails;
 import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
 import ca.uhn.fhir.rest.server.exceptions.UnprocessableEntityException;
 import ca.uhn.fhir.rest.server.interceptor.ServerOperationInterceptorAdapter;
 import org.hl7.fhir.instance.model.api.IBaseResource;
+import org.hl7.fhir.r4.model.Enumerations.ResourceType;
 import org.hl7.fhir.r4.model.Subscription;
 import org.hl7.fhir.r4.model.Subscription.SubscriptionChannelType;
 import org.hl7.fhir.r4.model.Subscription.SubscriptionStatus;
@@ -48,14 +49,14 @@ public class SubscriptionsRequireManualActivationInterceptorR4 extends ServerOpe
 
 	@Override
 	public void resourceCreated(RequestDetails theRequest, IBaseResource theResource) {
-		if (myDao.getContext().getResourceType(theResource).equals(ResourceTypeEnum.SUBSCRIPTION.getCode())) {
+		if (myDao.getContext().getResourceType(theResource).equals(ResourceType.SUBSCRIPTION.toCode())) {
 			verifyStatusOk(RestOperationTypeEnum.CREATE, null, theResource);
 		}
 	}
 
 	@Override
 	public void resourceUpdated(RequestDetails theRequest, IBaseResource theOldResource, IBaseResource theNewResource) {
-		if (myDao.getContext().getResourceType(theNewResource).equals(ResourceTypeEnum.SUBSCRIPTION.getCode())) {
+		if (myDao.getContext().getResourceType(theNewResource).equals(ResourceType.SUBSCRIPTION.toCode())) {
 			verifyStatusOk(RestOperationTypeEnum.UPDATE, theOldResource, theNewResource);
 		}
 	}

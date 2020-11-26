@@ -20,7 +20,7 @@ package ca.uhn.fhir.jpa.subscription.model;
  * #L%
  */
 
-import org.hl7.fhir.dstu2.model.Subscription;
+import org.hl7.fhir.r4.model.Subscription;
 import org.hl7.fhir.exceptions.FHIRException;
 
 import javax.annotation.Nonnull;

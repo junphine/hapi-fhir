@@ -35,9 +35,7 @@ public class NameUtil {
 			case R4:
 				HumanName humanNameR4 = (HumanName)theBase;
 				return humanNameR4.getGiven().stream().map(PrimitiveType::getValueAsString).filter(s -> !StringUtils.isEmpty(s)).collect(Collectors.toList());
-			case DSTU3:
-				org.hl7.fhir.dstu3.model.HumanName humanNameDSTU3 = (org.hl7.fhir.dstu3.model.HumanName) theBase;
-				return humanNameDSTU3.getGiven().stream().map(given -> given.toString()).filter(s -> !StringUtils.isEmpty(s)).collect(Collectors.toList());
+			
 			default:
 				throw new UnsupportedOperationException("Version not supported: " + theFhirContext.getVersion().getVersion());
 
@@ -49,9 +47,7 @@ public class NameUtil {
 			case R4:
 				HumanName humanNameR4 = (HumanName)theBase;
 				return humanNameR4.getFamily();
-			case DSTU3:
-				org.hl7.fhir.dstu3.model.HumanName humanNameDSTU3 = (org.hl7.fhir.dstu3.model.HumanName)theBase;
-				return humanNameDSTU3.getFamily();
+			
 			default:
 				throw new UnsupportedOperationException("Version not supported: " + theFhirContext.getVersion().getVersion());
 

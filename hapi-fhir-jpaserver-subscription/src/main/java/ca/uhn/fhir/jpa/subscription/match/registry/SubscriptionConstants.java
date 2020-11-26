@@ -1,5 +1,7 @@
 package ca.uhn.fhir.jpa.subscription.match.registry;
 
+import org.hl7.fhir.r4.model.Subscription;
+
 /*-
  * #%L
  * HAPI FHIR Subscription Server
@@ -20,7 +22,7 @@ package ca.uhn.fhir.jpa.subscription.match.registry;
  * #L%
  */
 
-import org.hl7.fhir.dstu2.model.Subscription;
+
 
 public class SubscriptionConstants {
 

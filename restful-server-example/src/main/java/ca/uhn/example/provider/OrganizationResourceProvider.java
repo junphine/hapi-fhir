@@ -1,8 +1,10 @@
 package ca.uhn.example.provider;
 
+import org.hl7.fhir.r4.model.ContactPoint;
+import org.hl7.fhir.r4.model.ContactPoint.ContactPointUse;
+
 import ca.uhn.example.model.MyOrganization;
-import ca.uhn.fhir.model.dstu2.composite.ContactPointDt;
-import ca.uhn.fhir.model.dstu2.valueset.ContactPointUseEnum;
+
 import ca.uhn.fhir.model.primitive.BooleanDt;
 import ca.uhn.fhir.model.primitive.CodeDt;
 import ca.uhn.fhir.model.primitive.IdDt;
@@ -52,7 +54,7 @@ public class OrganizationResourceProvider implements IResourceProvider {
 		retVal.setId("1");
 		retVal.addIdentifier().setSystem("urn:example:orgs").setValue("FooOrganization");
 		retVal.addAddress().addLine("123 Fake Street").setCity("Toronto");
-		retVal.addTelecom().setUse(ContactPointUseEnum.WORK).setValue("1-888-123-4567");
+		retVal.addTelecom().setUse(ContactPointUse.WORK).setValue("1-888-123-4567");
 		
 		// Populate the first, primitive extension
 		retVal.setBillingCode(new CodeDt("00102-1"));
@@ -60,7 +62,7 @@ public class OrganizationResourceProvider implements IResourceProvider {
 		// The second extension is repeatable and takes a block type
 		MyOrganization.EmergencyContact contact = new MyOrganization.EmergencyContact();
 		contact.setActive(new BooleanDt(true));
-		contact.setContact(new ContactPointDt());
+		contact.setContact(new ContactPoint());
 		retVal.getEmergencyContact().add(contact);
 		
 		return retVal;

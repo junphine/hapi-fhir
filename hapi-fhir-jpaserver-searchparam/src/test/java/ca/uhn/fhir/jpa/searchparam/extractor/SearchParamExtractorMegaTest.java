@@ -55,16 +55,9 @@ public class SearchParamExtractorMegaTest {
 	public void testAllCombinations() throws Exception {
 		PartitionSettings partitionSettings = new PartitionSettings();
 
-		FhirContext ctx = FhirContext.forDstu2();
-		ISearchParamRegistry searchParamRegistry = new MySearchParamRegistry(ctx);
-		process(ctx, new SearchParamExtractorDstu2(new ModelConfig(), partitionSettings, ctx, searchParamRegistry));
-
-		ctx = FhirContext.forDstu3();
-		searchParamRegistry = new MySearchParamRegistry(ctx);
-		process(ctx, new SearchParamExtractorDstu3(new ModelConfig(), partitionSettings, ctx, new DefaultProfileValidationSupport(ctx), searchParamRegistry));
-
+		FhirContext ctx;
 		ctx = FhirContext.forR4();
-		searchParamRegistry = new MySearchParamRegistry(ctx);
+		MySearchParamRegistry searchParamRegistry = new MySearchParamRegistry(ctx);
 		process(ctx, new SearchParamExtractorR4(new ModelConfig(), partitionSettings, ctx, new DefaultProfileValidationSupport(ctx), searchParamRegistry));
 
 		ctx = FhirContext.forR5();

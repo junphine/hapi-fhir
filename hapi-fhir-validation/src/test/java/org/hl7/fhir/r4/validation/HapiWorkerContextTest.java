@@ -4,9 +4,10 @@ import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.rest.server.exceptions.InternalErrorException;
 import ca.uhn.fhir.test.BaseTest;
 import com.google.common.base.Charsets;
-import org.apache.commons.lang.Validate;
+
 import ca.uhn.fhir.context.support.DefaultProfileValidationSupport;
 import org.hl7.fhir.common.hapi.validation.support.PrePopulatedValidationSupport;
+import org.apache.commons.lang3.Validate;
 import org.hl7.fhir.common.hapi.validation.support.InMemoryTerminologyServerValidationSupport;
 import org.hl7.fhir.common.hapi.validation.support.ValidationSupportChain;
 import org.hl7.fhir.instance.model.api.IBaseResource;

@@ -989,6 +989,7 @@ public class FhirContext {
 	/**
 	 * Creates and returns a new FhirContext with version {@link FhirVersionEnum#DSTU2 DSTU2}
 	 */
+	@java.lang.Deprecated
 	public static FhirContext forDstu2() {
 		return new FhirContext(FhirVersionEnum.DSTU2);
 	}
@@ -997,6 +998,7 @@ public class FhirContext {
 	 * Creates and returns a new FhirContext with version {@link FhirVersionEnum#DSTU2_HL7ORG DSTU2} (using the Reference
 	 * Implementation Structures)
 	 */
+	@java.lang.Deprecated
 	public static FhirContext forDstu2Hl7Org() {
 		return new FhirContext(FhirVersionEnum.DSTU2_HL7ORG);
 	}
@@ -1004,6 +1006,7 @@ public class FhirContext {
 	/**
 	 * Creates and returns a new FhirContext with version {@link FhirVersionEnum#DSTU2 DSTU2} (2016 May DSTU3 Snapshot)
 	 */
+	@java.lang.Deprecated
 	public static FhirContext forDstu2_1() {
 		return new FhirContext(FhirVersionEnum.DSTU2_1);
 	}

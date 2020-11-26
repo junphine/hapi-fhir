@@ -37,9 +37,7 @@ public class LastNParameterHelper {
 			return true;
 		} else if (isR4(version) && isLastNParameterR4(theParamName)) {
 			return true;
-		} else if (isDstu3(version) && isLastNParameterDstu3(theParamName)) {
-			return true;
-		} else {
+		}else {
 			return false;
 		}
 	}
@@ -56,11 +54,7 @@ public class LastNParameterHelper {
 		return (theVersion == FhirVersionEnum.R5);
 	}
 
-	private static boolean isLastNParameterDstu3(String theParamName) {
-		return (theParamName.equals(org.hl7.fhir.dstu3.model.Observation.SP_SUBJECT) || theParamName.equals(org.hl7.fhir.dstu3.model.Observation.SP_PATIENT)
-			|| theParamName.equals(org.hl7.fhir.dstu3.model.Observation.SP_CATEGORY) || theParamName.equals(org.hl7.fhir.r5.model.Observation.SP_CODE))
-			|| theParamName.equals(org.hl7.fhir.dstu3.model.Observation.SP_DATE);
-	}
+
 
 	private static boolean isLastNParameterR4(String theParamName) {
 		return (theParamName.equals(org.hl7.fhir.r4.model.Observation.SP_SUBJECT) || theParamName.equals(org.hl7.fhir.r4.model.Observation.SP_PATIENT)
@@ -78,9 +72,7 @@ public class LastNParameterHelper {
 		if (theContext.getVersion().getVersion() == FhirVersionEnum.R5) {
 			return org.hl7.fhir.r5.model.Observation.SP_SUBJECT;
 		} else if (theContext.getVersion().getVersion() == FhirVersionEnum.R4) {
-			return org.hl7.fhir.r4.model.Observation.SP_SUBJECT;
-		} else if (theContext.getVersion().getVersion() == FhirVersionEnum.DSTU3) {
-			return org.hl7.fhir.dstu3.model.Observation.SP_SUBJECT;
+			return org.hl7.fhir.r4.model.Observation.SP_SUBJECT;		
 		} else {
 			throw new InvalidRequestException("$lastn operation is not implemented for FHIR Version " + theContext.getVersion().getVersion().getFhirVersionString());
 		}
@@ -91,8 +83,6 @@ public class LastNParameterHelper {
 			return org.hl7.fhir.r5.model.Observation.SP_PATIENT;
 		} else if (theContext.getVersion().getVersion() == FhirVersionEnum.R4) {
 			return org.hl7.fhir.r4.model.Observation.SP_PATIENT;
-		} else if (theContext.getVersion().getVersion() == FhirVersionEnum.DSTU3) {
-			return org.hl7.fhir.dstu3.model.Observation.SP_PATIENT;
 		} else {
 			throw new InvalidRequestException("$lastn operation is not implemented for FHIR Version " + theContext.getVersion().getVersion().getFhirVersionString());
 		}
@@ -102,9 +92,7 @@ public class LastNParameterHelper {
 		if (theContext.getVersion().getVersion() == FhirVersionEnum.R5) {
 			return org.hl7.fhir.r5.model.Observation.SP_DATE;
 		} else if (theContext.getVersion().getVersion() == FhirVersionEnum.R4) {
-			return org.hl7.fhir.r4.model.Observation.SP_DATE;
-		} else if (theContext.getVersion().getVersion() == FhirVersionEnum.DSTU3) {
-			return org.hl7.fhir.dstu3.model.Observation.SP_DATE;
+			return org.hl7.fhir.r4.model.Observation.SP_DATE;		
 		} else {
 			throw new InvalidRequestException("$lastn operation is not implemented for FHIR Version " + theContext.getVersion().getVersion().getFhirVersionString());
 		}
@@ -114,9 +102,7 @@ public class LastNParameterHelper {
 		if (theContext.getVersion().getVersion() == FhirVersionEnum.R5) {
 			return org.hl7.fhir.r5.model.Observation.SP_CATEGORY;
 		} else if (theContext.getVersion().getVersion() == FhirVersionEnum.R4) {
-			return org.hl7.fhir.r4.model.Observation.SP_CATEGORY;
-		} else if (theContext.getVersion().getVersion() == FhirVersionEnum.DSTU3) {
-			return org.hl7.fhir.dstu3.model.Observation.SP_CATEGORY;
+			return org.hl7.fhir.r4.model.Observation.SP_CATEGORY;		
 		} else {
 			throw new InvalidRequestException("$lastn operation is not implemented for FHIR Version " + theContext.getVersion().getVersion().getFhirVersionString());
 		}
@@ -126,9 +112,7 @@ public class LastNParameterHelper {
 		if (theContext.getVersion().getVersion() == FhirVersionEnum.R5) {
 			return org.hl7.fhir.r5.model.Observation.SP_CODE;
 		} else if (theContext.getVersion().getVersion() == FhirVersionEnum.R4) {
-			return org.hl7.fhir.r4.model.Observation.SP_CODE;
-		} else if (theContext.getVersion().getVersion() == FhirVersionEnum.DSTU3) {
-			return org.hl7.fhir.dstu3.model.Observation.SP_CODE;
+			return org.hl7.fhir.r4.model.Observation.SP_CODE;		
 		} else {
 			throw new InvalidRequestException("$lastn operation is not implemented for FHIR Version " + theContext.getVersion().getVersion().getFhirVersionString());
 		}

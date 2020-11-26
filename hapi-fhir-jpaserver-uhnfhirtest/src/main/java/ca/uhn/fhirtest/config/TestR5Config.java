@@ -15,7 +15,7 @@ import net.ttddyy.dsproxy.support.ProxyDataSourceBuilder;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.apache.commons.lang3.time.DateUtils;
 import org.hibernate.dialect.PostgreSQL94Dialect;
-import org.hl7.fhir.dstu2.model.Subscription;
+import org.hl7.fhir.r4.model.Subscription.SubscriptionChannelType;
 import org.hl7.fhir.r5.utils.IResourceValidator;
 import org.springframework.beans.factory.annotation.Autowire;
 import org.springframework.beans.factory.annotation.Value;
@@ -55,9 +55,9 @@ public class TestR5Config extends BaseJavaConfigR5 {
 	@Bean
 	public DaoConfig daoConfig() {
 		DaoConfig retVal = new DaoConfig();
-		retVal.addSupportedSubscriptionType(Subscription.SubscriptionChannelType.EMAIL);
-		retVal.addSupportedSubscriptionType(Subscription.SubscriptionChannelType.RESTHOOK);
-		retVal.addSupportedSubscriptionType(Subscription.SubscriptionChannelType.WEBSOCKET);
+		retVal.addSupportedSubscriptionType(SubscriptionChannelType.EMAIL);
+		retVal.addSupportedSubscriptionType(SubscriptionChannelType.RESTHOOK);
+		retVal.addSupportedSubscriptionType(SubscriptionChannelType.WEBSOCKET);
 		retVal.setWebsocketContextPath("/websocketR5");
 		retVal.setAllowContainsSearches(true);
 		retVal.setAllowMultipleDelete(true);

@@ -9,9 +9,9 @@
 
     <modules>
         <module>common</module>
-        <module>dstu3</module>
+        
         <module>r4</module>
-        <module>cqf-ruler-dstu3</module>
+      
         <module>cqf-ruler-r4</module>
     </modules>
 
@@ -229,22 +229,13 @@
         </dependency>
 
         <!-- At least one "structures" JAR must also be included -->
+        
         <dependency>
             <groupId>ca.uhn.hapi.fhir</groupId>
-            <artifactId>hapi-fhir-structures-dstu2</artifactId>
+            <artifactId>hapi-fhir-structures-r4</artifactId>
             <version>${hapi.version}</version>
         </dependency>
-        <dependency>
-            <groupId>ca.uhn.hapi.fhir</groupId>
-            <artifactId>hapi-fhir-structures-dstu3</artifactId>
-            <version>${hapi.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>ca.uhn.hapi.fhir</groupId>
-            <artifactId>hapi-fhir-converter</artifactId>
-            <version>${hapi.version}</version>
-        </dependency>
+       
 
         <!-- This dependency includes the JPA server itself, which is packaged separately from the rest of HAPI FHIR -->
         <dependency>

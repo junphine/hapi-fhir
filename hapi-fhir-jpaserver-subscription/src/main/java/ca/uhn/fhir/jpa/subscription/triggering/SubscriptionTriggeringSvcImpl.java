@@ -33,7 +33,7 @@ import ca.uhn.fhir.jpa.searchparam.MatchUrlService;
 import ca.uhn.fhir.jpa.searchparam.SearchParameterMap;
 import ca.uhn.fhir.jpa.subscription.match.matcher.matching.IResourceModifiedConsumer;
 import ca.uhn.fhir.jpa.subscription.model.ResourceModifiedMessage;
-import ca.uhn.fhir.model.dstu2.valueset.ResourceTypeEnum;
+
 import ca.uhn.fhir.rest.annotation.IdParam;
 import ca.uhn.fhir.rest.api.CacheControlDirective;
 import ca.uhn.fhir.rest.api.server.IBundleProvider;
@@ -50,11 +50,13 @@ import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.hl7.fhir.dstu2.model.IdType;
+
 import org.hl7.fhir.instance.model.api.IBaseParameters;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.instance.model.api.IIdType;
 import org.hl7.fhir.instance.model.api.IPrimitiveType;
+import org.hl7.fhir.r4.model.Enumerations.ResourceType;
+import org.hl7.fhir.r4.model.IdType;
 import org.quartz.JobExecutionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -111,7 +113,7 @@ public class SubscriptionTriggeringSvcImpl implements ISubscriptionTriggeringSvc
 			IFhirResourceDao<?> subscriptionDao = myDaoRegistry.getSubscriptionDao();
 			IIdType subscriptionId = theSubscriptionId;
 			if (!subscriptionId.hasResourceType()) {
-				subscriptionId = subscriptionId.withResourceType(ResourceTypeEnum.SUBSCRIPTION.getCode());
+				subscriptionId = subscriptionId.withResourceType(ResourceType.SUBSCRIPTION.toCode());
 			}
 			subscriptionDao.read(subscriptionId);
 		}

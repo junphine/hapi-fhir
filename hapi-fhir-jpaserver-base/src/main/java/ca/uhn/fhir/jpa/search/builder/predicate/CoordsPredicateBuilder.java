@@ -27,7 +27,7 @@ import ca.uhn.fhir.jpa.searchparam.SearchParameterMap;
 import ca.uhn.fhir.jpa.util.CoordCalculator;
 import ca.uhn.fhir.jpa.util.SearchBox;
 import ca.uhn.fhir.model.api.IQueryParameterType;
-import ca.uhn.fhir.model.dstu2.resource.Location;
+
 import ca.uhn.fhir.rest.param.QuantityParam;
 import ca.uhn.fhir.rest.param.SpecialParam;
 import ca.uhn.fhir.rest.param.TokenParam;
@@ -37,6 +37,8 @@ import com.healthmarketscience.sqlbuilder.Condition;
 import com.healthmarketscience.sqlbuilder.dbspec.basic.DbColumn;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
+
+import org.hl7.fhir.r4.model.Location;
 
 public class CoordsPredicateBuilder extends BaseSearchParamPredicateBuilder {
 
@@ -108,9 +110,9 @@ public class CoordsPredicateBuilder extends BaseSearchParamPredicateBuilder {
 			latitudePredicate = theFrom.createPredicateLatitudeExact(latitudeValue);
 			longitudePredicate = theFrom.createPredicateLongitudeExact(longitudeValue);
 		} else if (distanceKm < 0.0) {
-			throw new IllegalArgumentException("Invalid " + Location.SP_NEAR_DISTANCE + " parameter '" + distanceKm + "' must be >= 0.0");
+			throw new IllegalArgumentException("Invalid " + Location.SP_NEAR + " parameter '" + distanceKm + "' must be >= 0.0");
 		} else if (distanceKm > CoordCalculator.MAX_SUPPORTED_DISTANCE_KM) {
-			throw new IllegalArgumentException("Invalid " + Location.SP_NEAR_DISTANCE + " parameter '" + distanceKm + "' must be <= " + CoordCalculator.MAX_SUPPORTED_DISTANCE_KM);
+			throw new IllegalArgumentException("Invalid " + Location.SP_NEAR + " parameter '" + distanceKm + "' must be <= " + CoordCalculator.MAX_SUPPORTED_DISTANCE_KM);
 		} else {
 			double latitudeDegrees = Double.parseDouble(latitudeValue);
 			double longitudeDegrees = Double.parseDouble(longitudeValue);

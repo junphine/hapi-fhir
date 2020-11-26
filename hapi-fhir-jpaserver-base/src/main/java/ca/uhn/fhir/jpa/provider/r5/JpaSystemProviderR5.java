@@ -219,7 +219,7 @@ public class JpaSystemProviderR5 extends BaseJpaSystemProviderDstu2Plus<Bundle, 
 		@OperationParam(name = "searchParam", min = 1, max = 1) String theSearchParam,
 		@OperationParam(name = "text", min = 1, max = 1) String theText,
 		RequestDetails theRequest) {
-		ca.uhn.fhir.jpa.provider.dstu3.JpaSystemProviderDstu3.validateFulltextSearchEnabled(mySearchDao);
+		//ca.uhn.fhir.jpa.provider.dstu3.JpaSystemProviderDstu3.validateFulltextSearchEnabled(mySearchDao);
 
 		if (isBlank(theContext)) {
 			throw new InvalidRequestException("Parameter 'context' must be provided");

@@ -3,7 +3,7 @@ package ca.uhn.fhir.to;
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.context.RuntimeResourceDefinition;
 import ca.uhn.fhir.model.api.Include;
-import ca.uhn.fhir.model.dstu2.valueset.ResourceTypeEnum;
+
 import ca.uhn.fhir.model.primitive.BoundCodeDt;
 import ca.uhn.fhir.model.primitive.DateTimeDt;
 import ca.uhn.fhir.model.primitive.IdDt;
@@ -29,11 +29,7 @@ import ca.uhn.fhir.to.model.TransactionRequest;
 import ca.uhn.fhir.util.UrlUtil;
 import com.google.gson.stream.JsonWriter;
 import org.apache.commons.lang3.StringUtils;
-import org.hl7.fhir.dstu3.model.CapabilityStatement;
-import org.hl7.fhir.dstu3.model.CapabilityStatement.CapabilityStatementRestComponent;
-import org.hl7.fhir.dstu3.model.CapabilityStatement.CapabilityStatementRestResourceComponent;
-import org.hl7.fhir.dstu3.model.CapabilityStatement.CapabilityStatementRestResourceSearchParamComponent;
-import org.hl7.fhir.dstu3.model.StringType;
+
 import org.hl7.fhir.instance.model.api.IBaseBundle;
 import org.hl7.fhir.instance.model.api.IBaseConformance;
 import org.hl7.fhir.instance.model.api.IBaseResource;
@@ -83,15 +79,19 @@ public class Controller extends BaseController {
 		long start = System.currentTimeMillis();
 		try {
 			Class<? extends IBaseConformance> type;
+			type = org.hl7.fhir.r4.model.CapabilityStatement.class;
 			switch (getContext(theRequest).getVersion().getVersion()) {
-			default:
+			
 			case DSTU2:
-				type = ca.uhn.fhir.model.dstu2.resource.Conformance.class;
+				//type = ca.uhn.fhir.model.dstu2.resource.Conformance.class;
 				break;
 			case DSTU3:
-				type = org.hl7.fhir.dstu3.model.CapabilityStatement.class;
+				//type = org.hl7.fhir.dstu3.model.CapabilityStatement.class;
 				break;
-			case R4:
+			case R5:
+				type = org.hl7.fhir.r5.model.CapabilityStatement.class;
+				break;
+			default:
 				type = org.hl7.fhir.r4.model.CapabilityStatement.class;
 				break;
 			}
@@ -304,12 +304,12 @@ public class Controller extends BaseController {
 		List<List<String>> queryIncludes = new ArrayList<>();
 
 		switch (theRequest.getFhirVersion(myConfig)) {
-			case DSTU2:
-				haveSearchParams = extractSearchParamsDstu2(conformance, resourceName, includes, revIncludes, sortParams, haveSearchParams, queryIncludes);
-				break;
-			case DSTU3:
-				haveSearchParams = extractSearchParamsDstu3CapabilityStatement(conformance, resourceName, includes, revIncludes, sortParams, haveSearchParams, queryIncludes);
-				break;
+			//case DSTU2:
+			//	haveSearchParams = extractSearchParamsDstu2(conformance, resourceName, includes, revIncludes, sortParams, haveSearchParams, queryIncludes);
+			//	break;
+			//case DSTU3:
+			//	haveSearchParams = extractSearchParamsDstu3CapabilityStatement(conformance, resourceName, includes, revIncludes, sortParams, haveSearchParams, queryIncludes);
+			//	break;
 			case R4:
 				haveSearchParams = extractSearchParamsR4CapabilityStatement(conformance, resourceName, includes, revIncludes, sortParams, haveSearchParams, queryIncludes);
 				break;
@@ -678,75 +678,6 @@ public class Controller extends BaseController {
 
 		processAndAddLastClientInvocation(client, returnsResource, theModel, delay, theMethodDescription, interceptor, theRequest);
 
-	}
-
-	private boolean extractSearchParamsDstu2(IBaseResource theConformance, String resourceName, TreeSet<String> includes, TreeSet<String> theRevIncludes, TreeSet<String> sortParams,
-			boolean haveSearchParams, List<List<String>> queryIncludes) {
-		ca.uhn.fhir.model.dstu2.resource.Conformance conformance = (ca.uhn.fhir.model.dstu2.resource.Conformance) theConformance;
-		for (ca.uhn.fhir.model.dstu2.resource.Conformance.Rest nextRest : conformance.getRest()) {
-			for (ca.uhn.fhir.model.dstu2.resource.Conformance.RestResource nextRes : nextRest.getResource()) {
-				if (nextRes.getTypeElement().getValue().equals(resourceName)) {
-					for (StringDt next : nextRes.getSearchInclude()) {
-						if (next.isEmpty() == false) {
-							includes.add(next.getValue());
-						}
-					}
-					for (ca.uhn.fhir.model.dstu2.resource.Conformance.RestResourceSearchParam next : nextRes.getSearchParam()) {
-						if (next.getTypeElement().getValueAsEnum() != ca.uhn.fhir.model.dstu2.valueset.SearchParamTypeEnum.COMPOSITE) {
-							sortParams.add(next.getNameElement().getValue());
-						}
-					}
-					if (nextRes.getSearchParam().size() > 0) {
-						haveSearchParams = true;
-					}
-				} else {
-					// It's a different resource from the one we're searching, so
-					// scan for revinclude candidates
-					for (ca.uhn.fhir.model.dstu2.resource.Conformance.RestResourceSearchParam next : nextRes.getSearchParam()) {
-						if (next.getTypeElement().getValueAsEnum() == ca.uhn.fhir.model.dstu2.valueset.SearchParamTypeEnum.REFERENCE) {
-							for (BoundCodeDt<ResourceTypeEnum> nextTargetType : next.getTarget()) {
-								if (nextTargetType.getValue().equals(resourceName)) {
-									theRevIncludes.add(nextRes.getTypeElement().getValue() + ":" + next.getName());
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-		return haveSearchParams;
-	}
-
-	private boolean extractSearchParamsDstu3CapabilityStatement(IBaseResource theConformance, String resourceName, TreeSet<String> includes, TreeSet<String> theRevIncludes, TreeSet<String> sortParams,
-			boolean haveSearchParams, List<List<String>> queryIncludes) {
-		CapabilityStatement conformance = (org.hl7.fhir.dstu3.model.CapabilityStatement) theConformance;
-		for (CapabilityStatementRestComponent nextRest : conformance.getRest()) {
-			for (CapabilityStatementRestResourceComponent nextRes : nextRest.getResource()) {
-				if (nextRes.getTypeElement().getValue().equals(resourceName)) {
-					for (StringType next : nextRes.getSearchInclude()) {
-						if (next.isEmpty() == false) {
-							includes.add(next.getValue());
-						}
-					}
-					for (CapabilityStatementRestResourceSearchParamComponent next : nextRes.getSearchParam()) {
-						if (next.getTypeElement().getValue() != org.hl7.fhir.dstu3.model.Enumerations.SearchParamType.COMPOSITE) {
-							sortParams.add(next.getNameElement().getValue());
-						}
-					}
-					if (nextRes.getSearchParam().size() > 0) {
-						haveSearchParams = true;
-					}
-				} else {
-					// It's a different resource from the one we're searching, so
-					// scan for revinclude candidates
-					for (CapabilityStatementRestResourceSearchParamComponent next : nextRes.getSearchParam()) {
-						if (next.getTypeElement().getValue() == org.hl7.fhir.dstu3.model.Enumerations.SearchParamType.REFERENCE) {
-						}
-					}
-				}
-			}
-		}
-		return haveSearchParams;
 	}
 
 	private boolean extractSearchParamsR4CapabilityStatement(IBaseResource theConformance, String resourceName, TreeSet<String> includes, TreeSet<String> theRevIncludes, TreeSet<String> sortParams,

@@ -3,10 +3,11 @@ package embedded;
 import java.util.List;
 
 import org.hl7.fhir.instance.model.api.IBaseResource;
+import org.hl7.fhir.r4.model.Practitioner;
 
 import com.google.common.collect.Lists;
 
-import ca.uhn.fhir.model.dstu2.resource.Practitioner;
+
 import ca.uhn.fhir.model.primitive.StringDt;
 import ca.uhn.fhir.rest.annotation.RequiredParam;
 import ca.uhn.fhir.rest.annotation.Search;

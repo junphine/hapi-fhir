@@ -10,7 +10,7 @@ import org.fhir.ucum.UcumEssenceService;
 import org.fhir.ucum.UcumException;
 import org.hl7.fhir.convertors.VersionConvertor_30_40;
 import org.hl7.fhir.convertors.VersionConvertor_40_50;
-import org.hl7.fhir.dstu2.model.ValueSet;
+
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r4.model.CodeSystem;
 import org.slf4j.Logger;
@@ -247,8 +247,9 @@ public class CommonCodeSystemsTerminologyService implements IValidationSupport {
 			case DSTU2_1:
 				return null;
 			case DSTU3:
-				normalized = VersionConvertor_30_40.convertResource(retVal, false);
-				break;
+				return null;
+				//normalized = VersionConvertor_30_40.convertResource(retVal, false);
+				//break;
 			case R4:
 				normalized = retVal;
 				break;
@@ -299,18 +300,7 @@ public class CommonCodeSystemsTerminologyService implements IValidationSupport {
 	public static String getValueSetUrl(@Nonnull IBaseResource theValueSet) {
 		String url;
 		switch (theValueSet.getStructureFhirVersionEnum()) {
-			case DSTU2: {
-				url = ((ca.uhn.fhir.model.dstu2.resource.ValueSet) theValueSet).getUrl();
-				break;
-			}
-			case DSTU2_HL7ORG: {
-				url = ((ValueSet) theValueSet).getUrl();
-				break;
-			}
-			case DSTU3: {
-				url = ((org.hl7.fhir.dstu3.model.ValueSet) theValueSet).getUrl();
-				break;
-			}
+			
 			case R4: {
 				url = ((org.hl7.fhir.r4.model.ValueSet) theValueSet).getUrl();
 				break;
@@ -347,10 +337,10 @@ public class CommonCodeSystemsTerminologyService implements IValidationSupport {
 	public static String getValueSetVersion(@Nonnull IBaseResource theValueSet) {
 		String version;
 		switch (theValueSet.getStructureFhirVersionEnum()) {
-			case DSTU3: {
-				version = ((org.hl7.fhir.dstu3.model.ValueSet) theValueSet).getVersion();
-				break;
-			}
+			//case DSTU3: {
+			//	version = ((org.hl7.fhir.dstu3.model.ValueSet) theValueSet).getVersion();
+			//	break;
+			//}
 			case R4: {
 				version = ((org.hl7.fhir.r4.model.ValueSet) theValueSet).getVersion();
 				break;

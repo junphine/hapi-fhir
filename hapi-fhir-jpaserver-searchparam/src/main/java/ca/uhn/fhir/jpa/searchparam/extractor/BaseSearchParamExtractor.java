@@ -258,8 +258,8 @@ public abstract class BaseSearchParamExtractor implements ISearchParamExtractor 
 		String useSystem;
 		if (getContext().getVersion().getVersion().equals(FhirVersionEnum.DSTU2)) {
 			if (resourceTypeName.equals("ValueSet")) {
-				ca.uhn.fhir.model.dstu2.resource.ValueSet dstu2ValueSet = (ca.uhn.fhir.model.dstu2.resource.ValueSet) theResource;
-				useSystem = dstu2ValueSet.getCodeSystem().getSystem();
+				
+				useSystem = null;
 			} else {
 				useSystem = null;
 			}
@@ -760,11 +760,7 @@ public abstract class BaseSearchParamExtractor implements ISearchParamExtractor 
 		BigDecimal latitude = null;
 		BigDecimal longitude = null;
 
-		if (theValue instanceof org.hl7.fhir.dstu3.model.Location.LocationPositionComponent) {
-			org.hl7.fhir.dstu3.model.Location.LocationPositionComponent value = (org.hl7.fhir.dstu3.model.Location.LocationPositionComponent) theValue;
-			latitude = value.getLatitude();
-			longitude = value.getLongitude();
-		} else if (theValue instanceof org.hl7.fhir.r4.model.Location.LocationPositionComponent) {
+		if (theValue instanceof org.hl7.fhir.r4.model.Location.LocationPositionComponent) {
 			org.hl7.fhir.r4.model.Location.LocationPositionComponent value = (org.hl7.fhir.r4.model.Location.LocationPositionComponent) theValue;
 			latitude = value.getLatitude();
 			longitude = value.getLongitude();

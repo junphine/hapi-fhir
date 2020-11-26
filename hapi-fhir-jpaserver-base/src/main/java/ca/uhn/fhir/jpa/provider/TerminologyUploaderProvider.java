@@ -60,7 +60,6 @@ import java.util.Map;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.commons.lang3.StringUtils.trim;
-import static org.hl7.fhir.convertors.conv30_40.CodeSystem30_40.convertCodeSystem;
 
 public class TerminologyUploaderProvider extends BaseJpaProvider {
 
@@ -269,10 +268,10 @@ public class TerminologyUploaderProvider extends BaseJpaProvider {
 		RuntimeResourceDefinition resourceDef = getContext().getResourceDefinition(theCodeSystem);
 		ValidateUtil.isTrueOrThrowInvalidRequest(resourceDef.getName().equals("CodeSystem"), "Resource '%s' is not a CodeSystem", resourceDef.getName());
 
-		CodeSystem nextCodeSystem;
+		CodeSystem nextCodeSystem = null;
 		switch (getContext().getVersion().getVersion()) {
 			case DSTU3:
-				nextCodeSystem = convertCodeSystem((org.hl7.fhir.dstu3.model.CodeSystem) theCodeSystem);
+				//nextCodeSystem = convertCodeSystem((org.hl7.fhir.dstu3.model.CodeSystem) theCodeSystem);
 				break;
 			case R5:
 				nextCodeSystem = org.hl7.fhir.convertors.conv40_50.CodeSystem40_50.convertCodeSystem((org.hl7.fhir.r5.model.CodeSystem) theCodeSystem);

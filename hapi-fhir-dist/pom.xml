@@ -91,88 +91,7 @@
 					<version>${project.version}</version>
 					<classifier>javadoc</classifier>
 					<scope>provided</scope>
-				</dependency>
-
-
-				<dependency>
-					<groupId>ca.uhn.hapi.fhir</groupId>
-					<artifactId>hapi-fhir-structures-dstu2</artifactId>
-					<version>${project.version}</version>
-				</dependency>
-				<dependency>
-					<groupId>ca.uhn.hapi.fhir</groupId>
-					<artifactId>hapi-fhir-structures-dstu2</artifactId>
-					<version>${project.version}</version>
-					<classifier>sources</classifier>
-					<scope>provided</scope>
-				</dependency>
-				<dependency>
-					<groupId>ca.uhn.hapi.fhir</groupId>
-					<artifactId>hapi-fhir-structures-dstu2</artifactId>
-					<version>${project.version}</version>
-					<classifier>javadoc</classifier>
-					<scope>provided</scope>
-				</dependency>
-		
-				<dependency>
-					<groupId>ca.uhn.hapi.fhir</groupId>
-					<artifactId>hapi-fhir-structures-hl7org-dstu2</artifactId>
-					<version>${project.version}</version>
-				</dependency>
-				<dependency>
-					<groupId>ca.uhn.hapi.fhir</groupId>
-					<artifactId>hapi-fhir-structures-hl7org-dstu2</artifactId>
-					<version>${project.version}</version>
-					<classifier>sources</classifier>
-					<scope>provided</scope>
-				</dependency>
-				<dependency>
-					<groupId>ca.uhn.hapi.fhir</groupId>
-					<artifactId>hapi-fhir-structures-hl7org-dstu2</artifactId>
-					<version>${project.version}</version>
-					<classifier>javadoc</classifier>
-					<scope>provided</scope>
-				</dependency>
-				
-				<dependency>
-					<groupId>ca.uhn.hapi.fhir</groupId>
-					<artifactId>hapi-fhir-structures-dstu2.1</artifactId>
-					<version>${project.version}</version>
-				</dependency>
-				<dependency>
-					<groupId>ca.uhn.hapi.fhir</groupId>
-					<artifactId>hapi-fhir-structures-dstu2.1</artifactId>
-					<version>${project.version}</version>
-					<classifier>sources</classifier>
-					<scope>provided</scope>
-				</dependency>
-				<dependency>
-					<groupId>ca.uhn.hapi.fhir</groupId>
-					<artifactId>hapi-fhir-structures-dstu2.1</artifactId>
-					<version>${project.version}</version>
-					<classifier>javadoc</classifier>
-					<scope>provided</scope>
-				</dependency>
-		
-				<dependency>
-					<groupId>ca.uhn.hapi.fhir</groupId>
-					<artifactId>hapi-fhir-structures-dstu3</artifactId>
-					<version>${project.version}</version>
-				</dependency>
-				<dependency>
-					<groupId>ca.uhn.hapi.fhir</groupId>
-					<artifactId>hapi-fhir-structures-dstu3</artifactId>
-					<version>${project.version}</version>
-					<classifier>sources</classifier>
-					<scope>provided</scope>
-				</dependency>
-				<dependency>
-					<groupId>ca.uhn.hapi.fhir</groupId>
-					<artifactId>hapi-fhir-structures-dstu3</artifactId>
-					<version>${project.version}</version>
-					<classifier>javadoc</classifier>
-					<scope>provided</scope>
-				</dependency>
+				</dependency>				
 
 				<dependency>
 					<groupId>ca.uhn.hapi.fhir</groupId>
@@ -194,21 +113,6 @@
 					<scope>provided</scope>
 				</dependency>
 
-				<dependency>
-					<groupId>ca.uhn.hapi.fhir</groupId>
-					<artifactId>hapi-fhir-validation-resources-dstu2</artifactId>
-					<version>${project.version}</version>
-				</dependency>
-				<dependency>
-					<groupId>ca.uhn.hapi.fhir</groupId>
-					<artifactId>hapi-fhir-validation-resources-dstu2.1</artifactId>
-					<version>${project.version}</version>
-				</dependency>
-				<dependency>
-					<groupId>ca.uhn.hapi.fhir</groupId>
-					<artifactId>hapi-fhir-validation-resources-dstu3</artifactId>
-					<version>${project.version}</version>
-				</dependency>
 				<dependency>
 					<groupId>ca.uhn.hapi.fhir</groupId>
 					<artifactId>hapi-fhir-validation-resources-r4</artifactId>

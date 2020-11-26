@@ -1,7 +1,7 @@
 package ca.uhn.fhir.jpa.subscription.module;
 
-import org.hl7.fhir.dstu3.model.IdType;
-import org.hl7.fhir.dstu3.model.Subscription;
+import org.hl7.fhir.r4.model.IdType;
+import org.hl7.fhir.r4.model.Subscription;
 
 import java.util.concurrent.atomic.AtomicLong;
 

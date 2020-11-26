@@ -3,6 +3,9 @@ package ca.uhn.example.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.hl7.fhir.r4.model.ContactPoint;
+import org.hl7.fhir.r4.model.Organization;
+
 import ca.uhn.fhir.model.api.BaseIdentifiableElement;
 import ca.uhn.fhir.model.api.IElement;
 import ca.uhn.fhir.model.api.IExtension;
@@ -11,8 +14,7 @@ import ca.uhn.fhir.model.api.annotation.Child;
 import ca.uhn.fhir.model.api.annotation.Description;
 import ca.uhn.fhir.model.api.annotation.Extension;
 import ca.uhn.fhir.model.api.annotation.ResourceDef;
-import ca.uhn.fhir.model.dstu2.composite.ContactPointDt;
-import ca.uhn.fhir.model.dstu2.resource.Organization;
+
 import ca.uhn.fhir.model.primitive.BooleanDt;
 import ca.uhn.fhir.model.primitive.CodeDt;
 import ca.uhn.fhir.util.ElementUtil;
@@ -79,10 +81,6 @@ public class MyOrganization extends Organization {
 	 * ElementUtil is called and all fields are passed in.
 	 * *****************************/
 	
-	@Override
-	public <T extends IElement> List<T> getAllPopulatedChildElementsOfType(Class<T> theType) {
-		return ElementUtil.allPopulatedChildElements(theType, super.getAllPopulatedChildElementsOfType(theType), myBillingCode, myEmergencyContact);
-	}
 
 	@Override
 	public boolean isEmpty() {
@@ -114,7 +112,7 @@ public class MyOrganization extends Organization {
 		@Description(shortDefinition = "Contains the actual contact details")
 		@Extension(url = "http://foo#emergencyContactContact", isModifier = false, definedLocally = true)
 		@Child(name = "contact")
-		private ContactPointDt myContact;
+		private ContactPoint myContact;
 
 		/* *****************************
 		 * Getters and setters
@@ -131,14 +129,14 @@ public class MyOrganization extends Organization {
 			myActive = theActive;
 		}
 
-		public ContactPointDt getContact() {
+		public ContactPoint getContact() {
 			if (myContact == null) {
-				myContact = new ContactPointDt();
+				myContact = new ContactPoint();
 			}
 			return myContact;
 		}
 
-		public void setContact(ContactPointDt theContact) {
+		public void setContact(ContactPoint theContact) {
 			myContact = theContact;
 		}
 

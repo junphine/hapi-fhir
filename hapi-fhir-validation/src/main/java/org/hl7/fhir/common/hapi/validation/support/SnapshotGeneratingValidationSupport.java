@@ -9,7 +9,7 @@ import ca.uhn.fhir.rest.server.exceptions.PreconditionFailedException;
 import org.apache.commons.lang3.Validate;
 import org.hl7.fhir.common.hapi.validation.validator.ProfileKnowledgeWorkerR5;
 import org.hl7.fhir.common.hapi.validation.validator.VersionSpecificWorkerContextWrapper;
-import org.hl7.fhir.common.hapi.validation.validator.VersionTypeConverterDstu3;
+
 import org.hl7.fhir.common.hapi.validation.validator.VersionTypeConverterR4;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r5.conformance.ProfileUtilities;
@@ -53,9 +53,7 @@ public class SnapshotGeneratingValidationSupport implements IValidationSupport {
 
 			VersionSpecificWorkerContextWrapper.IVersionTypeConverter converter;
 			switch (theInput.getStructureFhirVersionEnum()) {
-				case DSTU3:
-					converter = new VersionTypeConverterDstu3();
-					break;
+				
 				case R4:
 					converter = new VersionTypeConverterR4();
 					break;
@@ -104,11 +102,7 @@ public class SnapshotGeneratingValidationSupport implements IValidationSupport {
 			profileUtilities.generateSnapshot(baseCanonical, inputCanonical, theUrl, theWebUrl, theProfileName);
 
 			switch (theInput.getStructureFhirVersionEnum()) {
-				case DSTU3:
-					org.hl7.fhir.dstu3.model.StructureDefinition generatedDstu3 = (org.hl7.fhir.dstu3.model.StructureDefinition) converter.fromCanonical(inputCanonical);
-					((org.hl7.fhir.dstu3.model.StructureDefinition) theInput).getSnapshot().getElement().clear();
-					((org.hl7.fhir.dstu3.model.StructureDefinition) theInput).getSnapshot().getElement().addAll(generatedDstu3.getSnapshot().getElement());
-					break;
+			
 				case R4:
 					org.hl7.fhir.r4.model.StructureDefinition generatedR4 = (org.hl7.fhir.r4.model.StructureDefinition) converter.fromCanonical(inputCanonical);
 					((org.hl7.fhir.r4.model.StructureDefinition) theInput).getSnapshot().getElement().clear();
