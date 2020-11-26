@@ -1,5 +1,13 @@
 package ca.uhn.hapi.fhir.docs;
 
+import java.util.List;
+
+import javax.annotation.Nonnull;
+
+import org.hl7.fhir.instance.model.api.IBaseResource;
+import org.hl7.fhir.r4.model.InstantType;
+import org.hl7.fhir.r4.model.Patient;
+
 /*-
  * #%L
  * HAPI FHIR - Docs
@@ -25,12 +33,6 @@ import ca.uhn.fhir.rest.annotation.Search;
 import ca.uhn.fhir.rest.api.server.IBundleProvider;
 import ca.uhn.fhir.rest.param.StringParam;
 import ca.uhn.fhir.rest.server.IResourceProvider;
-import org.hl7.fhir.instance.model.api.IBaseResource;
-import org.hl7.fhir.r4.model.InstantType;
-import org.hl7.fhir.r4.model.Patient;
-
-import javax.annotation.Nonnull;
-import java.util.List;
 
 @SuppressWarnings("null")
 // START SNIPPET: provider

@@ -1,5 +1,8 @@
 package ca.uhn.hapi.fhir.docs;
 
+import org.hl7.fhir.instance.model.api.IBaseResource;
+import org.hl7.fhir.r4.model.Observation;
+
 /*-
  * #%L
  * HAPI FHIR - Docs
@@ -25,8 +28,6 @@ import ca.uhn.fhir.rest.server.exceptions.BaseServerResponseException;
 import ca.uhn.fhir.rest.server.interceptor.consent.ConsentOutcome;
 import ca.uhn.fhir.rest.server.interceptor.consent.IConsentContextServices;
 import ca.uhn.fhir.rest.server.interceptor.consent.IConsentService;
-import org.hl7.fhir.instance.model.api.IBaseResource;
-import org.hl7.fhir.r4.model.Observation;
 
 @SuppressWarnings("unused")
 public class ConsentInterceptors {

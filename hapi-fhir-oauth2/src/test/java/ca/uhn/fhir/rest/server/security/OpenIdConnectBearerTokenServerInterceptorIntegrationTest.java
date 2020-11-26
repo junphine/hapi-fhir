@@ -14,9 +14,12 @@ import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
+import org.hl7.fhir.instance.model.api.IBaseResource;
+import org.hl7.fhir.r4.model.Observation;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.BeforeEachClass;
+
 import org.junit.jupiter.api.Test;
 import org.mitre.oauth2.model.RegisteredClient;
 import org.mitre.openid.connect.client.service.impl.StaticClientConfigurationService;
@@ -25,10 +28,11 @@ import org.mitre.openid.connect.config.ServerConfiguration;
 
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.model.api.IResource;
-import ca.uhn.fhir.model.dstu.resource.Observation;
+
 import ca.uhn.fhir.rest.annotation.Search;
 import ca.uhn.fhir.rest.server.IResourceProvider;
 import ca.uhn.fhir.rest.server.RestfulServer;
+import ca.uhn.fhir.test.utilities.JettyUtil;
 
 /**
  * Created by dsotnikov on 2/25/2014.
@@ -139,7 +143,7 @@ public class OpenIdConnectBearerTokenServerInterceptorIntegrationTest {
 	public static class DummyObservationResourceProvider implements IResourceProvider {
 
 		@Override
-		public Class<? extends IResource> getResourceType() {
+		public Class<? extends IBaseResource> getResourceType() {
 			return Observation.class;
 		}
 
@@ -148,7 +152,7 @@ public class OpenIdConnectBearerTokenServerInterceptorIntegrationTest {
 			Observation o = new Observation();
 			o.setId("1");
 
-			o.getName().setText("This is an observation");
+			o.addNote().setText("This is an observation");
 
 			return o;
 		}

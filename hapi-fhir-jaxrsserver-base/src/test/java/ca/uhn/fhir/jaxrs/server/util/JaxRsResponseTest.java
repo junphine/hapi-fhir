@@ -13,11 +13,11 @@ import javax.ws.rs.core.Response;
 
 import org.hamcrest.Matchers;
 import org.hl7.fhir.instance.model.api.IBaseBinary;
+import org.hl7.fhir.r4.model.Binary;
+import org.hl7.fhir.r4.model.Patient;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import ca.uhn.fhir.model.dstu2.resource.Binary;
-import ca.uhn.fhir.model.dstu2.resource.Patient;
 import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.rest.api.Constants;
 import ca.uhn.fhir.rest.api.SummaryEnum;

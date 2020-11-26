@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.hamcrest.core.StringContains;
 import org.junit.jupiter.api.Test;
 import org.mitre.jose.keystore.JWKSetKeyStore;
-import org.mitre.jwt.signer.service.impl.DefaultJwtSigningAndValidationService;
+import org.mitre.jwt.signer.service.impl.DefaultJWTSigningAndValidationService;
 import org.mitre.jwt.signer.service.impl.JWKSetCacheService;
 import org.mitre.oauth2.model.RegisteredClient;
 import org.mitre.openid.connect.client.service.impl.StaticClientConfigurationService;
@@ -21,13 +21,13 @@ import org.mitre.openid.connect.config.ServerConfiguration;
 import org.springframework.core.io.ClassPathResource;
 
 import ca.uhn.fhir.model.api.IResource;
-import ca.uhn.fhir.model.dstu.composite.CodingDt;
-import ca.uhn.fhir.model.dstu.resource.Observation;
+
 import ca.uhn.fhir.rest.annotation.RequiredParam;
 import ca.uhn.fhir.rest.annotation.Search;
+import ca.uhn.fhir.rest.api.Constants;
 import ca.uhn.fhir.rest.param.ReferenceParam;
 import ca.uhn.fhir.rest.param.TokenOrListParam;
-import ca.uhn.fhir.rest.server.Constants;
+
 import ca.uhn.fhir.rest.server.IResourceProvider;
 import ca.uhn.fhir.rest.server.exceptions.AuthenticationException;
 
@@ -62,7 +62,7 @@ public class OpenIdConnectBearerTokenServerInterceptorTest {
 
 		JWKSetKeyStore keyStore = new JWKSetKeyStore();
 		keyStore.setLocation(new ClassPathResource("/svr_keystore.jwks"));
-		DefaultJwtSigningAndValidationService valSvc = new DefaultJwtSigningAndValidationService(keyStore);
+		DefaultJWTSigningAndValidationService valSvc = new DefaultJWTSigningAndValidationService(keyStore);
 		when(val.getValidator("AAAAAA")).thenReturn(valSvc);
 
 		mgr.setValidationServices(val);

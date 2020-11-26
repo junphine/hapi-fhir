@@ -1,5 +1,13 @@
 package ca.uhn.hapi.fhir.docs;
 
+import org.hl7.fhir.r4.model.Bundle;
+import org.hl7.fhir.r4.model.Enumerations;
+import org.hl7.fhir.r4.model.IdType;
+import org.hl7.fhir.r4.model.Observation;
+import org.hl7.fhir.r4.model.Patient;
+import org.hl7.fhir.r4.model.Quantity;
+import org.hl7.fhir.r4.model.Reference;
+
 /*-
  * #%L
  * HAPI FHIR - Docs
@@ -22,7 +30,6 @@ package ca.uhn.hapi.fhir.docs;
 
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
-import org.hl7.fhir.r4.model.*;
 
 public class ClientTransactionExamples {
 

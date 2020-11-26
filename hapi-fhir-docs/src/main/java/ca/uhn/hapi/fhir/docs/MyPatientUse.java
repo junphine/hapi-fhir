@@ -1,5 +1,13 @@
 package ca.uhn.hapi.fhir.docs;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.hl7.fhir.r4.model.DateTimeType;
+import org.hl7.fhir.r4.model.Patient;
+import org.hl7.fhir.r4.model.StringType;
+
 /*-
  * #%L
  * HAPI FHIR - Docs
@@ -28,13 +36,6 @@ import ca.uhn.fhir.model.api.annotation.Extension;
 import ca.uhn.fhir.model.api.annotation.ResourceDef;
 import ca.uhn.fhir.parser.DataFormatException;
 import ca.uhn.fhir.parser.IParser;
-import org.hl7.fhir.r4.model.DateTimeType;
-import org.hl7.fhir.r4.model.Patient;
-import org.hl7.fhir.r4.model.StringType;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class MyPatientUse {
 

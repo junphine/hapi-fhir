@@ -1,5 +1,9 @@
 package ca.uhn.hapi.fhir.docs;
 
+import java.util.Collection;
+
+import javax.servlet.ServletException;
+
 /*-
  * #%L
  * HAPI FHIR - Docs
@@ -25,9 +29,6 @@ import ca.uhn.fhir.parser.IParser;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.server.IResourceProvider;
 import ca.uhn.fhir.rest.server.RestfulServer;
-
-import javax.servlet.ServletException;
-import java.util.Collection;
 
 @SuppressWarnings("serial")
 public class Dstu2Examples {

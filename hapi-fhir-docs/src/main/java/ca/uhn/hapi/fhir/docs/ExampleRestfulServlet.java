@@ -1,5 +1,11 @@
 package ca.uhn.hapi.fhir.docs;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+
 /*-
  * #%L
  * HAPI FHIR - Docs
@@ -22,11 +28,6 @@ package ca.uhn.hapi.fhir.docs;
 
 import ca.uhn.fhir.rest.server.IResourceProvider;
 import ca.uhn.fhir.rest.server.RestfulServer;
-
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import java.util.ArrayList;
-import java.util.List;
 
 //START SNIPPET: servlet
 
@@ -53,7 +54,7 @@ public class ExampleRestfulServlet extends RestfulServer {
        * setResourceProviders()
        */
       List<IResourceProvider> resourceProviders = new ArrayList<IResourceProvider>();
-      resourceProviders.add(new RestfulPatientResourceProvider());
+     
       resourceProviders.add(new RestfulObservationResourceProvider());
       setResourceProviders(resourceProviders);
    }

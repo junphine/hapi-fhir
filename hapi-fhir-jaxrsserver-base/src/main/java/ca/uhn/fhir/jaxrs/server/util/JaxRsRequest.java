@@ -214,18 +214,9 @@ public class JaxRsRequest extends RequestDetails {
 					case R4:
 						result.setId(new org.hl7.fhir.r4.model.IdType(myServer.getBaseForRequest(), UrlUtil.unescape(myId), UrlUtil.unescape(myVersion)));
 						break;
-					case DSTU3:
-						result.setId(new org.hl7.fhir.dstu3.model.IdType(myServer.getBaseForRequest(), UrlUtil.unescape(myId), UrlUtil.unescape(myVersion)));
-						break;
-					case DSTU2_1:
-						result.setId(new org.hl7.fhir.dstu2016may.model.IdType(myServer.getBaseForRequest(), UrlUtil.unescape(myId), UrlUtil.unescape(myVersion)));
-						break;
-					case DSTU2_HL7ORG:
-						result.setId(new org.hl7.fhir.dstu2.model.IdType(myServer.getBaseForRequest(), UrlUtil.unescape(myId), UrlUtil.unescape(myVersion)));
-						break;
-					case DSTU2:
-						result.setId(new ca.uhn.fhir.model.primitive.IdDt(myServer.getBaseForRequest(), UrlUtil.unescape(myId), UrlUtil.unescape(myVersion)));
-						break;
+					case R5:
+						result.setId(new org.hl7.fhir.r5.model.IdType(myServer.getBaseForRequest(), UrlUtil.unescape(myId), UrlUtil.unescape(myVersion)));
+						break;					
 					default:
 						throw new ConfigurationException("Unsupported Fhir version: " + fhirContextVersion);
 				}
@@ -234,18 +225,9 @@ public class JaxRsRequest extends RequestDetails {
 					case R4:
 						result.setId(new org.hl7.fhir.r4.model.IdType(myServer.getBaseForRequest(), UrlUtil.unescape(myId)));
 						break;
-					case DSTU3:
-						result.setId(new org.hl7.fhir.dstu3.model.IdType(myServer.getBaseForRequest(), UrlUtil.unescape(myId)));
-						break;
-					case DSTU2_1:
-						result.setId(new org.hl7.fhir.dstu2016may.model.IdType(myServer.getBaseForRequest(), UrlUtil.unescape(myId)));
-						break;
-					case DSTU2_HL7ORG:
-						result.setId(new org.hl7.fhir.dstu2.model.IdType(myServer.getBaseForRequest(), UrlUtil.unescape(myId)));
-						break;
-					case DSTU2:
-						result.setId(new ca.uhn.fhir.model.primitive.IdDt(myServer.getBaseForRequest(), UrlUtil.unescape(myId)));
-						break;
+					case R5:
+						result.setId(new org.hl7.fhir.r5.model.IdType(myServer.getBaseForRequest(), UrlUtil.unescape(myId)));
+						break;					
 					default:
 						throw new ConfigurationException("Unsupported Fhir version: " + fhirContextVersion);
 				}
@@ -258,18 +240,9 @@ public class JaxRsRequest extends RequestDetails {
 						case R4:
 							result.setId(new org.hl7.fhir.r4.model.IdType(contentLocation));
 							break;
-						case DSTU3:
-							result.setId(new org.hl7.fhir.dstu3.model.IdType(contentLocation));
-							break;
-						case DSTU2_1:
-							result.setId(new org.hl7.fhir.dstu2016may.model.IdType(contentLocation));
-							break;
-						case DSTU2_HL7ORG:
-							result.setId(new org.hl7.fhir.dstu2.model.IdType(contentLocation));
-							break;
-						case DSTU2:
-							result.setId(new ca.uhn.fhir.model.primitive.IdDt(contentLocation));
-							break;
+						case R5:
+							result.setId(new org.hl7.fhir.r5.model.IdType(contentLocation));
+							break;						
 						default:
 							throw new ConfigurationException("Unsupported Fhir version: " + fhirContextVersion);
 					}

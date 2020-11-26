@@ -1,5 +1,8 @@
 package ca.uhn.hapi.fhir.docs;
 
+import org.hl7.fhir.common.hapi.validation.support.ValidationSupportChain;
+import org.hl7.fhir.common.hapi.validation.validator.FhirInstanceValidator;
+
 /*-
  * #%L
  * HAPI FHIR - Docs
@@ -21,10 +24,8 @@ package ca.uhn.hapi.fhir.docs;
  */
 
 import ca.uhn.fhir.context.FhirContext;
-import ca.uhn.fhir.validation.FhirValidator;
 import ca.uhn.fhir.context.support.DefaultProfileValidationSupport;
-import org.hl7.fhir.common.hapi.validation.support.ValidationSupportChain;
-import org.hl7.fhir.common.hapi.validation.validator.FhirInstanceValidator;
+import ca.uhn.fhir.validation.FhirValidator;
 
 public class ValidatorExamplesDstu3 {
 

@@ -1,5 +1,11 @@
 package ca.uhn.hapi.fhir.docs;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.hl7.fhir.r4.model.Coding;
+import org.hl7.fhir.r4.model.Patient;
+
 /*-
  * #%L
  * HAPI FHIR - Docs
@@ -23,11 +29,6 @@ package ca.uhn.hapi.fhir.docs;
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.rest.annotation.Search;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
-import org.hl7.fhir.r4.model.Coding;
-import org.hl7.fhir.r4.model.Patient;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class TagsExamples {
 

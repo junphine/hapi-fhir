@@ -1,5 +1,10 @@
 package ca.uhn.hapi.fhir.docs;
 
+import java.util.List;
+
+import org.hl7.fhir.r4.model.Patient;
+import org.hl7.fhir.r4.model.StringType;
+
 /*-
  * #%L
  * HAPI FHIR - Docs
@@ -21,9 +26,6 @@ package ca.uhn.hapi.fhir.docs;
  */
 
 import ca.uhn.fhir.context.FhirContext;
-import org.hl7.fhir.r4.model.*;
-
-import java.util.List;
 
 @SuppressWarnings("unused")
 public class ExampleRestfulClient {

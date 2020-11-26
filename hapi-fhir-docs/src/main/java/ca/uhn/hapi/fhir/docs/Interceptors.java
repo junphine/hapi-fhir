@@ -1,5 +1,9 @@
 package ca.uhn.hapi.fhir.docs;
 
+import org.hl7.fhir.r4.model.Patient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /*-
  * #%L
  * HAPI FHIR - Docs
@@ -27,9 +31,6 @@ import ca.uhn.fhir.interceptor.api.Pointcut;
 import ca.uhn.fhir.rest.api.server.RequestDetails;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.client.interceptor.LoggingInterceptor;
-import org.hl7.fhir.r4.model.Patient;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class Interceptors {
 

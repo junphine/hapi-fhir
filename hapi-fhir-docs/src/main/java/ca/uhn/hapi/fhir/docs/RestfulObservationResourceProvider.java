@@ -1,5 +1,13 @@
 package ca.uhn.hapi.fhir.docs;
 
+import java.util.Collections;
+import java.util.List;
+
+import org.hl7.fhir.r4.model.Enumerations;
+import org.hl7.fhir.r4.model.IdType;
+import org.hl7.fhir.r4.model.Identifier;
+import org.hl7.fhir.r4.model.Patient;
+
 /*-
  * #%L
  * HAPI FHIR - Docs
@@ -26,13 +34,6 @@ import ca.uhn.fhir.rest.annotation.Read;
 import ca.uhn.fhir.rest.annotation.RequiredParam;
 import ca.uhn.fhir.rest.annotation.Search;
 import ca.uhn.fhir.rest.server.IResourceProvider;
-import org.hl7.fhir.r4.model.Enumerations;
-import org.hl7.fhir.r4.model.IdType;
-import org.hl7.fhir.r4.model.Identifier;
-import org.hl7.fhir.r4.model.Patient;
-
-import java.util.Collections;
-import java.util.List;
 
 //START SNIPPET: provider
 

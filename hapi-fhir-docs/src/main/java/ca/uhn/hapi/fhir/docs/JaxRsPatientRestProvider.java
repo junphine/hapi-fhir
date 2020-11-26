@@ -1,5 +1,20 @@
 package ca.uhn.hapi.fhir.docs;
 
+import javax.ejb.Local;
+import javax.ejb.Stateless;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
+import org.hl7.fhir.r4.model.IdType;
+import org.hl7.fhir.r4.model.Parameters;
+import org.hl7.fhir.r4.model.Patient;
+import org.hl7.fhir.r4.model.StringType;
+
 /*-
  * #%L
  * HAPI FHIR - Docs
@@ -22,21 +37,16 @@ package ca.uhn.hapi.fhir.docs;
 
 import ca.uhn.fhir.jaxrs.server.AbstractJaxRsResourceProvider;
 import ca.uhn.fhir.model.primitive.StringDt;
-import ca.uhn.fhir.rest.annotation.*;
+import ca.uhn.fhir.rest.annotation.ConditionalUrlParam;
+import ca.uhn.fhir.rest.annotation.Create;
+import ca.uhn.fhir.rest.annotation.IdParam;
+import ca.uhn.fhir.rest.annotation.Operation;
+import ca.uhn.fhir.rest.annotation.OperationParam;
+import ca.uhn.fhir.rest.annotation.ResourceParam;
 import ca.uhn.fhir.rest.api.Constants;
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.api.RequestTypeEnum;
 import ca.uhn.fhir.rest.api.RestOperationTypeEnum;
-import org.hl7.fhir.r4.model.IdType;
-import org.hl7.fhir.r4.model.Parameters;
-import org.hl7.fhir.r4.model.Patient;
-import org.hl7.fhir.r4.model.StringType;
-
-import javax.ejb.Local;
-import javax.ejb.Stateless;
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 
 /**
  * A demo JaxRs Patient Rest Provider

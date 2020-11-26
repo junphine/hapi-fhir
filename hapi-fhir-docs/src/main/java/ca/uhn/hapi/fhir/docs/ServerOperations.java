@@ -1,5 +1,20 @@
 package ca.uhn.hapi.fhir.docs;
 
+import java.io.IOException;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.io.IOUtils;
+import org.hl7.fhir.r4.model.Bundle;
+import org.hl7.fhir.r4.model.Coding;
+import org.hl7.fhir.r4.model.ConceptMap;
+import org.hl7.fhir.r4.model.IdType;
+import org.hl7.fhir.r4.model.Parameters;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /*-
  * #%L
  * HAPI FHIR - Docs
@@ -25,20 +40,11 @@ import ca.uhn.fhir.model.primitive.StringDt;
 import ca.uhn.fhir.rest.annotation.IdParam;
 import ca.uhn.fhir.rest.annotation.Operation;
 import ca.uhn.fhir.rest.annotation.OperationParam;
-import ca.uhn.fhir.rest.param.*;
-import org.apache.commons.io.IOUtils;
-import org.hl7.fhir.dstu3.model.Parameters;
-import org.hl7.fhir.r4.model.Bundle;
-import org.hl7.fhir.r4.model.Coding;
-import org.hl7.fhir.r4.model.ConceptMap;
-import org.hl7.fhir.r4.model.IdType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.List;
+import ca.uhn.fhir.rest.param.DateParam;
+import ca.uhn.fhir.rest.param.DateRangeParam;
+import ca.uhn.fhir.rest.param.StringParam;
+import ca.uhn.fhir.rest.param.TokenAndListParam;
+import ca.uhn.fhir.rest.param.TokenParam;
 
 
 public class ServerOperations {

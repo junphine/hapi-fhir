@@ -1,5 +1,13 @@
 package ca.uhn.hapi.fhir.docs;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
+import java.util.List;
+
+import org.hl7.fhir.instance.model.api.IBaseResource;
+import org.hl7.fhir.r4.model.IdType;
+import org.hl7.fhir.r4.model.Patient;
+
 /*-
  * #%L
  * HAPI FHIR - Docs
@@ -23,24 +31,22 @@ package ca.uhn.hapi.fhir.docs;
 import ca.uhn.fhir.interceptor.api.HookParams;
 import ca.uhn.fhir.interceptor.api.IInterceptorBroadcaster;
 import ca.uhn.fhir.interceptor.api.Pointcut;
-import ca.uhn.fhir.rest.api.server.storage.TransactionDetails;
 import ca.uhn.fhir.rest.annotation.ConditionalUrlParam;
 import ca.uhn.fhir.rest.annotation.IdParam;
 import ca.uhn.fhir.rest.annotation.ResourceParam;
 import ca.uhn.fhir.rest.annotation.Update;
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.api.server.RequestDetails;
+import ca.uhn.fhir.rest.api.server.storage.TransactionDetails;
 import ca.uhn.fhir.rest.server.IResourceProvider;
 import ca.uhn.fhir.rest.server.exceptions.AuthenticationException;
-import ca.uhn.fhir.rest.server.interceptor.auth.*;
+import ca.uhn.fhir.rest.server.interceptor.auth.AuthorizationInterceptor;
+import ca.uhn.fhir.rest.server.interceptor.auth.AuthorizedList;
+import ca.uhn.fhir.rest.server.interceptor.auth.IAuthRule;
+import ca.uhn.fhir.rest.server.interceptor.auth.PolicyEnum;
+import ca.uhn.fhir.rest.server.interceptor.auth.RuleBuilder;
+import ca.uhn.fhir.rest.server.interceptor.auth.SearchNarrowingInterceptor;
 import ca.uhn.fhir.rest.server.servlet.ServletRequestDetails;
-import org.hl7.fhir.dstu3.model.IdType;
-import org.hl7.fhir.instance.model.api.IBaseResource;
-import org.hl7.fhir.r4.model.Patient;
-
-import java.util.List;
-
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 @SuppressWarnings("unused")
 public class AuthorizationInterceptors {

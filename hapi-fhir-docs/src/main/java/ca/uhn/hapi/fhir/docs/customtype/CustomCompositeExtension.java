@@ -1,5 +1,9 @@
 package ca.uhn.hapi.fhir.docs.customtype;
 
+import org.hl7.fhir.r4.model.BackboneElement;
+import org.hl7.fhir.r4.model.Patient;
+import org.hl7.fhir.r4.model.StringType;
+
 /*-
  * #%L
  * HAPI FHIR - Docs
@@ -25,9 +29,6 @@ import ca.uhn.fhir.model.api.annotation.Child;
 import ca.uhn.fhir.model.api.annotation.Extension;
 import ca.uhn.fhir.model.api.annotation.ResourceDef;
 import ca.uhn.fhir.util.ElementUtil;
-import org.hl7.fhir.dstu3.model.BackboneElement;
-import org.hl7.fhir.dstu3.model.Patient;
-import org.hl7.fhir.dstu3.model.StringType;
 
 //START SNIPPET: resource
 @ResourceDef(name = "Patient")

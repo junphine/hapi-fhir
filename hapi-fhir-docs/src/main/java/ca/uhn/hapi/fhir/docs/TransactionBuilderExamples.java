@@ -1,5 +1,9 @@
 package ca.uhn.hapi.fhir.docs;
 
+import org.hl7.fhir.exceptions.FHIRException;
+import org.hl7.fhir.instance.model.api.IBaseBundle;
+import org.hl7.fhir.r4.model.Patient;
+
 /*-
  * #%L
  * HAPI FHIR - Docs
@@ -23,9 +27,6 @@ package ca.uhn.hapi.fhir.docs;
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.util.TransactionBuilder;
-import org.hl7.fhir.exceptions.FHIRException;
-import org.hl7.fhir.instance.model.api.IBaseBundle;
-import org.hl7.fhir.r4.model.Patient;
 
 @SuppressWarnings("unused")
 public class TransactionBuilderExamples {

@@ -1,5 +1,20 @@
 package ca.uhn.hapi.fhir.docs;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import org.hl7.fhir.instance.model.api.IBaseResource;
+import org.hl7.fhir.instance.model.api.IIdType;
+import org.hl7.fhir.r4.model.Bundle;
+import org.hl7.fhir.r4.model.Resource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /*-
  * #%L
  * HAPI FHIR - Docs
@@ -23,16 +38,6 @@ package ca.uhn.hapi.fhir.docs;
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.util.ResourceReferenceInfo;
-import org.hl7.fhir.dstu3.model.Bundle;
-import org.hl7.fhir.dstu3.model.Resource;
-import org.hl7.fhir.instance.model.api.IBaseResource;
-import org.hl7.fhir.instance.model.api.IIdType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.*;
-
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 @SuppressWarnings("unused")
 public class Copier {

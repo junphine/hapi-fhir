@@ -1,5 +1,8 @@
 package ca.uhn.hapi.fhir.docs;
 
+import org.hl7.fhir.r4.model.Enumerations;
+import org.hl7.fhir.r4.model.SearchParameter;
+
 /*-
  * #%L
  * HAPI FHIR - Docs
@@ -23,8 +26,6 @@ package ca.uhn.hapi.fhir.docs;
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.client.interceptor.LoggingInterceptor;
-import org.hl7.fhir.r4.model.Enumerations;
-import org.hl7.fhir.r4.model.SearchParameter;
 
 public class GenomicsUploader {
 

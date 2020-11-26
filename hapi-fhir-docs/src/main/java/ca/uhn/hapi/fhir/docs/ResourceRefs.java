@@ -1,5 +1,8 @@
 package ca.uhn.hapi.fhir.docs;
 
+import org.hl7.fhir.r4.model.Organization;
+import org.hl7.fhir.r4.model.Patient;
+
 /*-
  * #%L
  * HAPI FHIR - Docs
@@ -21,8 +24,6 @@ package ca.uhn.hapi.fhir.docs;
  */
 
 import ca.uhn.fhir.context.FhirContext;
-import org.hl7.fhir.r4.model.Organization;
-import org.hl7.fhir.r4.model.Patient;
 
 public class ResourceRefs {
 

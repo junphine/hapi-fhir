@@ -1,5 +1,12 @@
 package ca.uhn.hapi.fhir.docs;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.hl7.fhir.r4.model.Bundle;
+import org.hl7.fhir.r4.model.Patient;
+import org.hl7.fhir.r4.model.StringType;
+
 /*-
  * #%L
  * HAPI FHIR - Docs
@@ -24,12 +31,6 @@ import ca.uhn.fhir.rest.annotation.RequiredParam;
 import ca.uhn.fhir.rest.annotation.Search;
 import ca.uhn.fhir.rest.server.HardcodedServerAddressStrategy;
 import ca.uhn.fhir.rest.server.IResourceProvider;
-import org.hl7.fhir.r4.model.Bundle;
-import org.hl7.fhir.r4.model.StringType;
-import org.hl7.fhir.r4.model.Patient;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @SuppressWarnings(value= {"serial"})
 public class ExampleProviders {

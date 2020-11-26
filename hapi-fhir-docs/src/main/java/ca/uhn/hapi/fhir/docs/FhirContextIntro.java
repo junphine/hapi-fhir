@@ -1,5 +1,11 @@
 package ca.uhn.hapi.fhir.docs;
 
+import org.hl7.fhir.r4.model.Enumerations;
+import org.hl7.fhir.r4.model.HumanName;
+import org.hl7.fhir.r4.model.Identifier;
+import org.hl7.fhir.r4.model.Observation;
+import org.hl7.fhir.r4.model.Patient;
+
 /*-
  * #%L
  * HAPI FHIR - Docs
@@ -23,7 +29,6 @@ package ca.uhn.hapi.fhir.docs;
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.parser.DataFormatException;
 import ca.uhn.fhir.parser.IParser;
-import org.hl7.fhir.r4.model.*;
 
 public class FhirContextIntro {
 
@@ -38,22 +43,7 @@ public class FhirContextIntro {
 		// END SNIPPET: creatingContext
 	}
 
-   @SuppressWarnings("unused")
-   public static void creatingContextHl7org() {
-		// START SNIPPET: creatingContextHl7org
-		// Create a context for DSTU3
-		FhirContext ctx = FhirContext.forDstu3();
-
-		// Working with RI structures is similar to how it works with the HAPI structures
-		org.hl7.fhir.dstu3.model.Patient patient = new org.hl7.fhir.dstu3.model.Patient();
-		patient.addName().addGiven("John").setFamily("Smith");
-		patient.getBirthDateElement().setValueAsString("1998-02-22");
-
-		// Parsing and encoding works the same way too
-		String encoded = ctx.newJsonParser().encodeResourceToString(patient);
-
-		// END SNIPPET: creatingContextHl7org
-   }
+  
 
 
 	public void encodeMsg() throws DataFormatException {

@@ -34,7 +34,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang3.StringUtils;
-import org.hl7.fhir.dstu2.hapi.rest.server.ServerConformanceProvider;
+
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.slf4j.LoggerFactory;
 
@@ -67,10 +67,8 @@ public abstract class AbstractJaxRsConformanceProvider extends AbstractJaxRsProv
 
 	/** the conformance. It is created once during startup */
 	private org.hl7.fhir.r4.model.CapabilityStatement myR4CapabilityStatement;
-	private org.hl7.fhir.dstu3.model.CapabilityStatement myDstu3CapabilityStatement;
-	private org.hl7.fhir.dstu2016may.model.Conformance myDstu2_1Conformance;
-	private org.hl7.fhir.dstu2.model.Conformance myDstu2Hl7OrgConformance;
-	private ca.uhn.fhir.model.dstu2.resource.Conformance myDstu2Conformance;
+	private org.hl7.fhir.r5.model.CapabilityStatement myR5CapabilityStatement;
+	
 	private boolean myInitialized;
 
 	/**
@@ -140,22 +138,11 @@ public abstract class AbstractJaxRsConformanceProvider extends AbstractJaxRsProv
 				org.hl7.fhir.r4.hapi.rest.server.ServerCapabilityStatementProvider r4ServerCapabilityStatementProvider = new org.hl7.fhir.r4.hapi.rest.server.ServerCapabilityStatementProvider(serverConfiguration);
 				myR4CapabilityStatement = r4ServerCapabilityStatementProvider.getServerConformance(null, null);
 				break;
-			case DSTU3:
-				org.hl7.fhir.dstu3.hapi.rest.server.ServerCapabilityStatementProvider dstu3ServerCapabilityStatementProvider = new org.hl7.fhir.dstu3.hapi.rest.server.ServerCapabilityStatementProvider(serverConfiguration);
-				myDstu3CapabilityStatement = dstu3ServerCapabilityStatementProvider.getServerConformance(null, null);
+			case R5:
+				org.hl7.fhir.r5.hapi.rest.server.ServerCapabilityStatementProvider dstu3ServerCapabilityStatementProvider = new org.hl7.fhir.r5.hapi.rest.server.ServerCapabilityStatementProvider(serverConfiguration);
+				myR5CapabilityStatement = dstu3ServerCapabilityStatementProvider.getServerConformance(null, null);
 				break;
-			case DSTU2_1:
-				org.hl7.fhir.dstu2016may.hapi.rest.server.ServerConformanceProvider dstu2_1ServerConformanceProvider = new org.hl7.fhir.dstu2016may.hapi.rest.server.ServerConformanceProvider(serverConfiguration);
-				myDstu2_1Conformance = dstu2_1ServerConformanceProvider.getServerConformance(null, null);
-				break;
-			case DSTU2_HL7ORG:
-				ServerConformanceProvider dstu2Hl7OrgServerConformanceProvider = new ServerConformanceProvider(serverConfiguration);
-				myDstu2Hl7OrgConformance = dstu2Hl7OrgServerConformanceProvider.getServerConformance(null, null);
-				break;
-			case DSTU2:
-				ca.uhn.fhir.rest.server.provider.dstu2.ServerConformanceProvider dstu2ServerConformanceProvider = new ca.uhn.fhir.rest.server.provider.dstu2.ServerConformanceProvider(serverConfiguration);
-				myDstu2Conformance = dstu2ServerConformanceProvider.getServerConformance(null, null);
-				break;
+			
 			default:
 				throw new ConfigurationException("Unsupported Fhir version: " + fhirContextVersion);
 		}
@@ -202,18 +189,9 @@ public abstract class AbstractJaxRsConformanceProvider extends AbstractJaxRsProv
 			case R4:
 				conformance = myR4CapabilityStatement;
 				break;
-			case DSTU3:
-				conformance = myDstu3CapabilityStatement;
-				break;
-			case DSTU2_1:
-				conformance = myDstu2_1Conformance;
-				break;
-			case DSTU2_HL7ORG:
-				conformance = myDstu2Hl7OrgConformance;
-				break;
-			case DSTU2:
-				conformance = myDstu2Conformance;
-				break;
+			case R5:
+				conformance = myR5CapabilityStatement;
+				break;			
 			default:
 				throw new ConfigurationException("Unsupported Fhir version: " + fhirContextVersion);
 		}
@@ -304,14 +282,8 @@ public abstract class AbstractJaxRsConformanceProvider extends AbstractJaxRsProv
 		switch (fhirContextVersion) {
 			case R4:
 				return Class.class.cast(org.hl7.fhir.r4.model.CapabilityStatement.class);
-			case DSTU3:
-				return Class.class.cast(org.hl7.fhir.dstu3.model.CapabilityStatement.class);
-			case DSTU2_1:
-				return Class.class.cast(org.hl7.fhir.dstu2016may.model.Conformance.class);
-			case DSTU2_HL7ORG:
-				return Class.class.cast(org.hl7.fhir.dstu2.model.Conformance.class);
-			case DSTU2:
-				return Class.class.cast(ca.uhn.fhir.model.dstu2.resource.Conformance.class);
+			case R5:
+				return Class.class.cast(org.hl7.fhir.r5.model.CapabilityStatement.class);			
 			default:
 				throw new ConfigurationException("Unsupported Fhir version: " + fhirContextVersion);
 		}

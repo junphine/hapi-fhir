@@ -1,4 +1,4 @@
-package ca.uhn.fhir.jpa.subscription.module.subscriber;
+package ca.uhn.fhir.jpa.subscription.module.subscriber.websocket;
 
 import ca.uhn.fhir.jpa.subscription.model.ResourceDeliveryMessage;
 import com.fasterxml.jackson.databind.ObjectMapper;

@@ -1,5 +1,13 @@
 package ca.uhn.hapi.fhir.docs;
 
+import java.io.IOException;
+import java.util.List;
+
+import org.hl7.fhir.r4.model.Identifier;
+import org.hl7.fhir.r4.model.Organization;
+import org.hl7.fhir.r4.model.Patient;
+import org.hl7.fhir.r4.model.Reference;
+
 /*-
  * #%L
  * HAPI FHIR - Docs
@@ -25,13 +33,6 @@ package ca.uhn.hapi.fhir.docs;
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.rest.annotation.RequiredParam;
 import ca.uhn.fhir.rest.annotation.Search;
-import org.hl7.fhir.r4.model.Identifier;
-import org.hl7.fhir.r4.model.Organization;
-import org.hl7.fhir.r4.model.Patient;
-import org.hl7.fhir.r4.model.Reference;
-
-import java.io.IOException;
-import java.util.List;
 
 public class CompleteExampleClient {
 

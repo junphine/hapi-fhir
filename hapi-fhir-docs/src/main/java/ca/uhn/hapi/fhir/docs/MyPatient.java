@@ -1,5 +1,12 @@
 package ca.uhn.hapi.fhir.docs;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.hl7.fhir.r4.model.DateTimeType;
+import org.hl7.fhir.r4.model.Patient;
+import org.hl7.fhir.r4.model.StringType;
+
 /*-
  * #%L
  * HAPI FHIR - Docs
@@ -27,12 +34,6 @@ import ca.uhn.fhir.model.api.annotation.Description;
 import ca.uhn.fhir.model.api.annotation.Extension;
 import ca.uhn.fhir.model.api.annotation.ResourceDef;
 import ca.uhn.fhir.util.ElementUtil;
-import org.hl7.fhir.r4.model.DateTimeType;
-import org.hl7.fhir.r4.model.Patient;
-import org.hl7.fhir.r4.model.StringType;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Definition class for adding extensions to the built-in

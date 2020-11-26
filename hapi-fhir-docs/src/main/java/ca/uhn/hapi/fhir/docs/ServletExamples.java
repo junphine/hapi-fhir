@@ -1,5 +1,13 @@
 package ca.uhn.hapi.fhir.docs;
 
+import java.util.Arrays;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+
+import org.hl7.fhir.common.hapi.validation.validator.FhirInstanceValidator;
+import org.springframework.web.cors.CorsConfiguration;
+
 /*-
  * #%L
  * HAPI FHIR - Docs
@@ -23,14 +31,14 @@ package ca.uhn.hapi.fhir.docs;
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.rest.server.RestfulServer;
 import ca.uhn.fhir.rest.server.exceptions.InternalErrorException;
-import ca.uhn.fhir.rest.server.interceptor.*;
+import ca.uhn.fhir.rest.server.interceptor.CorsInterceptor;
+import ca.uhn.fhir.rest.server.interceptor.ExceptionHandlingInterceptor;
+import ca.uhn.fhir.rest.server.interceptor.FhirPathFilterInterceptor;
+import ca.uhn.fhir.rest.server.interceptor.LoggingInterceptor;
+import ca.uhn.fhir.rest.server.interceptor.RequestValidatingInterceptor;
+import ca.uhn.fhir.rest.server.interceptor.ResponseHighlighterInterceptor;
+import ca.uhn.fhir.rest.server.interceptor.ResponseValidatingInterceptor;
 import ca.uhn.fhir.validation.ResultSeverityEnum;
-import org.hl7.fhir.common.hapi.validation.validator.FhirInstanceValidator;
-import org.springframework.web.cors.CorsConfiguration;
-
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import java.util.Arrays;
 
 @SuppressWarnings({"serial", "RedundantThrows", "InnerClassMayBeStatic"})
 public class ServletExamples {

@@ -1,8 +1,7 @@
 package ca.uhn.fhir.jaxrs.server.util;
 
 import ca.uhn.fhir.jaxrs.server.test.TestJaxRsDummyPatientProvider;
-import ca.uhn.fhir.model.dstu2.resource.Parameters;
-import ca.uhn.fhir.model.dstu2.resource.Patient;
+
 import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.model.primitive.StringDt;
 import ca.uhn.fhir.rest.annotation.IdParam;
@@ -16,6 +15,9 @@ import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.api.RestOperationTypeEnum;
 import ca.uhn.fhir.rest.param.StringParam;
 import ca.uhn.fhir.rest.server.exceptions.NotImplementedOperationException;
+
+import org.hl7.fhir.r4.model.Parameters;
+import org.hl7.fhir.r4.model.Patient;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

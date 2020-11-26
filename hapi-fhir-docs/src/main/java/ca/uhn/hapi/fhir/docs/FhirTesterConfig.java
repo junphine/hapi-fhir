@@ -1,5 +1,9 @@
 package ca.uhn.hapi.fhir.docs;
 
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
+
 /*-
  * #%L
  * HAPI FHIR - Docs
@@ -23,9 +27,6 @@ package ca.uhn.hapi.fhir.docs;
 import ca.uhn.fhir.context.FhirVersionEnum;
 import ca.uhn.fhir.to.FhirTesterMvcConfig;
 import ca.uhn.fhir.to.TesterConfig;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 
 // START SNIPPET: file
 /**

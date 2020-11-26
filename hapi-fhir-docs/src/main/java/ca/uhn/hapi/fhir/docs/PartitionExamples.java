@@ -1,5 +1,14 @@
 package ca.uhn.hapi.fhir.docs;
 
+import java.util.Set;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.hl7.fhir.instance.model.api.IBaseResource;
+import org.hl7.fhir.r4.model.Observation;
+import org.hl7.fhir.r4.model.Patient;
+import org.springframework.beans.factory.annotation.Autowired;
+
 /*-
  * #%L
  * HAPI FHIR - Docs
@@ -29,13 +38,6 @@ import ca.uhn.fhir.rest.server.RestfulServer;
 import ca.uhn.fhir.rest.server.exceptions.InvalidRequestException;
 import ca.uhn.fhir.rest.server.servlet.ServletRequestDetails;
 import ca.uhn.fhir.rest.server.tenant.UrlBaseTenantIdentificationStrategy;
-import org.hl7.fhir.instance.model.api.IBaseResource;
-import org.hl7.fhir.r4.model.Observation;
-import org.hl7.fhir.r4.model.Patient;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import javax.servlet.http.HttpServletRequest;
-import java.util.Set;
 
 @SuppressWarnings("InnerClassMayBeStatic")
 public class PartitionExamples {

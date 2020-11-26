@@ -1,5 +1,7 @@
 package ca.uhn.hapi.fhir.docs.customtype;
 
+import java.util.Date;
+
 /*-
  * #%L
  * HAPI FHIR - Docs
@@ -21,11 +23,7 @@ package ca.uhn.hapi.fhir.docs.customtype;
  */
 
 import ca.uhn.fhir.context.FhirContext;
-import org.hl7.fhir.dstu3.model.DateTimeType;
-import org.hl7.fhir.dstu3.model.DateType;
-import org.hl7.fhir.dstu3.model.StringType;
-
-import java.util.Date;
+import org.hl7.fhir.r4.model.*;
 
 public class CustomUsage {
 

@@ -1,5 +1,8 @@
 package ca.uhn.hapi.fhir.docs.customtype;
 
+import java.util.ArrayList;
+import java.util.List;
+import org.hl7.fhir.r4.model.*;
 /*-
  * #%L
  * HAPI FHIR - Docs
@@ -26,13 +29,6 @@ import ca.uhn.fhir.context.FhirVersionEnum;
 import ca.uhn.fhir.model.api.annotation.Child;
 import ca.uhn.fhir.model.api.annotation.ResourceDef;
 import ca.uhn.fhir.util.ElementUtil;
-import org.hl7.fhir.dstu3.model.DomainResource;
-import org.hl7.fhir.dstu3.model.ResourceType;
-import org.hl7.fhir.dstu3.model.StringType;
-import org.hl7.fhir.dstu3.model.Type;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This is an example of a custom resource that also uses a custom

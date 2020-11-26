@@ -1,5 +1,25 @@
 package ca.uhn.hapi.fhir.docs;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.hl7.fhir.instance.model.api.IBaseResource;
+import org.hl7.fhir.instance.model.api.IIdType;
+import org.hl7.fhir.r4.model.Bundle;
+import org.hl7.fhir.r4.model.CapabilityStatement;
+import org.hl7.fhir.r4.model.CodeType;
+import org.hl7.fhir.r4.model.DateType;
+import org.hl7.fhir.r4.model.Enumerations;
+import org.hl7.fhir.r4.model.IdType;
+import org.hl7.fhir.r4.model.InstantType;
+import org.hl7.fhir.r4.model.Observation;
+import org.hl7.fhir.r4.model.OperationOutcome;
+import org.hl7.fhir.r4.model.Organization;
+import org.hl7.fhir.r4.model.Parameters;
+import org.hl7.fhir.r4.model.Patient;
+import org.hl7.fhir.r4.model.Provenance;
+import org.hl7.fhir.r4.model.StringType;
+
 /*-
  * #%L
  * HAPI FHIR - Docs
@@ -32,25 +52,6 @@ import ca.uhn.fhir.rest.client.api.ServerValidationModeEnum;
 import ca.uhn.fhir.rest.client.interceptor.LoggingInterceptor;
 import ca.uhn.fhir.rest.param.DateRangeParam;
 import ca.uhn.fhir.rest.server.exceptions.PreconditionFailedException;
-import org.hl7.fhir.instance.model.api.IBaseResource;
-import org.hl7.fhir.instance.model.api.IIdType;
-import org.hl7.fhir.r4.model.Bundle;
-import org.hl7.fhir.r4.model.CapabilityStatement;
-import org.hl7.fhir.r4.model.CodeType;
-import org.hl7.fhir.r4.model.DateType;
-import org.hl7.fhir.r4.model.Enumerations;
-import org.hl7.fhir.r4.model.IdType;
-import org.hl7.fhir.r4.model.InstantType;
-import org.hl7.fhir.r4.model.Observation;
-import org.hl7.fhir.r4.model.OperationOutcome;
-import org.hl7.fhir.r4.model.Organization;
-import org.hl7.fhir.r4.model.Parameters;
-import org.hl7.fhir.r4.model.Patient;
-import org.hl7.fhir.r4.model.Provenance;
-import org.hl7.fhir.r4.model.StringType;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class GenericClientExample {
 	public static void deferModelScanning() {
