@@ -105,7 +105,8 @@
 			<groupId>ca.uhn.hapi.fhir</groupId>
 			<artifactId>hapi-fhir-structures-dstu3</artifactId>
 			<version>${project.version}</version>
-		</dependency> -->
+		</dependency> 
+		-->
 		<dependency>
 			<groupId>ca.uhn.hapi.fhir</groupId>
 			<artifactId>hapi-fhir-structures-r4</artifactId>
@@ -150,7 +151,7 @@
 					<artifactId>log4j-api</artifactId>
 				</exclusion>
 			</exclusions>
-		</dependency>
+		</dependency>		
  
 		<dependency>
 			<groupId>net.ttddyy</groupId>

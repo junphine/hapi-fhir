@@ -30,11 +30,13 @@ import org.springframework.security.ldap.search.LdapUserSearch;
 import org.springframework.security.ldap.userdetails.DefaultLdapAuthoritiesPopulator;
 import org.springframework.security.ldap.userdetails.LdapAuthoritiesPopulator;
 import org.springframework.security.ldap.userdetails.LdapUserDetailsManager;
+import org.springframework.security.web.authentication.logout.LogoutFilter;
 
 import com.satyy.ldap.model.Role;
+import com.satyy.ldap.filter.JwtAuthenticationTokenFilter;
 
 /**
- * @author Satyam Singh (satyamsingh00@gmail.com)
+ * 
  */
 @Configuration
 @ConfigurationProperties(prefix = "ldap")
@@ -54,23 +56,29 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private LdapUserProperties userProperties;
 
     
-   
+
+    @Autowired
+    private JwtAuthenticationTokenFilter jwtAuthenticationTokenFilter;
     
     @Override
 	protected void configure(HttpSecurity httpSecurity) throws Exception {
 		// Disable CSRF
 		httpSecurity.csrf().disable()
 				// Only admin can perform HTTP delete operation
-				.authorizeRequests().antMatchers(HttpMethod.DELETE).hasRole(Role.ADMIN)
+				.authorizeRequests()
+				.antMatchers(HttpMethod.POST).hasRole(Role.USER)
+				.antMatchers(HttpMethod.DELETE).hasRole(Role.ADMIN)
 				.antMatchers(HttpMethod.PUT).hasRole(Role.MANAGER)
 				.antMatchers(HttpMethod.PATCH).hasRole(Role.MANAGER)
 				// any authenticated user can perform all other operations
-				.antMatchers("/products/**").hasAnyRole(Role.ADMIN, Role.USER).and().httpBasic()
+				.antMatchers("/admin","/admin/**").hasAnyRole(Role.ADMIN, Role.MANAGER).and().httpBasic()
 				// Permit all other request without authentication
 				.and().authorizeRequests().anyRequest().permitAll()
 				//.and().antMatcher("authenticate").anonymous()
 				// We don't need sessions to be created.
 				.and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+		
+		httpSecurity.addFilterBefore(jwtAuthenticationTokenFilter, LogoutFilter.class); 
 	}
     
     @Bean

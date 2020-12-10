@@ -15,7 +15,7 @@ import ca.uhn.fhir.jpa.dao.index.IdHelperService;
 import ca.uhn.fhir.jpa.entity.TermConcept;
 import ca.uhn.fhir.jpa.model.util.JpaConstants;
 import ca.uhn.fhir.jpa.partition.IPartitionLookupSvc;
-import ca.uhn.fhir.jpa.provider.SystemProviderDstu2Test;
+import ca.uhn.fhir.jpa.provider.r4.SystemProviderR4Test;
 import ca.uhn.fhir.jpa.search.DatabaseBackedPagingProvider;
 import ca.uhn.fhir.jpa.search.PersistedJpaBundleProvider;
 import ca.uhn.fhir.jpa.search.cache.ISearchCacheSvc;
@@ -26,8 +26,7 @@ import ca.uhn.fhir.jpa.subscription.match.registry.SubscriptionLoader;
 import ca.uhn.fhir.jpa.subscription.match.registry.SubscriptionRegistry;
 import ca.uhn.fhir.jpa.util.CircularQueueCaptureQueriesListener;
 import ca.uhn.fhir.jpa.util.MemoryCacheService;
-import ca.uhn.fhir.model.dstu2.resource.Bundle;
-import ca.uhn.fhir.model.dstu2.resource.Bundle.Entry;
+
 import ca.uhn.fhir.rest.api.Constants;
 import ca.uhn.fhir.rest.api.server.IBundleProvider;
 import ca.uhn.fhir.rest.server.exceptions.InternalErrorException;
@@ -52,6 +51,7 @@ import org.hl7.fhir.dstu3.model.Resource;
 import org.hl7.fhir.instance.model.api.IBaseBundle;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.instance.model.api.IIdType;
+import org.hl7.fhir.r4.model.Bundle;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -340,15 +340,7 @@ public abstract class BaseJpaTest extends BaseTest {
 		return retVal;
 	}
 
-	protected List<IIdType> toUnqualifiedVersionlessIds(Bundle theFound) {
-		List<IIdType> retVal = new ArrayList<>();
-		for (Entry next : theFound.getEntry()) {
-			// if (next.getResource()!= null) {
-			retVal.add(next.getResource().getId().toUnqualifiedVersionless());
-			// }
-		}
-		return retVal;
-	}
+	
 
 	protected List<IIdType> toUnqualifiedVersionlessIds(IBundleProvider theProvider) {
 
@@ -466,7 +458,7 @@ public abstract class BaseJpaTest extends BaseTest {
 	}
 
 	public static byte[] loadClasspathBytes(String resource) throws IOException {
-		InputStream bundleRes = SystemProviderDstu2Test.class.getResourceAsStream(resource);
+		InputStream bundleRes = SystemProviderR4Test.class.getResourceAsStream(resource);
 		if (bundleRes == null) {
 			throw new NullPointerException("Can not load " + resource);
 		}

@@ -27,7 +27,7 @@ public class JaxRsConformanceProviderDstu3 extends AbstractJaxRsConformanceProvi
 	private static final String SERVER_NAME = "Jax-Rs Test Example";
 	
     @Inject
-    private JaxRsPatientRestProvider patientProvider;
+    private JaxRsPatientRestProviderDstu3 patientProvider;
 
 	/**
 	 * Standard Constructor
@@ -40,7 +40,7 @@ public class JaxRsConformanceProviderDstu3 extends AbstractJaxRsConformanceProvi
 	protected ConcurrentHashMap<Class<? extends IResourceProvider>, IResourceProvider> getProviders() {
 		ConcurrentHashMap<Class<? extends IResourceProvider>, IResourceProvider> map = new ConcurrentHashMap<Class<? extends IResourceProvider>, IResourceProvider>();
 		map.put(JaxRsConformanceProviderDstu3.class, this);
-		map.put(JaxRsPatientRestProvider.class, patientProvider);
+		map.put(JaxRsPatientRestProviderDstu3.class, patientProvider);
 		return map;
 	}
 }

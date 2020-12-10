@@ -1,9 +1,11 @@
 package ca.uhn.fhir.jpa.subscription.email;
 
 import ca.uhn.fhir.jpa.api.config.DaoConfig;
-import ca.uhn.fhir.jpa.provider.dstu3.BaseResourceProviderDstu3Test;
+
+import ca.uhn.fhir.jpa.provider.r4.BaseResourceProviderR4Test;
 import ca.uhn.fhir.jpa.subscription.SubscriptionTestUtil;
 import ca.uhn.fhir.rest.api.MethodOutcome;
+import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.util.HapiExtensions;
 import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.util.GreenMail;
@@ -29,14 +31,14 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Callable;
 
-import static ca.uhn.fhir.jpa.subscription.resthook.RestHookTestDstu3Test.logAllInterceptors;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Test the rest-hook subscriptions
  */
-public class EmailSubscriptionDstu3Test extends BaseResourceProviderDstu3Test {
+public class EmailSubscriptionDstu3Test extends BaseResourceProviderR4Test {
 
 	private static final org.slf4j.Logger ourLog = org.slf4j.LoggerFactory.getLogger(EmailSubscriptionDstu3Test.class);
 
@@ -46,6 +48,8 @@ public class EmailSubscriptionDstu3Test extends BaseResourceProviderDstu3Test {
 	private static int ourListenerPort;
 	private static GreenMail ourTestSmtp;
 	private List<IIdType> mySubscriptionIds = new ArrayList<>();
+	
+	IGenericClient ourClient;
 
 	@AfterEach
 	public void afterUnregisterEmailListener() {
@@ -71,12 +75,12 @@ public class EmailSubscriptionDstu3Test extends BaseResourceProviderDstu3Test {
 		ourTestSmtp.purgeEmailFromAllMailboxes();
 
 		ourLog.info("Before re-registering interceptors");
-		logAllInterceptors(myInterceptorRegistry);
+		//logAllInterceptors(myInterceptorRegistry);
 
 		mySubscriptionTestUtil.registerEmailInterceptor();
 
 		ourLog.info("After re-registering interceptors");
-		logAllInterceptors(myInterceptorRegistry);
+		//logAllInterceptors(myInterceptorRegistry);
 
 		mySubscriptionTestUtil.initEmailSender(ourListenerPort);
 

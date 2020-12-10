@@ -13,9 +13,8 @@
     -->
     <parent>
         <groupId>ca.uhn.hapi.fhir</groupId>
-        <artifactId>hapi-fhir</artifactId>
-        <version>5.2.0-SNAPSHOT</version>
-        <relativePath>../../pom.xml</relativePath>
+		<artifactId>hapi-fhir-spring-boot-samples</artifactId>
+		<version>5.2.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>hapi-fhir-jpaserver-starter</artifactId>
@@ -117,7 +116,7 @@
             <artifactId>hapi-fhir-testpage-overlay</artifactId>
             <version>${project.version}</version>
             <type>war</type>
-            <!-- <scope>provided</scope> -->
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>ca.uhn.hapi.fhir</groupId>
@@ -146,11 +145,11 @@
 		     <version>${spring_boot_version}</version>
 		</dependency>
 		
-        <!--  <dependency>
+        <dependency>
             <groupId>ca.uhn.hapi.fhir</groupId>
        		<artifactId>hapi-fhir-spring-boot-starter</artifactId>
        		<version>${project.version}</version>
-        </dependency> -->
+        </dependency> 
         
         <dependency>
 			<groupId>io.jsonwebtoken</groupId>
@@ -166,8 +165,7 @@
        
         <dependency>
 			<groupId>org.projectlombok</groupId>
-			<artifactId>lombok</artifactId>
-			<version>1.18.8</version>
+			<artifactId>lombok</artifactId>			
 			<optional>true</optional>
 		</dependency>
        
@@ -210,55 +208,7 @@
                 </exclusion>
             </exclusions>
         </dependency>
-
-        <!-- This example uses H2 embedded database. If you are using another database such as Mysql or Oracle, you may omit the following dependencies and replace them with an appropriate database client
-            dependency for your database platform. -->
-        <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-        </dependency>
-
-        <!-- webjars -->
-        <dependency>
-            <groupId>org.webjars.npm</groupId>
-            <artifactId>bootstrap</artifactId> 
-        </dependency>
-        <dependency>
-            <groupId>org.webjars</groupId>
-            <artifactId>Eonasdan-bootstrap-datetimepicker</artifactId>
-           
-        </dependency>
-        <dependency>
-            <groupId>org.webjars</groupId>
-            <artifactId>font-awesome</artifactId>
-          
-        </dependency>
-        <dependency>
-            <groupId>org.webjars.bower</groupId>
-            <artifactId>awesome-bootstrap-checkbox</artifactId>
-           
-        </dependency>
-        <dependency>
-            <groupId>org.webjars</groupId>
-            <artifactId>jstimezonedetect</artifactId>
-           
-        </dependency>
-        <dependency>
-            <groupId>org.webjars</groupId>
-            <artifactId>select2</artifactId>
-           
-        </dependency>
-        <dependency>
-            <groupId>org.webjars.bower</groupId>
-            <artifactId>jquery</artifactId>
-          
-        </dependency>
-        <dependency>
-            <groupId>org.webjars.bower</groupId>
-            <artifactId>moment</artifactId>
-           
-        </dependency>
-
+        
         <!-- The following dependencies are only needed for automated unit tests, you do not neccesarily need them to run the example. -->
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
@@ -310,8 +260,7 @@
  
         <dependency>
             <groupId>org.awaitility</groupId>
-            <artifactId>awaitility</artifactId>
-            <version>4.0.0-rc1</version>
+            <artifactId>awaitility</artifactId>           
             <scope>test</scope>
         </dependency> 
 

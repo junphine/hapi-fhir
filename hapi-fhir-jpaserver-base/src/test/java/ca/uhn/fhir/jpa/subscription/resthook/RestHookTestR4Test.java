@@ -920,7 +920,7 @@ public class RestHookTestR4Test extends BaseSubscriptionsR4Test {
 	 */
 	@Test
 	public void testSubscriptionDoesntActivateIfRestHookIsNotEnabled() throws InterruptedException {
-		Set<org.hl7.fhir.dstu2.model.Subscription.SubscriptionChannelType> existingSupportedSubscriptionTypes = myDaoConfig.getSupportedSubscriptionTypes();
+		Set<Subscription.SubscriptionChannelType> existingSupportedSubscriptionTypes = myDaoConfig.getSupportedSubscriptionTypes();
 		myDaoConfig.clearSupportedSubscriptionTypesForUnitTest();
 		try {
 

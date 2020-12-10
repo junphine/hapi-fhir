@@ -8,7 +8,7 @@ import ca.uhn.fhir.jpa.model.entity.ResourceIndexedSearchParamString;
 import ca.uhn.fhir.jpa.model.entity.ResourceTable;
 import ca.uhn.fhir.jpa.model.entity.ResourceTag;
 import ca.uhn.fhir.jpa.model.entity.TagTypeEnum;
-import ca.uhn.fhir.jpa.provider.SystemProviderDstu2Test;
+import ca.uhn.fhir.jpa.provider.r4.SystemProviderR4Test;
 import ca.uhn.fhir.jpa.searchparam.SearchParameterMap;
 import ca.uhn.fhir.model.api.ResourceMetadataKeyEnum;
 import ca.uhn.fhir.model.primitive.IdDt;
@@ -2280,7 +2280,7 @@ public class FhirSystemDaoR4Test extends BaseJpaR4SystemTest {
 	@Test
 	public void testTransactionFromBundle() throws Exception {
 
-		InputStream bundleRes = SystemProviderDstu2Test.class.getResourceAsStream("/transaction_link_patient_eve.xml");
+		InputStream bundleRes = SystemProviderR4Test.class.getResourceAsStream("/transaction_link_patient_eve.xml");
 		String bundleStr = IOUtils.toString(bundleRes, StandardCharsets.UTF_8);
 		Bundle bundle = myFhirCtx.newXmlParser().parseResource(Bundle.class, bundleStr);
 
@@ -2321,7 +2321,7 @@ public class FhirSystemDaoR4Test extends BaseJpaR4SystemTest {
 
 	@Test
 	public void testTransactionFromBundle6() throws Exception {
-		InputStream bundleRes = SystemProviderDstu2Test.class.getResourceAsStream("/simone_bundle3.xml");
+		InputStream bundleRes = SystemProviderR4Test.class.getResourceAsStream("/simone_bundle3.xml");
 		String bundle = IOUtils.toString(bundleRes, StandardCharsets.UTF_8);
 		Bundle output = mySystemDao.transaction(mySrd, myFhirCtx.newXmlParser().parseResource(Bundle.class, bundle));
 		ourLog.info(myFhirCtx.newXmlParser().setPrettyPrint(true).encodeResourceToString(output));
@@ -2330,7 +2330,7 @@ public class FhirSystemDaoR4Test extends BaseJpaR4SystemTest {
 	@Test
 	public void testTransactionFromBundleJosh() throws Exception {
 
-		InputStream bundleRes = SystemProviderDstu2Test.class.getResourceAsStream("/josh-bundle.json");
+		InputStream bundleRes = SystemProviderR4Test.class.getResourceAsStream("/josh-bundle.json");
 		String bundleStr = IOUtils.toString(bundleRes, StandardCharsets.UTF_8);
 		Bundle bundle = myFhirCtx.newJsonParser().parseResource(Bundle.class, bundleStr);
 
@@ -2949,7 +2949,7 @@ public class FhirSystemDaoR4Test extends BaseJpaR4SystemTest {
 	@Disabled
 	public void testTransactionWithBundledValidationSourceAndTarget() throws Exception {
 
-		InputStream bundleRes = SystemProviderDstu2Test.class.getResourceAsStream("/questionnaire-sdc-profile-example-ussg-fht.xml");
+		InputStream bundleRes = SystemProviderR4Test.class.getResourceAsStream("/questionnaire-sdc-profile-example-ussg-fht.xml");
 		String bundleStr = IOUtils.toString(bundleRes, StandardCharsets.UTF_8);
 		Bundle bundle = myFhirCtx.newXmlParser().parseResource(Bundle.class, bundleStr);
 

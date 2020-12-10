@@ -19,15 +19,15 @@ import lombok.Setter;
  * The persistent class for the role database table.
  * 
  */
-@Entity
+
 @Getter
 @Setter
 @NoArgsConstructor
 public class Role implements Serializable {
 	private static final long serialVersionUID = 1L;
-	public static final String USER = "USER";
-	public static final String ADMIN = "ADMIN";
-	public static final String MANAGER = "MANAGER";
+	public static final String USER = "USER"; //普通用户
+	public static final String ADMIN = "ADMIN"; //高级管理员
+	public static final String MANAGER = "MANAGER";//中级管理员
 	
 	public static final String ROLE_USER = "ROLE_USER";
 	public static final String ROLE_MANAGER = "ROLE_MANAGER";
@@ -38,11 +38,14 @@ public class Role implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int roleId;
 
+	@Column(name = "ROLE_NAME")
 	private String name;
 
-	
+	@Column(name = "ROLE_KEY")
+	private String key;
 
-	public Role(String name) {
+	public Role(String key,String name) {
+		this.key = key;
 		this.name = name;
 	}
 
@@ -50,7 +53,7 @@ public class Role implements Serializable {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + ((key == null) ? 0 : key.hashCode());
 		return result;
 	}
 
@@ -65,13 +68,13 @@ public class Role implements Serializable {
 		if (getClass() != obj.getClass()) {
 			return false;
 		}
-		return Objects.equals(name, ((Role) obj).getName());
+		return Objects.equals(key, ((Role) obj).getName());
 	}
 
 	@Override
 	public String toString() {
 		final StringBuilder builder = new StringBuilder();
-		builder.append("Role [name=").append(name).append("]").append("[id=").append(roleId).append("]");
+		builder.append("Role [key=").append(key).append("]").append("[id=").append(roleId).append("]");
 		return builder.toString();
 	}
 }

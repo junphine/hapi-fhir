@@ -24,7 +24,7 @@ import ca.uhn.fhir.context.BaseRuntimeChildDefinition;
 import ca.uhn.fhir.context.BaseRuntimeElementCompositeDefinition;
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.model.api.IResource;
-
+import ca.uhn.fhir.model.api.ResourceMetadataKeyEnum;
 import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.model.valueset.BundleTypeEnum;
 import ca.uhn.fhir.parser.DataFormatException;
@@ -170,90 +170,114 @@ public class ExampleDataUploader extends BaseCommand {
 		return bundle;
 	}
 
+	static FhirValidator val = null;
+	
 	@SuppressWarnings("unchecked")
 	private org.hl7.fhir.r4.model.Bundle getBundleFromFileR4(Integer limit, File inputFile, FhirContext ctx) throws IOException {
 
 		org.hl7.fhir.r4.model.Bundle bundle = new org.hl7.fhir.r4.model.Bundle();
 		bundle.setType(org.hl7.fhir.r4.model.Bundle.BundleType.TRANSACTION);
-
-		FhirValidator val = ctx.newValidator();
-		val.registerValidatorModule(new FhirInstanceValidator(new DefaultProfileValidationSupport(ctx)));
-
-		ZipInputStream zis = new ZipInputStream(FileUtils.openInputStream(inputFile));
-		byte[] buffer = new byte[2048];
-
-		int count = 0;
-		while (true) {
-			count++;
-			if (limit != null && count > limit) {
-				break;
-			}
-
-			ZipEntry nextEntry = zis.getNextEntry();
-			if (nextEntry == null) {
-				break;
-			}
-
-			int len;
-			ByteArrayOutputStream bos = new ByteArrayOutputStream();
-			while ((len = zis.read(buffer)) > 0) {
-				bos.write(buffer, 0, len);
-			}
-			byte[] exampleBytes = bos.toByteArray();
-			String exampleString = new String(exampleBytes, StandardCharsets.UTF_8);
-
-			if (ourLog.isTraceEnabled()) {
-				ourLog.trace("Next example: " + exampleString);
-			}
-
-			IBaseResource parsed;
-			try {
-				parsed = ctx.newJsonParser().parseResource(exampleString);
-			} catch (Exception e) {
-				ourLog.info("FAILED to parse example {}", nextEntry.getName(), e);
-				continue;
-			}
-			ourLog.info("Found example {} - {} - {} chars", nextEntry.getName(), parsed.getClass().getSimpleName(), exampleString.length());
-
-			ValidationResult result = val.validateWithResult(parsed);
-			if (result.isSuccessful() == false) {
-				ourLog.info("FAILED to validate example {} - {}", nextEntry.getName(), result.toString());
-				continue;
-			}
-
-			if (ctx.getResourceType(parsed).equals("Bundle")) {
-				BaseRuntimeChildDefinition entryChildDef = ctx.getResourceDefinition(parsed).getChildByName("entry");
-				BaseRuntimeElementCompositeDefinition<?> entryDef = (BaseRuntimeElementCompositeDefinition<?>) entryChildDef.getChildByName("entry");
-
-				for (IBase nextEntry1 : entryChildDef.getAccessor().getValues(parsed)) {
-					List<IBase> resources = entryDef.getChildByName("resource").getAccessor().getValues(nextEntry1);
-					if (resources == null) {
-						continue;
-					}
-					for (IBase nextResource : resources) {
-						if (nextResource == null) {
-							continue;
-						}
-						if (!ctx.getResourceDefinition((Class<? extends IBaseResource>) nextResource.getClass()).getName().equals("Bundle")
-							&& ctx.getResourceDefinition((Class<? extends IBaseResource>) nextResource.getClass()).getName().equals("SearchParameter")) {
-							org.hl7.fhir.r4.model.Bundle.BundleEntryComponent entry = bundle.addEntry();
-							entry.getRequest().setMethod(org.hl7.fhir.r4.model.Bundle.HTTPVerb.POST);
-							entry.setResource((org.hl7.fhir.r4.model.Resource) nextResource);
-						}
-					}
+		if(val == null) {
+			val = ctx.newValidator();
+			val.registerValidatorModule(new FhirInstanceValidator(new DefaultProfileValidationSupport(ctx)));
+		}
+		if(inputFile.getName().endsWith(".zip")) {
+			ZipInputStream zis = new ZipInputStream(FileUtils.openInputStream(inputFile));
+			byte[] buffer = new byte[2048];
+	
+			int count = 0;
+			while (true) {
+				count++;
+				if (limit != null && count > limit) {
+					break;
 				}
-			} else {
-				if (ctx.getResourceType(parsed).equals("SearchParameter")) {
-					continue;
+	
+				ZipEntry nextEntry = zis.getNextEntry();
+				if (nextEntry == null) {
+					break;
 				}
-				org.hl7.fhir.r4.model.Bundle.BundleEntryComponent entry = bundle.addEntry();
-				entry.getRequest().setMethod(org.hl7.fhir.r4.model.Bundle.HTTPVerb.POST);
-				entry.setResource((org.hl7.fhir.r4.model.Resource) parsed);
+	
+				int len;
+				ByteArrayOutputStream bos = new ByteArrayOutputStream();
+				while ((len = zis.read(buffer)) > 0) {
+					bos.write(buffer, 0, len);
+				}
+				byte[] exampleBytes = bos.toByteArray();
+				String exampleString = new String(exampleBytes, StandardCharsets.UTF_8);
+	
+				if (ourLog.isTraceEnabled()) {
+					ourLog.trace("Next example: " + exampleString);
+				}
+				
+				processBundleFromFileR4(exampleString,nextEntry.getName(),bundle,val,ctx);
+	
+			}	
+		}
+		else if(inputFile.isDirectory()) {
+			Collection<File> jsonFiles = FileUtils.listFiles(inputFile, new String[]{"json"}, false);
+			for(File jsonFile: jsonFiles) {
+				String exampleString = FileUtils.readFileToString(jsonFile,StandardCharsets.UTF_8);
+				processBundleFromFileR4(exampleString,jsonFile.getName(),bundle,val,ctx);
 			}
+		}
+		else {
+			String exampleString = FileUtils.readFileToString(inputFile,StandardCharsets.UTF_8);
+			processBundleFromFileR4(exampleString,inputFile.getName(),bundle,val,ctx);
 		}
 		return bundle;
 	}
 
+	private boolean processBundleFromFileR4(String exampleString, String fileName, org.hl7.fhir.r4.model.Bundle bundle, FhirValidator val, FhirContext ctx) {
+			
+
+		IBaseResource parsed;
+		try {
+			parsed = ctx.newJsonParser().parseResource(exampleString);
+		} catch (Exception e) {
+			ourLog.info("FAILED to parse example {}", fileName, e);
+			return false;
+		}
+		ourLog.info("Found example {} - {} - {} chars", fileName, parsed.getClass().getSimpleName(), exampleString.length());
+
+		if(false) {
+			ValidationResult result = val.validateWithResult(parsed);
+			if (result.isSuccessful() == false) {
+				ourLog.info("FAILED to validate example {} - {}", fileName, result.toString());
+				return false;
+			}
+		}
+		if (ctx.getResourceType(parsed).equals("Bundle")) {
+			BaseRuntimeChildDefinition entryChildDef = ctx.getResourceDefinition(parsed).getChildByName("entry");
+			BaseRuntimeElementCompositeDefinition<?> entryDef = (BaseRuntimeElementCompositeDefinition<?>) entryChildDef.getChildByName("entry");
+
+			for (IBase nextEntry1 : entryChildDef.getAccessor().getValues(parsed)) {
+				List<IBase> resources = entryDef.getChildByName("resource").getAccessor().getValues(nextEntry1);
+				if (resources == null) {
+					continue;
+				}
+				for (IBase nextResource : resources) {
+					if (nextResource == null) {
+						continue;
+					}
+					if (!ctx.getResourceDefinition((Class<? extends IBaseResource>) nextResource.getClass()).getName().equals("Bundle")
+						&& ctx.getResourceDefinition((Class<? extends IBaseResource>) nextResource.getClass()).getName().equals("SearchParameter")) {
+						org.hl7.fhir.r4.model.Bundle.BundleEntryComponent entry = bundle.addEntry();
+						entry.getRequest().setMethod(org.hl7.fhir.r4.model.Bundle.HTTPVerb.POST);
+						entry.setResource((org.hl7.fhir.r4.model.Resource) nextResource);
+					}
+				}
+			}
+		} else {
+			if (ctx.getResourceType(parsed).equals("SearchParameter")) {
+				return false;
+			}
+			org.hl7.fhir.r4.model.Bundle.BundleEntryComponent entry = bundle.addEntry();
+			entry.getRequest().setMethod(org.hl7.fhir.r4.model.Bundle.HTTPVerb.POST);
+			entry.setResource((org.hl7.fhir.r4.model.Resource) parsed);
+		}
+		return true;
+	}
+	
 	@Override
 	public String getCommandDescription() {
 		return "Downloads the resource example pack from the HL7.org FHIR specification website, and uploads all of the example resources to a given server.";
@@ -400,7 +424,7 @@ public class ExampleDataUploader extends BaseCommand {
 				ourLog.info("Skipping " + next.getResource().getResourceType() + " example");
 				iterator.remove();
 			} else {
-				IdDt resourceId = new IdDt(next.getResource().getResourceType() + "/EX" + next.getResource().getIdElement().getIdPart());
+				IdDt resourceId = new IdDt(next.getResource().getResourceType() + "/" + next.getResource().getIdElement().getIdPart());
 				if (!fullIds.add(resourceId.toUnqualifiedVersionless().getValue())) {
 					ourLog.info("Discarding duplicate resource: " + resourceId.getValue());
 					iterator.remove();
@@ -422,7 +446,11 @@ public class ExampleDataUploader extends BaseCommand {
 				String nextId = next.getResource().getIdElement().getValue();
 				next.getRequest().setMethod(org.hl7.fhir.r4.model.Bundle.HTTPVerb.PUT);
 				next.getRequest().setUrl(nextId);
+				next.getResource().setUserData(ResourceMetadataKeyEnum.ENTRY_TRANSACTION_METHOD.name(), "PUT");
 				qualIds.add(nextId);
+			}
+			else {
+				next.getResource().setUserData(ResourceMetadataKeyEnum.ENTRY_TRANSACTION_METHOD.name(), "POST");
 			}
 		}
 
@@ -433,7 +461,7 @@ public class ExampleDataUploader extends BaseCommand {
 				nextRef.getResourceReference().setResource(null);
 				String value = nextRef.getResourceReference().getReferenceElement().toUnqualifiedVersionless().getValue();
 
-				if (isNotBlank(value)) {
+				if (isNotBlank(value)) {					
 					if (!qualIds.contains(value) && !nextRef.getResourceReference().getReferenceElement().isLocal()) {
 						ourLog.info("Discarding unknown reference: {}", value);
 						nextRef.getResourceReference().getReferenceElement().setValue(null);
@@ -545,7 +573,7 @@ public class ExampleDataUploader extends BaseCommand {
 					if (nextRefIdPart.startsWith("EX")) {
 						nextRefIdPart = nextRefIdPart.substring(2);
 					}
-					String nextTarget = nextRefResourceType + "/EX" + nextRefIdPart;
+					String nextTarget = nextRefResourceType + "/" + nextRefIdPart;
 					nextRef.getResourceReference().setResource(null);
 					nextRef.getResourceReference().setReference(nextTarget);
 					if (checkedTargets.add(nextTarget) == false) {
@@ -563,7 +591,7 @@ public class ExampleDataUploader extends BaseCommand {
 				}
 			}
 
-			if (subResourceList.size() < 10 && resources.size() > 0) {
+			if (subResourceList.size() < 2 && resources.size() > 0) {
 				subResourceList.add(resources.remove(0));
 				continue;
 			}
@@ -571,7 +599,7 @@ public class ExampleDataUploader extends BaseCommand {
 			ourLog.info("About to upload {} examples in a transaction, {} remaining", subResourceList.size(), resources.size());
 
 			IVersionSpecificBundleFactory bundleFactory = ctx.newBundleFactory();
-			bundleFactory.addRootPropertiesToBundle(null, null, null, null, null, subResourceList.size(), BundleTypeEnum.TRANSACTION, null);
+			bundleFactory.addRootPropertiesToBundle(null, targetServer, null, null, null, subResourceList.size(), BundleTypeEnum.TRANSACTION, null);
 			bundleFactory.addResourcesToBundle(new ArrayList<>(subResourceList), BundleTypeEnum.TRANSACTION, null, null, null);
 			IBaseResource subBundle = bundleFactory.getResourceBundle();
 

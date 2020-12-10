@@ -47,7 +47,7 @@ public class JaxRsPatientRestProviderR4 extends AbstractJaxRsResourceProvider<Pa
 	 */
 	public static final IPagingProvider PAGE_PROVIDER;
 
-	static final String PATH = "/Patient";
+	static final String PATH = "/r4/Patient";
 	private static final ConcurrentHashMap<String, List<Patient>> patients = new ConcurrentHashMap<String, List<Patient>>();
 
 	static {
@@ -63,7 +63,7 @@ public class JaxRsPatientRestProviderR4 extends AbstractJaxRsResourceProvider<Pa
 	}
 
 	public JaxRsPatientRestProviderR4() {
-		super(FhirContext.forDstu3(), JaxRsPatientRestProviderR4.class);
+		super(FhirContext.forR4(), JaxRsPatientRestProviderR4.class);
 	}
 
 	@Create

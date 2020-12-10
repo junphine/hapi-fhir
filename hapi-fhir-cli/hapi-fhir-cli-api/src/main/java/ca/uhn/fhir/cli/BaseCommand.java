@@ -337,7 +337,10 @@ public abstract class BaseCommand implements Comparable<BaseCommand> {
 
 			if (suppliedFile.isDirectory()) {
 				inputFiles = FileUtils.listFiles(suppliedFile, new String[]{"zip"}, false);
-			} else {
+				if(inputFiles.isEmpty()) { //no zip file,return dir
+					inputFiles = Collections.singletonList(suppliedFile);
+				}
+			} else { //zip file
 				inputFiles = Collections.singletonList(suppliedFile);
 			}
 

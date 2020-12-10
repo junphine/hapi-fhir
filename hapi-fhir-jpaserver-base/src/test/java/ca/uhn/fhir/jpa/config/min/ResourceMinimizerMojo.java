@@ -4,8 +4,7 @@ import ca.uhn.fhir.context.BaseRuntimeChildDefinition;
 import ca.uhn.fhir.context.BaseRuntimeElementCompositeDefinition;
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.model.api.IResource;
-import ca.uhn.fhir.model.dstu2.resource.Bundle;
-import ca.uhn.fhir.model.dstu2.resource.Bundle.Entry;
+
 import ca.uhn.fhir.parser.IParser;
 import ca.uhn.fhir.rest.api.EncodingEnum;
 import ca.uhn.fhir.util.BundleUtil;
@@ -16,6 +15,8 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.instance.model.api.IBaseBundle;
 import org.hl7.fhir.instance.model.api.IBaseResource;
+import org.hl7.fhir.r4.model.Bundle;
+import org.hl7.fhir.r4.model.Bundle.BundleEntryComponent;
 
 import java.io.*;
 import java.net.URL;
@@ -72,10 +73,10 @@ public class ResourceMinimizerMojo {
 				((IResource) input).getText().getDiv().setValueAsString((String) null);
 				((IResource) input).getText().getStatus().setValueAsString((String) null);
 				if (input instanceof Bundle) {
-					for (Entry nextEntry : ((Bundle) input).getEntry()) {
+					for (BundleEntryComponent nextEntry : ((Bundle) input).getEntry()) {
 						if (nextEntry.getResource() != null) {
-							nextEntry.getResource().getText().getDiv().setValueAsString((String) null);
-							nextEntry.getResource().getText().getStatus().setValueAsString((String) null);
+							//nextEntry.getResource().getText().getDiv().setValueAsString((String) null);
+							//nextEntry.getResource().getText().getStatus().setValueAsString((String) null);
 						}
 					}
 				}

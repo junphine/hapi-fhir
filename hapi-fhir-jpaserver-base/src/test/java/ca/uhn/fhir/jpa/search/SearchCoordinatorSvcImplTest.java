@@ -7,7 +7,8 @@ import ca.uhn.fhir.interceptor.model.RequestPartitionId;
 import ca.uhn.fhir.jpa.api.config.DaoConfig;
 import ca.uhn.fhir.jpa.api.dao.DaoRegistry;
 import ca.uhn.fhir.jpa.api.dao.IFhirResourceDao;
-import ca.uhn.fhir.jpa.config.dstu3.BaseDstu3Config;
+
+import ca.uhn.fhir.jpa.config.r4.BaseR4Config;
 import ca.uhn.fhir.jpa.dao.IResultIterator;
 import ca.uhn.fhir.jpa.dao.ISearchBuilder;
 import ca.uhn.fhir.jpa.dao.LegacySearchBuilder;
@@ -20,7 +21,7 @@ import ca.uhn.fhir.jpa.search.cache.ISearchCacheSvc;
 import ca.uhn.fhir.jpa.search.cache.ISearchResultCacheSvc;
 import ca.uhn.fhir.jpa.searchparam.SearchParameterMap;
 import ca.uhn.fhir.jpa.util.BaseIterator;
-import ca.uhn.fhir.model.dstu2.resource.Patient;
+
 import ca.uhn.fhir.rest.api.CacheControlDirective;
 import ca.uhn.fhir.rest.api.SearchTotalModeEnum;
 import ca.uhn.fhir.rest.api.server.IBundleProvider;
@@ -31,6 +32,7 @@ import ca.uhn.fhir.rest.server.exceptions.InternalErrorException;
 import ca.uhn.fhir.rest.server.exceptions.ResourceGoneException;
 import com.google.common.collect.Lists;
 import org.hl7.fhir.instance.model.api.IBaseResource;
+import org.hl7.fhir.r4.model.Patient;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -127,7 +129,7 @@ public class SearchCoordinatorSvcImplTest {
 
 		myCurrentSearch = null;
 
-		mySvc = new SearchCoordinatorSvcImpl(new BaseDstu3Config().searchCoordinatorThreadFactory());
+		mySvc = new SearchCoordinatorSvcImpl(new BaseR4Config().searchCoordinatorThreadFactory());
 		mySvc.setEntityManagerForUnitTest(myEntityManager);
 		mySvc.setTransactionManagerForUnitTest(myTxManager);
 		mySvc.setContextForUnitTest(ourCtx);

@@ -10,8 +10,8 @@ import ca.uhn.fhir.jpa.subscription.channel.subscription.SubscriptionChannelWith
 import ca.uhn.fhir.jpa.subscription.submit.interceptor.SubscriptionMatcherInterceptor;
 import ca.uhn.fhir.jpa.subscription.match.deliver.email.JavaMailEmailSender;
 import ca.uhn.fhir.jpa.subscription.match.deliver.email.SubscriptionDeliveringEmailSubscriber;
-import org.hl7.fhir.dstu2.model.Subscription;
 import org.hl7.fhir.instance.model.api.IIdType;
+import org.hl7.fhir.r4.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class SubscriptionTestUtil {

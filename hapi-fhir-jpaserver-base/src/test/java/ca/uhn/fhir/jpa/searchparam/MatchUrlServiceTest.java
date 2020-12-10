@@ -3,7 +3,7 @@ package ca.uhn.fhir.jpa.searchparam;
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.context.FhirVersionEnum;
 import ca.uhn.fhir.context.RuntimeResourceDefinition;
-import ca.uhn.fhir.jpa.config.TestDstu3Config;
+import ca.uhn.fhir.jpa.config.TestR4Config;
 import ca.uhn.fhir.jpa.dao.BaseJpaTest;
 import ca.uhn.fhir.jpa.searchparam.registry.ISearchParamRegistry;
 import ca.uhn.fhir.jpa.searchparam.util.Dstu3DistanceHelper;
@@ -29,7 +29,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {TestDstu3Config.class})
+@ContextConfiguration(classes = {TestR4Config.class})
 public class MatchUrlServiceTest extends BaseJpaTest {
 
 	private static FhirContext ourCtx = FhirContext.forCached(FhirVersionEnum.DSTU3);

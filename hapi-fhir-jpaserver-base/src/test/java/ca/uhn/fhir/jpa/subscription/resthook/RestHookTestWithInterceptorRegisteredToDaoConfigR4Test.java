@@ -6,7 +6,6 @@ import ca.uhn.fhir.context.FhirVersionEnum;
 import ca.uhn.fhir.jpa.api.config.DaoConfig;
 import ca.uhn.fhir.jpa.provider.r4.BaseResourceProviderR4Test;
 import ca.uhn.fhir.jpa.subscription.SubscriptionTestUtil;
-import ca.uhn.fhir.model.dstu2.valueset.ResourceTypeEnum;
 import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.rest.annotation.Create;
 import ca.uhn.fhir.rest.annotation.ResourceParam;
@@ -21,6 +20,7 @@ import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r4.model.*;
+import org.hl7.fhir.r5.model.Enumerations.ResourceTypeEnum;
 import org.junit.jupiter.api.*; import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -152,7 +152,7 @@ public class RestHookTestWithInterceptorRegisteredToDaoConfigR4Test extends Base
 		waitForSize(0, ourCreatedObservations);
 		waitForSize(3, ourUpdatedObservations);
 
-		myClient.delete().resourceById(new IdDt(ResourceTypeEnum.SUBSCRIPTION.getCode(), subscription2.getId())).execute();
+		myClient.delete().resourceById(new IdDt(ResourceTypeEnum.SUBSCRIPTION.toCode(), subscription2.getId())).execute();
 
 		Observation observationTemp3 = sendObservation(code, "SNOMED-CT");
 

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd">
+   
+        
+	<bean id="default" class="org.apache.ignite.configuration.CacheConfiguration">
+		<property name="name" value="default" />		
+		
+		<property name="atomicityMode" value="ATOMIC" />
+		<property name="sqlFunctionClasses">
+			<list>
+				<value type="java.lang.Class">org.apache.ignite.cache.FullTextLucene</value>
+			</list>
+		</property>		
+		
+	</bean>
+	
+	<bean id="FTL" class="org.apache.ignite.configuration.CacheConfiguration">
+		<property name="name" value="FTL" />	
+		<property name="cacheMode" value="REPLICATED"/>	
+		
+		<property name="atomicityMode" value="ATOMIC" />
+		<property name="sqlFunctionClasses">
+			<list>
+				<value type="java.lang.Class">org.apache.ignite.cache.FullTextLucene</value>
+			</list>
+		</property>
+		
+		<property name="queryEntities">
+			<list>
+				<bean class="org.apache.ignite.cache.QueryEntity">
+					<property name="keyType"   value="org.apache.ignite.cache.FullTextLucene.FullTextIndexKey" />
+					<property name="valueType" value="org.apache.ignite.cache.FullTextLucene.FullTextIndex" />
+				
+					<property name="tableName" value="INDEXES" />
+					<property name="keyFields">
+						<set> 
+							<value>schema</value>
+							<value>table</value>
+						</set>
+					</property>
+					<property name="fields">
+						<map>							
+							<entry key="schema" value="java.lang.String" />
+							<entry key="table" value="java.lang.String" />
+							<entry key="columns" value="java.lang.String" />							
+						</map>
+					</property>					
+				</bean>
+				
+				
+			</list>
+		</property>
+	</bean>
+
+	<!-- Partitioned cache example configuration (Atomic mode). -->
+	<bean id="redis" class="org.apache.ignite.configuration.CacheConfiguration">
+		<property name="name" value="redis-ignite-internal-cache-0" />
+		<property name="atomicityMode" value="ATOMIC" />
+		<property name="backups" value="1" />
+	</bean>
+
+	<bean id="UserAction" class="org.apache.ignite.configuration.CacheConfiguration">
+		<property name="name" value="UserAction" />		
+		
+		<property name="atomicityMode" value="ATOMIC" />		
+		
+	</bean>
+</beans>
