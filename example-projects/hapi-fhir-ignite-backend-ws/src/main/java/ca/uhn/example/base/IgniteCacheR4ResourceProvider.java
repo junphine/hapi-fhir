@@ -75,8 +75,9 @@ import org.hl7.fhir.instance.model.api.IBase;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.instance.model.api.IIdType;
 import org.hl7.fhir.instance.model.api.IPrimitiveType;
+import org.hl7.fhir.r4.model.BaseResource;
 import org.hl7.fhir.r4.model.IdType;
-import org.jsr166.ConcurrentLinkedHashMap;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -95,6 +96,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Function;
 
@@ -119,24 +121,27 @@ import static org.apache.ignite.events.EventType.EVT_CACHE_OBJECT_REMOVED;
  *
  * @param <T> The resource type to support
  */
-public class IgniteCacheR4ResourceProvider<T extends IBaseResource> implements IResourceProvider {
+public class IgniteCacheR4ResourceProvider<T extends BaseResource> implements IResourceProvider {
 	private static final Logger ourLog = LoggerFactory.getLogger(IgniteCacheR4ResourceProvider.class);
 	private final Class<T> myResourceType;
 	private final FhirContext myFhirContext;
 	private final String myResourceName;
+	
+	// id生成器
+	private IgniteAtomicSequence myNextId;
+		
 	//protected Map<String, TreeMap<Long, T>> myIdToVersionToResourceMap = Collections.synchronizedMap(new LinkedHashMap<>());
 	// 持久化的存储
 	protected IgniteCache<String,T> resourceMap;
 	// 历史资源数据，可能会自动清除
 	protected IgniteCache<VersionedId,T> versionResourceMap = null;
 	// 某个资源instance的版本历史
-	protected Map<String, LinkedList<VersionedId>> myIdToHistory = new ConcurrentLinkedHashMap<>();
+	protected Map<String, LinkedList<VersionedId>> myIdToHistory = new ConcurrentHashMap<>();
 	// 资源列表
 	protected LinkedList<String> myTypeHistory = new LinkedList<>();
 	
 	protected AtomicLong mySearchCount = new AtomicLong(0);
-	// id生成器
-	private IgniteAtomicSequence myNextId;
+	
 	private AtomicLong myDeleteCount = new AtomicLong(0);
 	private AtomicLong myUpdateCount = new AtomicLong(0);
 	private AtomicLong myCreateCount = new AtomicLong(0);
@@ -184,10 +189,10 @@ public class IgniteCacheR4ResourceProvider<T extends IBaseResource> implements I
 	
 
 	private void init(Ignite ignite) {
-		CacheConfiguration<String,T> cacheCfg = IgniteAppCfg.cacheConfigurationFor(myFhirContext,myResourceName);
+		CacheConfiguration<String,T> cacheCfg = IgniteAppCfg.cacheConfigurationFor(myFhirContext,myResourceType);
 		resourceMap = ignite.getOrCreateCache(cacheCfg);
 		
-		CacheConfiguration<VersionedId, T> historyCacheCfg = IgniteAppCfg.historyCacheConfigurationFor(myFhirContext,myResourceName);
+		CacheConfiguration<VersionedId, T> historyCacheCfg = IgniteAppCfg.historyCacheConfigurationFor(myFhirContext,myResourceType);
 		if(historyCacheCfg!=null) {
 			this.versionResourceMap = ignite.getOrCreateCache(historyCacheCfg);
 		}
@@ -215,7 +220,7 @@ public class IgniteCacheR4ResourceProvider<T extends IBaseResource> implements I
 	 * Clear all data held in this resource provider
 	 */
 	public void clear() {
-		myNextId.close();
+		
 		versionResourceMap.clear();
 		resourceMap.clear();
 		myIdToHistory.clear();
@@ -389,14 +394,14 @@ public class IgniteCacheR4ResourceProvider<T extends IBaseResource> implements I
 	@Search
 	public List<IBaseResource> searchAll(RequestDetails theRequestDetails) {
 		mySearchCount.incrementAndGet();
-		List<T> retVal = getAllResources();
+		List<T> retVal = getAllResources(null);
 		return fireInterceptorsAndFilterAsNeeded(retVal, theRequestDetails);
 	}
 
 	@Nonnull
-	protected List<T> getAllResources() {
+	protected List<T> getAllResources(IgniteBiPredicate<String,T> pred) {
 		List<T> retVal = new ArrayList<>();
-		QueryCursor<Entry<String, T>> cursor = this.getStoredResources(null);
+		QueryCursor<Entry<String, T>> cursor = this.getStoredResources(pred);
 		for (Entry<String, T> next : cursor) {
 			if (!next.getKey().isEmpty()) {
 				T nextResource = next.getValue();
@@ -652,4 +657,40 @@ public class IgniteCacheR4ResourceProvider<T extends IBaseResource> implements I
 		return resourcesToReturn;
 	}
 	
+
+	@Search
+	public List<IBaseResource> searchByParams(
+			@ResourceParam T sample, RequestDetails theRequestDetails) {
+
+		List<T> retVal = new ArrayList<>();
+		boolean matches = false;
+		if (sample != null && !sample.isEmpty()) {
+			
+			List<T> retValFirst = getAllResources(null);
+			
+			
+			for (T nextResource : retValFirst) {
+				matches = false;
+				for (java.util.Map.Entry<String, String[]> nextOr : theRequestDetails.getParameters().entrySet()) {
+					String field = nextOr.getKey();
+				
+					if (nextResource!=null) {						
+						matches = true;
+						retVal.add(nextResource);
+					}
+				}				
+			}
+		}
+
+		if (!matches) {
+			ourLog.info("search empty result!");
+		}
+
+		
+
+		mySearchCount.incrementAndGet();
+
+		return fireInterceptorsAndFilterAsNeeded(retVal, theRequestDetails);
+	}
+
 }

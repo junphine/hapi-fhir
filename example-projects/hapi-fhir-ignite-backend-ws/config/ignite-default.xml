@@ -28,6 +28,10 @@
         http://www.springframework.org/schema/beans/spring-beans.xsd
         http://www.springframework.org/schema/util
         http://www.springframework.org/schema/util/spring-util.xsd">
+        
+    <bean id="fhirR4Serializer" class="ca.uhn.example.base.FhirBinarySerializer">
+    </bean>
+    
     <bean abstract="true" id="ignite.cfg" class="org.apache.ignite.configuration.IgniteConfiguration">
         <!-- Set to true to enable distributed class loading for examples, default is false. -->
         <property name="peerClassLoadingEnabled" value="true"/>
@@ -36,9 +40,17 @@
 	        <bean class="org.apache.ignite.configuration.BinaryConfiguration">
 	            <property name="nameMapper">
 	                <bean class="org.apache.ignite.binary.BinaryBasicNameMapper">
-	                    <property name="simpleName" value="true"/>
+	                    <property name="simpleName" value="false"/>
 	                </bean>
 	            </property>
+	             <property name="typeConfigurations">
+			        <list>
+			          <bean class="org.apache.ignite.binary.BinaryTypeConfiguration">
+			            <property name="typeName" value="org.hl7.fhir.r4.model.*"/>
+			            <property name="serializer" ref="fhirR4Serializer"/>
+			          </bean>
+			        </list>
+			      </property>
 	        </bean>
 	    </property>
 		

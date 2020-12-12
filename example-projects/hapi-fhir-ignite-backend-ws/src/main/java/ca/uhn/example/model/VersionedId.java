@@ -5,51 +5,37 @@ import java.util.Date;
 import org.apache.ignite.cache.affinity.AffinityKeyMapped;
 import org.hl7.fhir.instance.model.api.IIdType;
 
-public class VersionedId {
+public final class VersionedId {
 
-	static long Y2020 = new Date(2020,0,1,0,0,0).getTime();
+	static long Y2020 = new Date(130,0,1,0,0,0).getTime();
 	
 	@AffinityKeyMapped
-	private String id;
+	private String idPart;
 	
-	private long ver;//timestamps
+	private long version;//timestamps
 	
 	private VersionedId() {		
 	}
 
 	public VersionedId(String id,long ver) {
-		this.id = id;
-		this.ver = ver;
+		this.idPart = id;
+		this.version = ver;
 	}
 	
 	public VersionedId(IIdType id) {
-		this.id = id.getIdPart();
-		this.ver = id.getVersionIdPartAsLong();
+		this.idPart = id.getIdPart();
+		this.version = id.getVersionIdPartAsLong();
 	}
 	
 	
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
-	}
-
-	public long getVer() {
-		return ver;
-	}
-
-	public void setVer(long ver) {
-		this.ver = ver;
-	}
+	
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		result = prime * result + (int) (ver ^ (ver >>> 32));
+		result = prime * result + ((idPart == null) ? 0 : idPart.hashCode());
+		result = prime * result + (int) (version ^ (version >>> 32));
 		return result;
 	}
 
@@ -62,21 +48,30 @@ public class VersionedId {
 		if (getClass() != obj.getClass())
 			return false;
 		VersionedId other = (VersionedId) obj;
-		if (id == null) {
-			if (other.id != null)
+		if (idPart == null) {
+			if (other.idPart != null)
 				return false;
-		} else if (!id.equals(other.id))
+		} else if (!idPart.equals(other.idPart))
 			return false;
-		if (ver != other.ver)
+		if (version != other.version)
 			return false;
 		return true;
 	}
 
+	@Override
+	public String toString() {
+		return "VersionedId [id=" + idPart + ", ver=" + version + "]";
+	}
+
 	public static final synchronized long nextVersion() {
-		//不能一小时重启一次
-		long timePart = System.currentTimeMillis()-Y2020;
-		long cpuPart = System.nanoTime();
-		long nextVersion = timePart/(1000*60*60)+cpuPart;
+		//不能重复
+		long timePart = System.currentTimeMillis();
+		//long cpuPart = System.nanoTime();
+		//long nextVersion = (timePart-Y2020)/(1000*60*60)+cpuPart;
+		while(lastVersion>=timePart)
+			timePart++;
+		lastVersion = timePart;
 		return timePart;
 	}
+	private static volatile long lastVersion;
 }

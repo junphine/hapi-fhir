@@ -63,10 +63,35 @@
 		<property name="backups" value="1" />
 	</bean>
 
-	<bean id="UserAction" class="org.apache.ignite.configuration.CacheConfiguration">
-		<property name="name" value="UserAction" />		
+	<bean abstract="true" id="VersionedResource" class="org.apache.ignite.configuration.CacheConfiguration">
+		<property name="name" value="VersionedResource" />		
 		
-		<property name="atomicityMode" value="ATOMIC" />		
+		<property name="atomicityMode" value="ATOMIC" />	
+		<property name="queryEntities">
+			<list>
+				<bean class="org.apache.ignite.cache.QueryEntity">
+					<property name="keyType"   value="ca.uhn.example.model.VersionedId" />
+					<property name="valueType" value="org.hl7.fhir.r4.model.Resource" />
+				
+					
+					<property name="keyFields">
+						<set> 
+							<value>id</value>
+							<value>ver</value>
+						</set>
+					</property>
+					<property name="fields">
+						<map>							
+							<entry key="idPart" value="java.lang.String" />
+							<entry key="version" value="java.lang.Long" />
+							<entry key="meta" value="org.hl7.fhir.r4.model.Meta" />							
+						</map>
+					</property>					
+				</bean>
+				
+				
+			</list>
+		</property>	
 		
 	</bean>
 </beans>

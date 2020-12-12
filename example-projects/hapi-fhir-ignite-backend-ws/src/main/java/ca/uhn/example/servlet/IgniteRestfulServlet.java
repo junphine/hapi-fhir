@@ -8,6 +8,7 @@ import org.hl7.fhir.r4.model.ResourceFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.cors.CorsConfiguration;
 
+import ca.uhn.example.base.FhirBinarySerializer;
 import ca.uhn.example.base.IgniteCacheR4ResourceProvider;
 import ca.uhn.example.base.MemoryCacheResourceProvider;
 import ca.uhn.example.provider.AccountResourceProvider;
@@ -27,6 +28,7 @@ import ca.uhn.fhir.rest.server.interceptor.ResponseHighlighterInterceptor;
 public class IgniteRestfulServlet extends RestfulServer {
 
 	private static final long serialVersionUID = 1L;	
+	
 	 
 	@Autowired
 	Ignite ignite;
@@ -35,7 +37,8 @@ public class IgniteRestfulServlet extends RestfulServer {
 	 * Constructor
 	 */
 	public IgniteRestfulServlet() {
-		super(FhirContext.forR4()); // Support DSTU2
+		super(FhirContext.forR4()); // Support R4
+		FhirBinarySerializer.globalFhirContext = this.getFhirContext();
 	}
 	
 	/**
@@ -50,7 +53,7 @@ public class IgniteRestfulServlet extends RestfulServer {
 		 */
 		List<IResourceProvider> providers = new ArrayList<>();
 		providers.add(new PatientResourceProvider());
-		providers.add(new OrganizationResourceProvider());
+		//providers.add(new OrganizationResourceProvider());
 		providers.add(new AccountResourceProvider(this.getFhirContext()));
 		
 		for(String resourceName: this.getFhirContext().getResourceTypes()) {

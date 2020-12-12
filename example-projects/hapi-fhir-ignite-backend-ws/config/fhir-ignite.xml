@@ -25,14 +25,21 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans.xsd">
     <!-- Imports default Ignite configuration -->
-    <import resource="ignite-default.xml"/>
-
-    <bean parent="ignite.cfg">
-        <property name="pluginConfigurations">
-            <bean class="org.apache.ignite.ml.util.plugin.MLPluginConfiguration">
-                <property name="withMdlStorage" value="#{true}" />
-                <property name="withMdlDescStorage" value="#{true}" />
-            </bean>
-        </property>
-    </bean>
+    <!-- Imports default Ignite configuration -->
+    <import resource="../config/ignite-default.xml"/>   
+	<import resource="../config/example-caches.xml"/>
+	
+    <bean parent="ignite.cfg" >	
+	
+		<!-- Cache configuration. -->
+		 <property name="cacheConfiguration">
+			<list>
+				<ref bean="default"/>
+				<ref bean="redis"/>				
+				<ref bean="FTL"/>	
+						
+			</list>
+		</property>
+	
+	</bean>
 </beans>
