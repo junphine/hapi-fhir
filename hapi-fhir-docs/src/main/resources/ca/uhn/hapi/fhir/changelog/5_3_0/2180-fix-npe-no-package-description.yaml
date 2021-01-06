@@ -1,4 +1,0 @@
----
-type: fix
-issue: 2180
-title: "Loading a package without a description was causing a null pointer exception. This has been fixed."

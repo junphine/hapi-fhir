@@ -1,8 +1,0 @@
-.git
-.gitignore
-.vscode
-.classpath
-.project
-examples
-target
-derby.log

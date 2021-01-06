@@ -1,5 +1,0 @@
----
-type: add
-issue: 1939
-title: "The JPA server is now able to support _has queries where the linked search expression on the right hand side of the
-   _has parameter is a second _has query."

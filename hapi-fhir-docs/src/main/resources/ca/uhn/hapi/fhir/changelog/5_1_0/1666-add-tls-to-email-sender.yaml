@@ -1,4 +1,0 @@
----
-type: add
-issue: 1666
-title: "The email sender used by email subscriptions can now be configured with TLS parameters."

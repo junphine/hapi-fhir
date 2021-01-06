@@ -1,7 +1,0 @@
-extraction:
-  javascript:
-    index:
-      filters:
-        - exclude: "**/jquery*.js"
-        - exclude: "**/bootstrap*.js"
-        - exclude: "**/webapp/fa/*.js"
