@@ -61,18 +61,38 @@
 					<argLine>@{argLine} ${surefire_jvm_args}</argLine>
 				</configuration>
 			</plugin>
+			
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>  
+	                    <phase>compile</phase>  
+	                    <goals>  
+	                        <goal>copy-dependencies</goal>  
+	                    </goals>  
+	                    <configuration>
+							<includeScope>compile</includeScope>
+						</configuration>
+	                </execution> 
+				</executions>
+			</plugin>
+			
 			<plugin>
 				<groupId>org.apache.felix</groupId>
 				<artifactId>maven-bundle-plugin</artifactId>
 				<extensions>true</extensions>
 				<configuration>
 					<instructions>
+						<!-- <Embed-Dependency>*;scope=compile|runtime;inline=false</Embed-Dependency> -->
 						<Fragment-Host>
 							ca.uhn.hapi.fhir.hapi-fhir-base
 						</Fragment-Host>
 					</instructions>
 				</configuration>
 			</plugin>
+			
+			
 		</plugins>
 	</build>
 

@@ -24,7 +24,6 @@ import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.context.support.DefaultProfileValidationSupport;
 import ca.uhn.fhir.context.support.IValidationSupport;
 
-import ca.uhn.fhir.igpacks.parser.IgPackParserDstu3;
 import ca.uhn.fhir.parser.DataFormatException;
 import ca.uhn.fhir.parser.LenientErrorHandler;
 import ca.uhn.fhir.validation.FhirValidator;
@@ -147,13 +146,7 @@ public class ValidateCommand extends BaseCommand {
 			localProfileResource = ca.uhn.fhir.rest.api.EncodingEnum.detectEncodingNoDefault(input).newParser(ctx).parseResource(input);
 		}
 
-		byte[] igPack = null;
-		String igpackFilename = null;
-		if (theCommandLine.hasOption("igpack")) {
-			igpackFilename = theCommandLine.getOptionValue("igpack");
-			igPack = loadFileAsByteArray(igpackFilename);
-		}
-
+		
 		if (theCommandLine.hasOption("p")) {
 			switch (ctx.getVersion().getVersion()) {
 				
@@ -161,11 +154,7 @@ public class ValidateCommand extends BaseCommand {
 					FhirInstanceValidator instanceValidator = new FhirInstanceValidator(ctx);
 					val.registerValidatorModule(instanceValidator);
 					ValidationSupportChain validationSupport = new ValidationSupportChain(new DefaultProfileValidationSupport(ctx), new InMemoryTerminologyServerValidationSupport(ctx));
-					if (igPack != null) {
-						IgPackParserDstu3 parser = new IgPackParserDstu3(getFhirContext());
-						IValidationSupport igValidationSupport = parser.parseIg(igPack, igpackFilename);
-						validationSupport.addValidationSupport(igValidationSupport);
-					}
+					
 
 					if (theCommandLine.hasOption("r")) {
 						validationSupport.addValidationSupport((IValidationSupport) new LoadingValidationSupportDstu3());

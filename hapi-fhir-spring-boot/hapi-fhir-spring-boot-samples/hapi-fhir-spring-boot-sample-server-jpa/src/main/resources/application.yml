@@ -1,7 +1,15 @@
 spring:
+  server:
+    port: 18080
+  
+  datasource:    
+    url: 'jdbc:postgresql://localhost:5432/drupal_his_db?currentSchema=fhir'
+    username: junphine
+    password: 332584185
+    driverClassName: org.postgresql.Driver
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
     properties:
       hibernate.jdbc.batch_size: 20
       hibernate.cache.use_query_cache: false
@@ -12,18 +20,17 @@ spring:
       hibernate.search.default.indexBase: target/lucenefiles
       hibernate.search.lucene_version: LUCENE_CURRENT
       hibernate.search.model_mapping: ca.uhn.fhir.jpa.search.LuceneSearchMappingFactory
-
+      hibernate.dialect: org.hibernate.dialect.PostgreSQL10Dialect
+      
   main:
      allow-bean-definition-overriding: true
-  h2:
-    console:
-      enabled: true
+
   batch:
     job:
        enabled: false
 hapi:
   fhir:
-    version: DSTU3
+    version: R4
     server:
       path: /fhir/*
     rest:
@@ -39,6 +46,7 @@ hapi:
     jpa:
       scheduling-disabled: true
       subscription-enabled: false
+    filter_search_enabled: false
 management:
   security:
     enabled: false

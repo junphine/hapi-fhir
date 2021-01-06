@@ -168,8 +168,7 @@ public abstract class BaseApp {
 		commands.add(new ValidateCommand());
 		commands.add(new ValidationDataUploader());
 		commands.add(new WebsocketSubscribeCommand());
-		commands.add(new UploadTerminologyCommand());
-		commands.add(new IgPackUploader());
+		commands.add(new UploadTerminologyCommand());		
 		commands.add(new ExportConceptMapToCsvCommand());
 		commands.add(new ImportCsvToConceptMapCommand());
 		commands.add(new HapiFlywayMigrateDatabaseCommand());

@@ -122,7 +122,7 @@
             <groupId>ca.uhn.hapi.fhir</groupId>
             <artifactId>hapi-fhir-testpage-overlay</artifactId>
             <version>${project.version}</version>
-            <classifier>classes</classifier>
+            <!-- <classifier>classes</classifier> -->
 			<!-- <scope>provided</scope> -->
         </dependency>
         

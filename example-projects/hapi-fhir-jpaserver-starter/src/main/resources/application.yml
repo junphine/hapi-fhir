@@ -25,6 +25,10 @@ spring:
       hibernate.search.default.directory_provider: filesystem
       hibernate.search.default.indexBase: target/lucenefiles
       hibernate.search.lucene_version: LUCENE_CURRENT
+      
+  main:
+    allow-bean-definition-overriding: true
+
 
   batch:
     job:

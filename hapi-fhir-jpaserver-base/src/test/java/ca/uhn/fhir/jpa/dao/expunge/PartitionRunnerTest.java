@@ -2,7 +2,7 @@ package ca.uhn.fhir.jpa.dao.expunge;
 
 import ca.uhn.fhir.interceptor.api.HookParams;
 import ca.uhn.fhir.jpa.api.config.DaoConfig;
-import ca.uhn.fhir.jpa.config.TestDstu3Config;
+import ca.uhn.fhir.jpa.config.TestR4Config;
 import ca.uhn.test.concurrency.PointcutLatch;
 import com.google.common.collect.Sets;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {TestDstu3Config.class})
+@ContextConfiguration(classes = {TestR4Config.class})
 public class PartitionRunnerTest {
 	private static final Logger ourLog = LoggerFactory.getLogger(PartitionRunnerTest.class);
 	private static final String EXPUNGE_THREADNAME_1 = "expunge-1";
