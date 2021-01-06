@@ -4,7 +4,7 @@ package ca.uhn.fhir.jpa.dao.index;
  * #%L
  * HAPI FHIR JPA Server
  * %%
- * Copyright (C) 2014 - 2020 University Health Network
+ * Copyright (C) 2014 - 2021 Smile CDR, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import ca.uhn.fhir.context.RuntimeResourceDefinition;
 import ca.uhn.fhir.context.RuntimeSearchParam;
 import ca.uhn.fhir.interceptor.model.RequestPartitionId;
 import ca.uhn.fhir.jpa.api.config.DaoConfig;
+import ca.uhn.fhir.jpa.model.entity.PartitionablePartitionId;
 import ca.uhn.fhir.rest.api.server.storage.TransactionDetails;
 import ca.uhn.fhir.jpa.dao.BaseHapiFhirDao;
 import ca.uhn.fhir.jpa.dao.MatchResourceUrlService;
@@ -99,7 +100,7 @@ public class SearchParamWithInlineReferencesExtractor {
 
 		RequestPartitionId partitionId;
 		if (myPartitionSettings.isPartitioningEnabled()) {
-			partitionId = theEntity.getPartitionId();
+			partitionId = PartitionablePartitionId.toRequestPartitionId(theEntity.getPartitionId());
 		} else {
 			partitionId = RequestPartitionId.allPartitions();
 		}
@@ -206,7 +207,7 @@ public class SearchParamWithInlineReferencesExtractor {
 			for (String nextQueryString : queryStringsToPopulate) {
 				if (isNotBlank(nextQueryString)) {
 					ourLog.trace("Adding composite unique SP: {}", nextQueryString);
-					theParams.myCompositeStringUniques.add(new ResourceIndexedCompositeStringUnique(theEntity, nextQueryString));
+					theParams.myCompositeStringUniques.add(new ResourceIndexedCompositeStringUnique(theEntity, nextQueryString, next.getId()));
 				}
 			}
 		}
@@ -253,7 +254,7 @@ public class SearchParamWithInlineReferencesExtractor {
 				ResourcePersistentId match;
 				if (matches.isEmpty()) {
 
-					Optional<ResourceTable> placeholderOpt = myDaoResourceLinkResolver.createPlaceholderTargetIfConfiguredToDoSo(matchResourceType, nextRef, null);
+					Optional<ResourceTable> placeholderOpt = myDaoResourceLinkResolver.createPlaceholderTargetIfConfiguredToDoSo(matchResourceType, nextRef, null, theRequest);
 					if (placeholderOpt.isPresent()) {
 						match = new ResourcePersistentId(placeholderOpt.get().getResourceId());
 					} else {
@@ -289,7 +290,13 @@ public class SearchParamWithInlineReferencesExtractor {
 				if (myDaoConfig.isUniqueIndexesCheckedBeforeSave()) {
 					ResourceIndexedCompositeStringUnique existing = myResourceIndexedCompositeStringUniqueDao.findByQueryString(next.getIndexString());
 					if (existing != null) {
-						String msg = myContext.getLocalizer().getMessage(BaseHapiFhirDao.class, "uniqueIndexConflictFailure", theEntity.getResourceType(), next.getIndexString(), existing.getResource().getIdDt().toUnqualifiedVersionless().getValue());
+
+						String searchParameterId = "(unknown)";
+						if (next.getSearchParameterId() != null) {
+							searchParameterId = next.getSearchParameterId().toUnqualifiedVersionless().getValue();
+						}
+
+						String msg = myContext.getLocalizer().getMessage(BaseHapiFhirDao.class, "uniqueIndexConflictFailure", theEntity.getResourceType(), next.getIndexString(), existing.getResource().getIdDt().toUnqualifiedVersionless().getValue(), searchParameterId);
 						throw new PreconditionFailedException(msg);
 					}
 				}

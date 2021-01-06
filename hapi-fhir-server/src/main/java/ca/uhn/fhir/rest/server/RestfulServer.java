@@ -4,7 +4,7 @@ package ca.uhn.fhir.rest.server;
  * #%L
  * HAPI FHIR - Server Framework
  * %%
- * Copyright (C) 2014 - 2020 University Health Network
+ * Copyright (C) 2014 - 2021 Smile CDR, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -175,7 +175,7 @@ public class RestfulServer extends HttpServlet implements IRestfulServer<Servlet
 	 * Constructor
 	 */
 	public RestfulServer(FhirContext theCtx) {
-		this(theCtx, new InterceptorService());
+		this(theCtx, new InterceptorService("RestfulServer"));
 	}
 
 	public RestfulServer(FhirContext theCtx, IInterceptorService theInterceptorService)	{
@@ -299,7 +299,11 @@ public class RestfulServer extends HttpServlet implements IRestfulServer<Servlet
 	 * @see #createPoweredByHeader()
 	 */
 	protected String createPoweredByHeaderProductVersion() {
-		return VersionUtil.getVersion();
+		String version = VersionUtil.getVersion();
+		if (VersionUtil.isSnapshot()) {
+			version = version + "/" + VersionUtil.getBuildNumber() + "/" + VersionUtil.getBuildDate();
+		}
+		return version;
 	}
 
 	@Override

@@ -4,7 +4,7 @@ package ca.uhn.fhir.jpa.bulk.job;
  * #%L
  * HAPI FHIR JPA Server
  * %%
- * Copyright (C) 2014 - 2020 University Health Network
+ * Copyright (C) 2014 - 2021 Smile CDR, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,7 +42,7 @@ public class BulkExportJobCloser implements Tasklet {
 	private BulkExportDaoSvc myBulkExportDaoSvc;
 
 	@Override
-	public RepeatStatus execute(StepContribution theStepContribution, ChunkContext theChunkContext) throws Exception {
+	public RepeatStatus execute(StepContribution theStepContribution, ChunkContext theChunkContext) {
 		if (theChunkContext.getStepContext().getStepExecution().getJobExecution().getStatus() == BatchStatus.STARTED) {
 			myBulkExportDaoSvc.setJobToStatus(myJobUUID, BulkJobStatusEnum.COMPLETE);
 		} else {

@@ -47,15 +47,20 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static ca.uhn.fhir.jpa.dao.r4.FhirResourceDaoR4TerminologyTest.URL_MY_CODE_SYSTEM;
 import static ca.uhn.fhir.jpa.dao.r4.FhirResourceDaoR4TerminologyTest.URL_MY_VALUE_SET;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.containsStringIgnoringCase;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.stringContainsInOrder;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -70,7 +75,6 @@ public class ResourceProviderR5ValueSetTest extends BaseResourceProviderR5Test {
 	private IIdType myExtensionalCsId;
 	private IIdType myExtensionalVsId;
 	private IIdType myLocalValueSetId;
-	private Long myExtensionalCsIdOnResourceTable;
 	private Long myExtensionalVsIdOnResourceTable;
 	private ValueSet myLocalVs;
 
@@ -82,11 +86,6 @@ public class ResourceProviderR5ValueSetTest extends BaseResourceProviderR5Test {
 	private void loadAndPersistCodeSystemAndValueSetWithDesignations(HTTPVerb theVerb) throws IOException {
 		loadAndPersistCodeSystemWithDesignations(theVerb);
 		loadAndPersistValueSet(theVerb);
-	}
-
-	private void loadAndPersistCodeSystemAndValueSetWithDesignationsAndExclude(HTTPVerb theVerb) throws IOException {
-		loadAndPersistCodeSystemWithDesignations(theVerb);
-		loadAndPersistValueSetWithExclude(theVerb);
 	}
 
 	private void loadAndPersistCodeSystem(HTTPVerb theVerb) throws IOException {
@@ -123,17 +122,10 @@ public class ResourceProviderR5ValueSetTest extends BaseResourceProviderR5Test {
 			default:
 				throw new IllegalArgumentException("HTTP verb is not supported: " + theVerb);
 		}
-		myExtensionalCsIdOnResourceTable = myCodeSystemDao.readEntity(myExtensionalCsId, null).getId();
 	}
 
 	private void loadAndPersistValueSet(HTTPVerb theVerb) throws IOException {
 		ValueSet valueSet = loadResourceFromClasspath(ValueSet.class, "/extensional-case-3-vs.xml");
-		valueSet.setId("ValueSet/vs");
-		persistValueSet(valueSet, theVerb);
-	}
-
-	private void loadAndPersistValueSetWithExclude(HTTPVerb theVerb) throws IOException {
-		ValueSet valueSet = loadResourceFromClasspath(ValueSet.class, "/extensional-case-3-vs-with-exclude.xml");
 		valueSet.setId("ValueSet/vs");
 		persistValueSet(valueSet, theVerb);
 	}
@@ -306,6 +298,7 @@ public class ResourceProviderR5ValueSetTest extends BaseResourceProviderR5Test {
 		loadAndPersistCodeSystemAndValueSet(HTTPVerb.POST);
 		myTermSvc.preExpandDeferredValueSetsToTerminologyTables();
 
+		List<String> expandedConceptsByValueSetUrl = getExpandedConceptsByValueSetUrl("http://www.healthintersections.com.au/fhir/ValueSet/extensional-case-2");
 		Parameters respParam = myClient
 			.operation()
 			.onInstance(myExtensionalVsId)
@@ -317,6 +310,7 @@ public class ResourceProviderR5ValueSetTest extends BaseResourceProviderR5Test {
 		String resp = myFhirCtx.newXmlParser().setPrettyPrint(true).encodeResourceToString(expanded);
 		ourLog.info(resp);
 
+
 		assertEquals(24, expanded.getExpansion().getTotal());
 		assertEquals(1, expanded.getExpansion().getOffset());
 		assertEquals("offset", expanded.getExpansion().getParameter().get(0).getName());
@@ -324,13 +318,14 @@ public class ResourceProviderR5ValueSetTest extends BaseResourceProviderR5Test {
 		assertEquals("count", expanded.getExpansion().getParameter().get(1).getName());
 		assertEquals(1000, expanded.getExpansion().getParameter().get(1).getValueIntegerType().getValue().intValue());
 		assertEquals(23, expanded.getExpansion().getContains().size());
-		assertEquals("http://acme.org", expanded.getExpansion().getContains().get(0).getSystem());
-		assertEquals("11378-7", expanded.getExpansion().getContains().get(0).getCode());
-		assertEquals("Systolic blood pressure at First encounter", expanded.getExpansion().getContains().get(0).getDisplay());
-		assertEquals("http://acme.org", expanded.getExpansion().getContains().get(1).getSystem());
-		assertEquals("8493-9", expanded.getExpansion().getContains().get(1).getCode());
-		assertEquals("Systolic blood pressure 10 hour minimum", expanded.getExpansion().getContains().get(1).getDisplay());
 
+
+		assertThat(toCodes(expanded), is(equalTo(expandedConceptsByValueSetUrl.subList(1,24))));
+	}
+
+	@Nonnull
+	public List<String> toCodes(ValueSet theExpandedValueSet) {
+		return theExpandedValueSet.getExpansion().getContains().stream().map(t -> t.getCode()).collect(Collectors.toList());
 	}
 
 	@Test
@@ -339,7 +334,7 @@ public class ResourceProviderR5ValueSetTest extends BaseResourceProviderR5Test {
 
 		loadAndPersistCodeSystemAndValueSet(HTTPVerb.POST);
 		myTermSvc.preExpandDeferredValueSetsToTerminologyTables();
-
+		List<String> expandedConcepts = getExpandedConceptsByValueSetUrl("http://www.healthintersections.com.au/fhir/ValueSet/extensional-case-2");
 		Parameters respParam = myClient
 			.operation()
 			.onInstance(myExtensionalVsId)
@@ -358,9 +353,7 @@ public class ResourceProviderR5ValueSetTest extends BaseResourceProviderR5Test {
 		assertEquals("count", expanded.getExpansion().getParameter().get(1).getName());
 		assertEquals(1, expanded.getExpansion().getParameter().get(1).getValueIntegerType().getValue().intValue());
 		assertEquals(1, expanded.getExpansion().getContains().size());
-		assertEquals("http://acme.org", expanded.getExpansion().getContainsFirstRep().getSystem());
-		assertEquals("8450-9", expanded.getExpansion().getContainsFirstRep().getCode());
-		assertEquals("Systolic blood pressure--expiration", expanded.getExpansion().getContainsFirstRep().getDisplay());
+		assertThat(toCodes(expanded), is(equalTo(expandedConcepts.subList(0,1))));
 
 	}
 
@@ -370,6 +363,8 @@ public class ResourceProviderR5ValueSetTest extends BaseResourceProviderR5Test {
 
 		loadAndPersistCodeSystemAndValueSet(HTTPVerb.POST);
 		myTermSvc.preExpandDeferredValueSetsToTerminologyTables();
+
+		List<String> expandedConcepts = getExpandedConceptsByValueSetUrl("http://www.healthintersections.com.au/fhir/ValueSet/extensional-case-2");
 
 		Parameters respParam = myClient
 			.operation()
@@ -390,10 +385,8 @@ public class ResourceProviderR5ValueSetTest extends BaseResourceProviderR5Test {
 		assertEquals("count", expanded.getExpansion().getParameter().get(1).getName());
 		assertEquals(1, expanded.getExpansion().getParameter().get(1).getValueIntegerType().getValue().intValue());
 		assertEquals(1, expanded.getExpansion().getContains().size());
-		assertEquals("http://acme.org", expanded.getExpansion().getContainsFirstRep().getSystem());
-		assertEquals("11378-7", expanded.getExpansion().getContainsFirstRep().getCode());
-		assertEquals("Systolic blood pressure at First encounter", expanded.getExpansion().getContainsFirstRep().getDisplay());
 
+		assertThat(toCodes(expanded), is(equalTo(expandedConcepts.subList(1,2))));
 	}
 
 	@Test
@@ -404,14 +397,14 @@ public class ResourceProviderR5ValueSetTest extends BaseResourceProviderR5Test {
 			.operation()
 			.onInstance(myExtensionalVsId)
 			.named("expand")
-			.withParameter(Parameters.class, "filter", new StringType("first"))
+			.withParameter(Parameters.class, "filter", new StringType("systolic"))
 			.execute();
 		ValueSet expanded = (ValueSet) respParam.getParameter().get(0).getResource();
 
 		String resp = myFhirCtx.newXmlParser().setPrettyPrint(true).encodeResourceToString(expanded);
 		ourLog.info(resp);
 		assertThat(resp, containsString("<display value=\"Systolic blood pressure at First encounter\"/>"));
-		assertThat(resp, not(containsString("<display value=\"Systolic blood pressure--expiration\"/>")));
+		assertThat(resp, not(containsString("\"Foo Code\"")));
 
 	}
 
@@ -426,14 +419,14 @@ public class ResourceProviderR5ValueSetTest extends BaseResourceProviderR5Test {
 			.operation()
 			.onInstance(myExtensionalVsId)
 			.named("expand")
-			.withParameter(Parameters.class, "filter", new StringType("first"))
+			.withParameter(Parameters.class, "filter", new StringType("systolic"))
 			.execute();
 		ValueSet expanded = (ValueSet) respParam.getParameter().get(0).getResource();
 
 		String resp = myFhirCtx.newXmlParser().setPrettyPrint(true).encodeResourceToString(expanded);
 		ourLog.info(resp);
 		assertThat(resp, containsString("<display value=\"Systolic blood pressure at First encounter\"/>"));
-		assertThat(resp, not(containsString("<display value=\"Systolic blood pressure--expiration\"/>")));
+		assertThat(resp, not(containsString("\"Foo Code\"")));
 
 	}
 
@@ -525,6 +518,8 @@ public class ResourceProviderR5ValueSetTest extends BaseResourceProviderR5Test {
 		loadAndPersistCodeSystemAndValueSet(HTTPVerb.POST);
 		myTermSvc.preExpandDeferredValueSetsToTerminologyTables();
 
+		List<String> expandedConcepts = getExpandedConceptsByValueSetUrl("http://www.healthintersections.com.au/fhir/ValueSet/extensional-case-2");
+
 		Parameters respParam = myClient
 			.operation()
 			.onType(ValueSet.class)
@@ -544,13 +539,7 @@ public class ResourceProviderR5ValueSetTest extends BaseResourceProviderR5Test {
 		assertEquals("count", expanded.getExpansion().getParameter().get(1).getName());
 		assertEquals(1000, expanded.getExpansion().getParameter().get(1).getValueIntegerType().getValue().intValue());
 		assertEquals(23, expanded.getExpansion().getContains().size());
-		assertEquals("http://acme.org", expanded.getExpansion().getContains().get(0).getSystem());
-		assertEquals("11378-7", expanded.getExpansion().getContains().get(0).getCode());
-		assertEquals("Systolic blood pressure at First encounter", expanded.getExpansion().getContains().get(0).getDisplay());
-		assertEquals("http://acme.org", expanded.getExpansion().getContains().get(1).getSystem());
-		assertEquals("8493-9", expanded.getExpansion().getContains().get(1).getCode());
-		assertEquals("Systolic blood pressure 10 hour minimum", expanded.getExpansion().getContains().get(1).getDisplay());
-
+		assertThat(toCodes(expanded), is(equalTo(expandedConcepts.subList(1,24))));
 	}
 
 	@Test
@@ -559,6 +548,7 @@ public class ResourceProviderR5ValueSetTest extends BaseResourceProviderR5Test {
 
 		loadAndPersistCodeSystemAndValueSet(HTTPVerb.POST);
 		myTermSvc.preExpandDeferredValueSetsToTerminologyTables();
+		List<String> expandedConcepts = getExpandedConceptsByValueSetUrl("http://www.healthintersections.com.au/fhir/ValueSet/extensional-case-2");
 
 		Parameters respParam = myClient
 			.operation()
@@ -579,10 +569,7 @@ public class ResourceProviderR5ValueSetTest extends BaseResourceProviderR5Test {
 		assertEquals("count", expanded.getExpansion().getParameter().get(1).getName());
 		assertEquals(1, expanded.getExpansion().getParameter().get(1).getValueIntegerType().getValue().intValue());
 		assertEquals(1, expanded.getExpansion().getContains().size());
-		assertEquals("http://acme.org", expanded.getExpansion().getContainsFirstRep().getSystem());
-		assertEquals("8450-9", expanded.getExpansion().getContainsFirstRep().getCode());
-		assertEquals("Systolic blood pressure--expiration", expanded.getExpansion().getContainsFirstRep().getDisplay());
-
+		assertThat(toCodes(expanded), is(equalTo(expandedConcepts.subList(0,1))));
 	}
 
 	@Test
@@ -591,6 +578,8 @@ public class ResourceProviderR5ValueSetTest extends BaseResourceProviderR5Test {
 
 		loadAndPersistCodeSystemAndValueSet(HTTPVerb.POST);
 		myTermSvc.preExpandDeferredValueSetsToTerminologyTables();
+
+		List<String> expandedConcepts = getExpandedConceptsByValueSetUrl("http://www.healthintersections.com.au/fhir/ValueSet/extensional-case-2");
 
 		Parameters respParam = myClient
 			.operation()
@@ -612,9 +601,7 @@ public class ResourceProviderR5ValueSetTest extends BaseResourceProviderR5Test {
 		assertEquals("count", expanded.getExpansion().getParameter().get(1).getName());
 		assertEquals(1, expanded.getExpansion().getParameter().get(1).getValueIntegerType().getValue().intValue());
 		assertEquals(1, expanded.getExpansion().getContains().size());
-		assertEquals("http://acme.org", expanded.getExpansion().getContainsFirstRep().getSystem());
-		assertEquals("11378-7", expanded.getExpansion().getContainsFirstRep().getCode());
-		assertEquals("Systolic blood pressure at First encounter", expanded.getExpansion().getContainsFirstRep().getDisplay());
+		assertThat(toCodes(expanded), is(equalTo(expandedConcepts.subList(1,2))));
 
 	}
 
@@ -694,6 +681,7 @@ public class ResourceProviderR5ValueSetTest extends BaseResourceProviderR5Test {
 
 		ValueSet toExpand = loadResourceFromClasspath(ValueSet.class, "/extensional-case-3-vs.xml");
 
+		List<String> expandedConcepts = getExpandedConceptsByValueSetUrl("http://www.healthintersections.com.au/fhir/ValueSet/extensional-case-2");
 		Parameters respParam = myClient
 			.operation()
 			.onType(ValueSet.class)
@@ -713,12 +701,7 @@ public class ResourceProviderR5ValueSetTest extends BaseResourceProviderR5Test {
 		assertEquals("count", expanded.getExpansion().getParameter().get(1).getName());
 		assertEquals(1000, expanded.getExpansion().getParameter().get(1).getValueIntegerType().getValue().intValue());
 		assertEquals(23, expanded.getExpansion().getContains().size());
-		assertEquals("http://acme.org", expanded.getExpansion().getContains().get(0).getSystem());
-		assertEquals("11378-7", expanded.getExpansion().getContains().get(0).getCode());
-		assertEquals("Systolic blood pressure at First encounter", expanded.getExpansion().getContains().get(0).getDisplay());
-		assertEquals("http://acme.org", expanded.getExpansion().getContains().get(1).getSystem());
-		assertEquals("8493-9", expanded.getExpansion().getContains().get(1).getCode());
-		assertEquals("Systolic blood pressure 10 hour minimum", expanded.getExpansion().getContains().get(1).getDisplay());
+		assertThat(toCodes(expanded), is(equalTo(expandedConcepts.subList(1,24))));
 
 	}
 
@@ -731,6 +714,7 @@ public class ResourceProviderR5ValueSetTest extends BaseResourceProviderR5Test {
 
 		ValueSet toExpand = loadResourceFromClasspath(ValueSet.class, "/extensional-case-3-vs.xml");
 
+		List<String> expandedConcepts = getExpandedConceptsByValueSetUrl("http://www.healthintersections.com.au/fhir/ValueSet/extensional-case-2");
 		Parameters respParam = myClient
 			.operation()
 			.onType(ValueSet.class)
@@ -750,9 +734,7 @@ public class ResourceProviderR5ValueSetTest extends BaseResourceProviderR5Test {
 		assertEquals("count", expanded.getExpansion().getParameter().get(1).getName());
 		assertEquals(1, expanded.getExpansion().getParameter().get(1).getValueIntegerType().getValue().intValue());
 		assertEquals(1, expanded.getExpansion().getContains().size());
-		assertEquals("http://acme.org", expanded.getExpansion().getContainsFirstRep().getSystem());
-		assertEquals("8450-9", expanded.getExpansion().getContainsFirstRep().getCode());
-		assertEquals("Systolic blood pressure--expiration", expanded.getExpansion().getContainsFirstRep().getDisplay());
+		assertThat(toCodes(expanded), is(equalTo(expandedConcepts.subList(0,1))));
 
 	}
 
@@ -765,6 +747,7 @@ public class ResourceProviderR5ValueSetTest extends BaseResourceProviderR5Test {
 
 		ValueSet toExpand = loadResourceFromClasspath(ValueSet.class, "/extensional-case-3-vs.xml");
 
+		List<String> expandedConcepts = getExpandedConceptsByValueSetUrl("http://www.healthintersections.com.au/fhir/ValueSet/extensional-case-2");
 		Parameters respParam = myClient
 			.operation()
 			.onType(ValueSet.class)
@@ -785,10 +768,7 @@ public class ResourceProviderR5ValueSetTest extends BaseResourceProviderR5Test {
 		assertEquals("count", expanded.getExpansion().getParameter().get(1).getName());
 		assertEquals(1, expanded.getExpansion().getParameter().get(1).getValueIntegerType().getValue().intValue());
 		assertEquals(1, expanded.getExpansion().getContains().size());
-		assertEquals("http://acme.org", expanded.getExpansion().getContainsFirstRep().getSystem());
-		assertEquals("11378-7", expanded.getExpansion().getContainsFirstRep().getCode());
-		assertEquals("Systolic blood pressure at First encounter", expanded.getExpansion().getContainsFirstRep().getDisplay());
-
+		assertThat(toCodes(expanded), is(equalTo(expandedConcepts.subList(1,2))));
 	}
 
 	@Test
@@ -1154,67 +1134,17 @@ public class ResourceProviderR5ValueSetTest extends BaseResourceProviderR5Test {
 			assertTrue(optionalValueSetByUrl.isPresent());
 
 			TermValueSet termValueSet = optionalValueSetByUrl.get();
-			assertSame(optionalValueSetByResourcePid.get(), termValueSet);
-			ourLog.info("ValueSet:\n" + termValueSet.toString());
-			assertEquals("http://www.healthintersections.com.au/fhir/ValueSet/extensional-case-2", termValueSet.getUrl());
-			assertEquals(theValueSetName, termValueSet.getName());
-			assertEquals(theCodeSystem.getConcept().size(), termValueSet.getConcepts().size());
-			assertEquals(TermValueSetPreExpansionStatusEnum.EXPANDED, termValueSet.getExpansionStatus());
 
-			TermValueSetConcept concept = termValueSet.getConcepts().get(0);
-			ourLog.info("Concept:\n" + concept.toString());
-			assertEquals("http://acme.org", concept.getSystem());
-			assertEquals("8450-9", concept.getCode());
-			assertEquals("Systolic blood pressure--expiration", concept.getDisplay());
-			assertEquals(2, concept.getDesignations().size());
-			assertEquals(0, concept.getOrder());
+			TermValueSetConcept concept = assertTermValueSetContainsConceptAndIsInDeclaredOrder(termValueSet, "http://acme.org", "8450-9", "Systolic blood pressure--expiration", 2);
+			assertTermConceptContainsDesignation(concept, "nl", "http://snomed.info/sct", "900000000000013009", "Synonym", "Systolische bloeddruk - expiratie");
+			assertTermConceptContainsDesignation(concept, "sv", "http://snomed.info/sct", "900000000000013009", "Synonym", "Systoliskt blodtryck - utgång");
 
-			TermValueSetConceptDesignation designation = concept.getDesignations().get(0);
-			assertEquals("nl", designation.getLanguage());
-			assertEquals("http://snomed.info/sct", designation.getUseSystem());
-			assertEquals("900000000000013009", designation.getUseCode());
-			assertEquals("Synonym", designation.getUseDisplay());
-			assertEquals("Systolische bloeddruk - expiratie", designation.getValue());
+			assertTermValueSetContainsConceptAndIsInDeclaredOrder(termValueSet, "http://acme.org", "11378-7", "Systolic blood pressure at First encounter", 0);
 
-			designation = concept.getDesignations().get(1);
-			assertEquals("sv", designation.getLanguage());
-			assertEquals("http://snomed.info/sct", designation.getUseSystem());
-			assertEquals("900000000000013009", designation.getUseCode());
-			assertEquals("Synonym", designation.getUseDisplay());
-			assertEquals("Systoliskt blodtryck - utgång", designation.getValue());
+			TermValueSetConcept otherConcept = assertTermValueSetContainsConceptAndIsInDeclaredOrder(termValueSet, "http://acme.org", "8491-3", "Systolic blood pressure 1 hour minimum", 1);
+			assertTermConceptContainsDesignation(otherConcept, "nl", "http://snomed.info/sct", "900000000000013009", "Synonym", "Systolische bloeddruk minimaal 1 uur");
 
-			concept = termValueSet.getConcepts().get(1);
-			ourLog.info("Concept:\n" + concept.toString());
-			assertEquals("http://acme.org", concept.getSystem());
-			assertEquals("11378-7", concept.getCode());
-			assertEquals("Systolic blood pressure at First encounter", concept.getDisplay());
-			assertEquals(0, concept.getDesignations().size());
-			assertEquals(1, concept.getOrder());
-
-			// ...
-
-			concept = termValueSet.getConcepts().get(22);
-			ourLog.info("Concept:\n" + concept.toString());
-			assertEquals("http://acme.org", concept.getSystem());
-			assertEquals("8491-3", concept.getCode());
-			assertEquals("Systolic blood pressure 1 hour minimum", concept.getDisplay());
-			assertEquals(1, concept.getDesignations().size());
-			assertEquals(22, concept.getOrder());
-
-			designation = concept.getDesignations().get(0);
-			assertEquals("nl", designation.getLanguage());
-			assertEquals("http://snomed.info/sct", designation.getUseSystem());
-			assertEquals("900000000000013009", designation.getUseCode());
-			assertEquals("Synonym", designation.getUseDisplay());
-			assertEquals("Systolische bloeddruk minimaal 1 uur", designation.getValue());
-
-			concept = termValueSet.getConcepts().get(23);
-			ourLog.info("Concept:\n" + concept.toString());
-			assertEquals("http://acme.org", concept.getSystem());
-			assertEquals("8492-1", concept.getCode());
-			assertEquals("Systolic blood pressure 8 hour minimum", concept.getDisplay());
-			assertEquals(0, concept.getDesignations().size());
-			assertEquals(23, concept.getOrder());
+			assertTermValueSetContainsConceptAndIsInDeclaredOrder(termValueSet, "http://acme.org", "8492-1", "Systolic blood pressure 8 hour minimum", 0);
 		});
 	}
 
@@ -1414,6 +1344,112 @@ public class ResourceProviderR5ValueSetTest extends BaseResourceProviderR5Test {
 			Parameters output = myFhirCtx.newXmlParser().parseResource(Parameters.class, response);
 			assertEquals(false, output.getParameterBool("result"));
 		}
+
+	}
+
+	@Test
+	public void testExpandByValueSetWithFilter() throws IOException {
+		loadAndPersistCodeSystem(HTTPVerb.POST);
+
+		ValueSet toExpand = loadResourceFromClasspath(ValueSet.class, "/extensional-case-3-vs.xml");
+
+		Parameters respParam = myClient
+			.operation()
+			.onType(ValueSet.class)
+			.named("expand")
+			.withParameter(Parameters.class, "valueSet", toExpand)
+			.andParameter("filter", new StringType("blood"))
+			.execute();
+		ValueSet expanded = (ValueSet) respParam.getParameter().get(0).getResource();
+
+		String resp = myFhirCtx.newXmlParser().setPrettyPrint(true).encodeResourceToString(expanded);
+		ourLog.info(resp);
+		assertThat(resp, stringContainsInOrder(
+			"<code value=\"11378-7\"/>",
+			"<display value=\"Systolic blood pressure at First encounter\"/>"));
+
+	}
+
+	@Test
+	public void testExpandByValueSetWithFilterContainsPrefixValue() throws IOException {
+		loadAndPersistCodeSystem(HTTPVerb.POST);
+
+		ValueSet toExpand = loadResourceFromClasspath(ValueSet.class, "/extensional-case-3-vs.xml");
+
+		Parameters respParam = myClient
+			.operation()
+			.onType(ValueSet.class)
+			.named("expand")
+			.withParameter(Parameters.class, "valueSet", toExpand)
+			.andParameter("filter", new StringType("blo"))
+			.execute();
+		ValueSet expanded = (ValueSet) respParam.getParameter().get(0).getResource();
+
+		String resp = myFhirCtx.newXmlParser().setPrettyPrint(true).encodeResourceToString(expanded);
+		ourLog.info(resp);
+		assertThat(resp, stringContainsInOrder("<code value=\"11378-7\"/>", "<display value=\"Systolic blood pressure at First encounter\"/>"));
+	}
+	
+	@Test
+	public void testExpandByValueSetWithFilterContainsNoPrefixValue() throws IOException {
+		loadAndPersistCodeSystem(HTTPVerb.POST);
+
+		ValueSet toExpand = loadResourceFromClasspath(ValueSet.class, "/extensional-case-3-vs.xml");
+
+		Parameters respParam = myClient
+			.operation()
+			.onType(ValueSet.class)
+			.named("expand")
+			.withParameter(Parameters.class, "valueSet", toExpand)
+			.andParameter("filter", new StringType("lood"))
+			.execute();
+		ValueSet expanded = (ValueSet) respParam.getParameter().get(0).getResource();
+
+		String resp = myFhirCtx.newXmlParser().setPrettyPrint(true).encodeResourceToString(expanded);
+		ourLog.info(resp);
+		
+		assertThat(resp, not(stringContainsInOrder("<code value=\"11378-7\"/>","<display value=\"Systolic blood pressure at First encounter\"/>")));
+	}
+	
+	@Test
+	public void testExpandByValueSetWithFilterNotContainsAnyValue() throws IOException {
+		loadAndPersistCodeSystem(HTTPVerb.POST);
+
+		ValueSet toExpand = loadResourceFromClasspath(ValueSet.class, "/extensional-case-3-vs.xml");
+
+		Parameters respParam = myClient
+			.operation()
+			.onType(ValueSet.class)
+			.named("expand")
+			.withParameter(Parameters.class, "valueSet", toExpand)
+			.andParameter("filter", new StringType("loood"))
+			.execute();
+		ValueSet expanded = (ValueSet) respParam.getParameter().get(0).getResource();
+
+		String resp = myFhirCtx.newXmlParser().setPrettyPrint(true).encodeResourceToString(expanded);
+		ourLog.info(resp);
+		
+		assertThat(resp, not(stringContainsInOrder("<code value=\"11378-7\"/>","<display value=\"Systolic blood pressure at First encounter\"/>")));
+	}
+
+	@Test
+	public void testExpandByUrlWithFilter() throws Exception {
+		loadAndPersistCodeSystemAndValueSet(HTTPVerb.POST);
+
+		Parameters respParam = myClient
+			.operation()
+			.onType(ValueSet.class)
+			.named("expand")
+			.withParameter(Parameters.class, "url", new UriType("http://www.healthintersections.com.au/fhir/ValueSet/extensional-case-2"))
+			.andParameter("filter", new StringType("systolic"))
+			.execute();
+		ValueSet expanded = (ValueSet) respParam.getParameter().get(0).getResource();
+
+		String resp = myFhirCtx.newXmlParser().setPrettyPrint(true).encodeResourceToString(expanded);
+		ourLog.info(resp);
+		assertThat(resp, stringContainsInOrder(
+			"<code value=\"11378-7\"/>",
+			"<display value=\"Systolic blood pressure at First encounter\"/>"));
 
 	}
 

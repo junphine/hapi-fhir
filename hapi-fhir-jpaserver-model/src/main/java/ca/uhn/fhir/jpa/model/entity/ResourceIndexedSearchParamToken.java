@@ -4,7 +4,7 @@ package ca.uhn.fhir.jpa.model.entity;
  * #%L
  * HAPI FHIR Model
  * %%
- * Copyright (C) 2014 - 2020 University Health Network
+ * Copyright (C) 2014 - 2021 Smile CDR, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.hibernate.search.annotations.Field;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.FullTextField;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -71,12 +71,14 @@ public class ResourceIndexedSearchParamToken extends BaseResourceIndexedSearchPa
 
 	private static final long serialVersionUID = 1L;
 
-	@Field()
+	@FullTextField
 	@Column(name = "SP_SYSTEM", nullable = true, length = MAX_LENGTH)
 	public String mySystem;
-	@Field()
+
+	@FullTextField
 	@Column(name = "SP_VALUE", nullable = true, length = MAX_LENGTH)
 	private String myValue;
+
 	@SuppressWarnings("unused")
 	@Id
 	@SequenceGenerator(name = "SEQ_SPIDX_TOKEN", sequenceName = "SEQ_SPIDX_TOKEN")
@@ -286,12 +288,27 @@ public class ResourceIndexedSearchParamToken extends BaseResourceIndexedSearchPa
 		return retVal;
 	}
 
+	public static long calculateHashSystem(PartitionSettings thePartitionSettings, PartitionablePartitionId theRequestPartitionId, String theResourceType, String theParamName, String theSystem) {
+		RequestPartitionId requestPartitionId = PartitionablePartitionId.toRequestPartitionId(theRequestPartitionId);
+		return calculateHashSystem(thePartitionSettings, requestPartitionId, theResourceType, theParamName, theSystem);
+	}
+
 	public static long calculateHashSystem(PartitionSettings thePartitionSettings, RequestPartitionId theRequestPartitionId, String theResourceType, String theParamName, String theSystem) {
 		return hash(thePartitionSettings, theRequestPartitionId, theResourceType, theParamName, trim(theSystem));
 	}
 
+	public static long calculateHashSystemAndValue(PartitionSettings thePartitionSettings, PartitionablePartitionId theRequestPartitionId, String theResourceType, String theParamName, String theSystem, String theValue) {
+		RequestPartitionId requestPartitionId = PartitionablePartitionId.toRequestPartitionId(theRequestPartitionId);
+		return calculateHashSystemAndValue(thePartitionSettings, requestPartitionId, theResourceType, theParamName, theSystem, theValue);
+	}
+
 	public static long calculateHashSystemAndValue(PartitionSettings thePartitionSettings, RequestPartitionId theRequestPartitionId, String theResourceType, String theParamName, String theSystem, String theValue) {
 		return hash(thePartitionSettings, theRequestPartitionId, theResourceType, theParamName, defaultString(trim(theSystem)), trim(theValue));
+	}
+
+	public static long calculateHashValue(PartitionSettings thePartitionSettings, PartitionablePartitionId theRequestPartitionId, String theResourceType, String theParamName, String theValue) {
+		RequestPartitionId requestPartitionId = PartitionablePartitionId.toRequestPartitionId(theRequestPartitionId);
+		return calculateHashValue(thePartitionSettings, requestPartitionId, theResourceType, theParamName, theValue);
 	}
 
 	public static long calculateHashValue(PartitionSettings thePartitionSettings, RequestPartitionId theRequestPartitionId, String theResourceType, String theParamName, String theValue) {

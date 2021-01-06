@@ -13,10 +13,14 @@ import ca.uhn.fhir.jpa.bulk.api.IBulkDataExportSvc;
 import ca.uhn.fhir.jpa.config.BaseConfig;
 import ca.uhn.fhir.jpa.dao.index.IdHelperService;
 import ca.uhn.fhir.jpa.entity.TermConcept;
+import ca.uhn.fhir.jpa.entity.TermValueSet;
+import ca.uhn.fhir.jpa.entity.TermValueSetConcept;
+import ca.uhn.fhir.jpa.entity.TermValueSetConceptDesignation;
 import ca.uhn.fhir.jpa.model.util.JpaConstants;
 import ca.uhn.fhir.jpa.partition.IPartitionLookupSvc;
 import ca.uhn.fhir.jpa.provider.r4.SystemProviderR4Test;
 import ca.uhn.fhir.jpa.search.DatabaseBackedPagingProvider;
+import ca.uhn.fhir.jpa.search.HapiLuceneAnalysisConfigurer;
 import ca.uhn.fhir.jpa.search.PersistedJpaBundleProvider;
 import ca.uhn.fhir.jpa.search.cache.ISearchCacheSvc;
 import ca.uhn.fhir.jpa.search.cache.ISearchResultCacheSvc;
@@ -24,6 +28,7 @@ import ca.uhn.fhir.jpa.search.reindex.IResourceReindexingSvc;
 import ca.uhn.fhir.jpa.searchparam.registry.ISearchParamRegistry;
 import ca.uhn.fhir.jpa.subscription.match.registry.SubscriptionLoader;
 import ca.uhn.fhir.jpa.subscription.match.registry.SubscriptionRegistry;
+import ca.uhn.fhir.jpa.term.ValueSetExpansionR4Test;
 import ca.uhn.fhir.jpa.util.CircularQueueCaptureQueriesListener;
 import ca.uhn.fhir.jpa.util.MemoryCacheService;
 
@@ -37,14 +42,18 @@ import ca.uhn.fhir.test.utilities.LoggingExtension;
 import ca.uhn.fhir.test.utilities.ProxyUtil;
 import ca.uhn.fhir.test.utilities.UnregisterScheduledProcessor;
 import ca.uhn.fhir.util.BundleUtil;
+import ca.uhn.fhir.util.FhirVersionIndependentConcept;
 import ca.uhn.fhir.util.StopWatch;
 import ca.uhn.fhir.util.TestUtil;
-import ca.uhn.fhir.util.FhirVersionIndependentConcept;
 import org.apache.commons.io.IOUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.jdbc.Work;
+import org.hibernate.search.backend.lucene.cfg.LuceneBackendSettings;
+import org.hibernate.search.backend.lucene.cfg.LuceneIndexSettings;
+import org.hibernate.search.engine.cfg.BackendSettings;
+import org.hibernate.search.mapper.orm.cfg.HibernateOrmMapperSettings;
 import org.hl7.fhir.common.hapi.validation.validator.FhirInstanceValidator;
 import org.hl7.fhir.dstu3.model.Bundle.BundleEntryComponent;
 import org.hl7.fhir.dstu3.model.Resource;
@@ -62,6 +71,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.domain.Pageable;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -70,21 +80,25 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.io.InputStream;
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static ca.uhn.fhir.util.TestUtil.randomizeLocale;
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.eq;
@@ -112,11 +126,21 @@ public abstract class BaseJpaTest extends BaseTest {
 		TestUtil.setShouldRandomizeTimezones(false);
 	}
 
+	public static Map<?,?> buildHeapLuceneHibernateSearchProperties() {
+		Map<String, String> props = new HashMap<>();
+		props.put(BackendSettings.backendKey(BackendSettings.TYPE), "lucene");
+		props.put(BackendSettings.backendKey(LuceneBackendSettings.ANALYSIS_CONFIGURER), HapiLuceneAnalysisConfigurer.class.getName());
+		props.put(BackendSettings.backendKey(LuceneIndexSettings.DIRECTORY_TYPE), "local-heap");
+		props.put(BackendSettings.backendKey(LuceneBackendSettings.LUCENE_VERSION), "LUCENE_CURRENT");
+		props.put(HibernateOrmMapperSettings.ENABLED, "true");
+		return props;
+	}
+
 	@RegisterExtension
 	public LoggingExtension myLoggingExtension = new LoggingExtension();
 	@Mock(answer = Answers.RETURNS_DEEP_STUBS)
 	protected ServletRequestDetails mySrd;
-	protected InterceptorService myRequestOperationCallback;
+	protected InterceptorService mySrdInterceptorService;
 	@Autowired
 	protected DatabaseBackedPagingProvider myDatabaseBackedPagingProvider;
 	@Autowired
@@ -173,18 +197,13 @@ public abstract class BaseJpaTest extends BaseTest {
 			AtomicBoolean isReadOnly = new AtomicBoolean();
 			Session currentSession;
 			try {
+				assert sessionFactory != null;
 				currentSession = sessionFactory.getCurrentSession();
 			} catch (HibernateException e) {
 				currentSession = null;
 			}
 			if (currentSession != null) {
-				currentSession.doWork(new Work() {
-
-					@Override
-					public void execute(Connection connection) throws SQLException {
-						isReadOnly.set(connection.isReadOnly());
-					}
-				});
+				currentSession.doWork(connection -> isReadOnly.set(connection.isReadOnly()));
 
 				assertFalse(isReadOnly.get());
 			}
@@ -199,12 +218,12 @@ public abstract class BaseJpaTest extends BaseTest {
 	}
 
 	@BeforeEach
-	public void beforeInitMocks() {
-		myRequestOperationCallback = new InterceptorService();
+	public void beforeInitMocks() throws Exception {
+		mySrdInterceptorService = new InterceptorService();
 
 		MockitoAnnotations.initMocks(this);
 
-		when(mySrd.getInterceptorBroadcaster()).thenReturn(myRequestOperationCallback);
+		when(mySrd.getInterceptorBroadcaster()).thenReturn(mySrdInterceptorService);
 		when(mySrd.getUserData()).thenReturn(new HashMap<>());
 		when(mySrd.getHeaders(eq(JpaConstants.HEADER_META_SNAPSHOT_MODE))).thenReturn(new ArrayList<>());
 		when(mySrd.getServer().getDefaultPageSize()).thenReturn(null);
@@ -231,7 +250,7 @@ public abstract class BaseJpaTest extends BaseTest {
 	public void runInTransaction(Runnable theRunnable) {
 		newTxTemplate().execute(new TransactionCallbackWithoutResult() {
 			@Override
-			protected void doInTransactionWithoutResult(TransactionStatus theStatus) {
+			protected void doInTransactionWithoutResult(@Nonnull TransactionStatus theStatus) {
 				theRunnable.run();
 			}
 		});
@@ -250,16 +269,14 @@ public abstract class BaseJpaTest extends BaseTest {
 	/**
 	 * Sleep until at least 1 ms has elapsed
 	 */
-	public void sleepUntilTimeChanges() throws InterruptedException {
+	public void sleepUntilTimeChanges() {
 		StopWatch sw = new StopWatch();
-		while (sw.getMillis() == 0) {
-			Thread.sleep(10);
-		}
+		await().until(() -> sw.getMillis() > 0);
 	}
 
 	protected org.hl7.fhir.dstu3.model.Bundle toBundle(IBundleProvider theSearch) {
 		org.hl7.fhir.dstu3.model.Bundle bundle = new org.hl7.fhir.dstu3.model.Bundle();
-		for (IBaseResource next : theSearch.getResources(0, theSearch.size())) {
+		for (IBaseResource next : theSearch.getResources(0, theSearch.sizeOrThrowNpe())) {
 			bundle.addEntry().setResource((Resource) next);
 		}
 		return bundle;
@@ -267,7 +284,7 @@ public abstract class BaseJpaTest extends BaseTest {
 
 	protected org.hl7.fhir.r4.model.Bundle toBundleR4(IBundleProvider theSearch) {
 		org.hl7.fhir.r4.model.Bundle bundle = new org.hl7.fhir.r4.model.Bundle();
-		for (IBaseResource next : theSearch.getResources(0, theSearch.size())) {
+		for (IBaseResource next : theSearch.getResources(0, theSearch.sizeOrThrowNpe())) {
 			bundle.addEntry().setResource((org.hl7.fhir.r4.model.Resource) next);
 		}
 		return bundle;
@@ -275,11 +292,11 @@ public abstract class BaseJpaTest extends BaseTest {
 
 	@SuppressWarnings({"rawtypes"})
 	protected List toList(IBundleProvider theSearch) {
-		return theSearch.getResources(0, theSearch.size());
+		return theSearch.getResources(0, theSearch.sizeOrThrowNpe());
 	}
 
 	protected List<String> toUnqualifiedIdValues(IBaseBundle theFound) {
-		List<String> retVal = new ArrayList<String>();
+		List<String> retVal = new ArrayList<>();
 
 		List<IBaseResource> res = BundleUtil.toListOfResources(getContext(), theFound);
 		int size = res.size();
@@ -291,8 +308,8 @@ public abstract class BaseJpaTest extends BaseTest {
 	}
 
 	protected List<String> toUnqualifiedIdValues(IBundleProvider theFound) {
-		List<String> retVal = new ArrayList<String>();
-		int size = theFound.size();
+		List<String> retVal = new ArrayList<>();
+		int size = theFound.sizeOrThrowNpe();
 		ourLog.info("Found {} results", size);
 		List<IBaseResource> resources = theFound.getResources(0, size);
 		for (IBaseResource next : resources) {
@@ -302,7 +319,7 @@ public abstract class BaseJpaTest extends BaseTest {
 	}
 
 	protected List<String> toUnqualifiedVersionlessIdValues(IBaseBundle theFound) {
-		List<String> retVal = new ArrayList<String>();
+		List<String> retVal = new ArrayList<>();
 
 		List<IBaseResource> res = BundleUtil.toListOfResources(getContext(), theFound);
 		int size = res.size();
@@ -421,6 +438,7 @@ public abstract class BaseJpaTest extends BaseTest {
 		return retVal.toArray(new String[0]);
 	}
 
+	@SuppressWarnings("BusyWait")
 	protected void waitForActivatedSubscriptionCount(int theSize) throws Exception {
 		for (int i = 0; ; i++) {
 			if (i == 10) {
@@ -465,6 +483,7 @@ public abstract class BaseJpaTest extends BaseTest {
 		return IOUtils.toByteArray(bundleRes);
 	}
 
+	@SuppressWarnings("BusyWait")
 	protected static void purgeDatabase(DaoConfig theDaoConfig, IFhirSystemDao<?, ?> theSystemDao, IResourceReindexingSvc theResourceReindexingSvc, ISearchCoordinatorSvc theSearchCoordinatorSvc, ISearchParamRegistry theSearchParamRegistry, IBulkDataExportSvc theBulkDataExportSvc) {
 		theSearchCoordinatorSvc.cancelAllActiveSearches();
 		theResourceReindexingSvc.cancelAndPurgeAllJobs();
@@ -511,6 +530,7 @@ public abstract class BaseJpaTest extends BaseTest {
 		return retVal;
 	}
 
+	@SuppressWarnings("BusyWait")
 	public static void waitForSize(int theTarget, List<?> theList) {
 		StopWatch sw = new StopWatch();
 		while (theList.size() != theTarget && sw.getMillis() <= 16000) {
@@ -541,6 +561,7 @@ public abstract class BaseJpaTest extends BaseTest {
 		waitForSize(theTarget, 10000, theCallable);
 	}
 
+	@SuppressWarnings("BusyWait")
 	public static void waitForSize(int theTarget, int theTimeout, Callable<Number> theCallable) throws Exception {
 		StopWatch sw = new StopWatch();
 		while (theCallable.call().intValue() != theTarget && sw.getMillis() < theTimeout) {
@@ -560,6 +581,7 @@ public abstract class BaseJpaTest extends BaseTest {
 		waitForSize(theTarget, 10000, theCallable, theFailureMessage);
 	}
 
+	@SuppressWarnings("BusyWait")
 	public static void waitForSize(int theTarget, int theTimeout, Callable<Number> theCallable, Callable<String> theFailureMessage) throws Exception {
 		StopWatch sw = new StopWatch();
 		while (theCallable.call().intValue() != theTarget && sw.getMillis() < theTimeout) {
@@ -574,5 +596,64 @@ public abstract class BaseJpaTest extends BaseTest {
 		}
 		Thread.sleep(500);
 	}
+
+	protected TermValueSetConceptDesignation assertTermConceptContainsDesignation(TermValueSetConcept theConcept, String theLanguage, String theUseSystem, String theUseCode, String theUseDisplay, String theDesignationValue) {
+		Stream<TermValueSetConceptDesignation> stream = theConcept.getDesignations().stream();
+		if (theLanguage != null) {
+			stream = stream.filter(designation -> theLanguage.equalsIgnoreCase(designation.getLanguage()));
+		}
+		if (theUseSystem != null) {
+			stream = stream.filter(designation -> theUseSystem.equalsIgnoreCase(designation.getUseSystem()));
+		}
+		if (theUseCode != null) {
+			stream = stream.filter(designation -> theUseCode.equalsIgnoreCase(designation.getUseCode()));
+		}
+		if (theUseDisplay != null) {
+			stream = stream.filter(designation -> theUseDisplay.equalsIgnoreCase(designation.getUseDisplay()));
+		}
+		if (theDesignationValue != null) {
+			stream = stream.filter(designation -> theDesignationValue.equalsIgnoreCase(designation.getValue()));
+		}
+
+		Optional<TermValueSetConceptDesignation> first = stream.findFirst();
+		if (!first.isPresent()) {
+			String failureMessage = String.format("Concept %s did not contain designation [%s|%s|%s|%s|%s] ", theConcept.toString(), theLanguage, theUseSystem, theUseCode, theUseDisplay, theDesignationValue);
+			fail(failureMessage);
+			return null;
+		} else {
+			return first.get();
+		}
+
+	}
+
+	protected TermValueSetConcept assertTermValueSetContainsConceptAndIsInDeclaredOrder(TermValueSet theValueSet, String theSystem, String theCode, String theDisplay, Integer theDesignationCount) {
+		List<TermValueSetConcept> contains = theValueSet.getConcepts();
+
+		Stream<TermValueSetConcept> stream = contains.stream();
+		if (theSystem != null) {
+			stream = stream.filter(concept -> theSystem.equalsIgnoreCase(concept.getSystem()));
+		}
+		if (theCode != null ) {
+			stream = stream.filter(concept -> theCode.equalsIgnoreCase(concept.getCode()));
+		}
+		if (theDisplay != null){
+			stream = stream.filter(concept -> theDisplay.equalsIgnoreCase(concept.getDisplay()));
+		}
+		if (theDesignationCount != null) {
+			stream = stream.filter(concept -> concept.getDesignations().size() == theDesignationCount);
+		}
+
+		Optional<TermValueSetConcept> first = stream.findFirst();
+		if (!first.isPresent()) {
+			String failureMessage = String.format("Expanded ValueSet %s did not contain concept [%s|%s|%s] with [%d] designations", theValueSet.getId(), theSystem, theCode, theDisplay, theDesignationCount);
+			fail(failureMessage);
+			return null;
+		} else {
+			TermValueSetConcept termValueSetConcept = first.get();
+			assertEquals(termValueSetConcept.getOrder(), theValueSet.getConcepts().indexOf(termValueSetConcept));
+			return termValueSetConcept;
+		}
+	}
+
 
 }

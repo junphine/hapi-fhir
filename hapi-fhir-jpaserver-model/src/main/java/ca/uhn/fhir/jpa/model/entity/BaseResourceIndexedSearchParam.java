@@ -4,7 +4,7 @@ package ca.uhn.fhir.jpa.model.entity;
  * #%L
  * HAPI FHIR Model
  * %%
- * Copyright (C) 2014 - 2020 University Health Network
+ * Copyright (C) 2014 - 2021 Smile CDR, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,18 +20,20 @@ package ca.uhn.fhir.jpa.model.entity;
  * #L%
  */
 
+import ca.uhn.fhir.context.ConfigurationException;
 import ca.uhn.fhir.interceptor.model.RequestPartitionId;
 import ca.uhn.fhir.jpa.model.config.PartitionSettings;
 import ca.uhn.fhir.model.api.IQueryParameterType;
 import ca.uhn.fhir.rest.api.Constants;
+import ca.uhn.fhir.rest.server.exceptions.InternalErrorException;
 import ca.uhn.fhir.util.UrlUtil;
 import com.google.common.base.Charsets;
 import com.google.common.hash.HashCode;
 import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hasher;
 import com.google.common.hash.Hashing;
-import org.hibernate.search.annotations.ContainedIn;
-import org.hibernate.search.annotations.Field;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.FullTextField;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.GenericField;
 
 import javax.annotation.Nullable;
 import javax.persistence.Column;
@@ -58,27 +60,26 @@ public abstract class BaseResourceIndexedSearchParam extends BaseResourceIndex {
 	private static final byte[] DELIMITER_BYTES = "|".getBytes(Charsets.UTF_8);
 	private static final long serialVersionUID = 1L;
 
-	@Field()
+	@GenericField
 	@Column(name = "SP_MISSING", nullable = false)
 	private boolean myMissing = false;
 
-	@Field
+	@FullTextField
 	@Column(name = "SP_NAME", length = MAX_SP_NAME, nullable = false)
 	private String myParamName;
 
 	@ManyToOne(optional = false, fetch = FetchType.LAZY, cascade = {})
 	@JoinColumn(name = "RES_ID", referencedColumnName = "RES_ID", nullable = false)
-	@ContainedIn
 	private ResourceTable myResource;
 
 	@Column(name = "RES_ID", insertable = false, updatable = false, nullable = false)
 	private Long myResourcePid;
 
-	@Field()
+	@FullTextField
 	@Column(name = "RES_TYPE", updatable = false, nullable = false, length = Constants.MAX_RESOURCE_NAME_LENGTH)
 	private String myResourceType;
 
-	@Field()
+	@GenericField
 	@Column(name = "SP_UPDATED", nullable = true) // TODO: make this false after HAPI 2.3
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date myUpdated;
@@ -179,6 +180,11 @@ public abstract class BaseResourceIndexedSearchParam extends BaseResourceIndex {
 		return myModelConfig;
 	}
 
+	public static long calculateHashIdentity(PartitionSettings thePartitionSettings, PartitionablePartitionId theRequestPartitionId, String theResourceType, String theParamName) {
+		RequestPartitionId requestPartitionId = PartitionablePartitionId.toRequestPartitionId(theRequestPartitionId);
+		return calculateHashIdentity(thePartitionSettings, requestPartitionId, theResourceType, theParamName);
+	}
+
 	public static long calculateHashIdentity(PartitionSettings thePartitionSettings, RequestPartitionId theRequestPartitionId, String theResourceType, String theParamName) {
 		return hash(thePartitionSettings, theRequestPartitionId, theResourceType, theParamName);
 	}
@@ -190,8 +196,12 @@ public abstract class BaseResourceIndexedSearchParam extends BaseResourceIndex {
 		Hasher hasher = HASH_FUNCTION.newHasher();
 
 		if (thePartitionSettings.isPartitioningEnabled() && thePartitionSettings.isIncludePartitionInSearchHashes() && theRequestPartitionId != null) {
-			if (theRequestPartitionId.getPartitionId() != null) {
-				hasher.putInt(theRequestPartitionId.getPartitionId());
+			if (theRequestPartitionId.getPartitionIds().size() > 1) {
+				throw new InternalErrorException("Can not search multiple partitions when partitions are included in search hashes");
+			}
+			Integer partitionId = theRequestPartitionId.getFirstPartitionIdOrNull();
+			if (partitionId != null) {
+				hasher.putInt(partitionId);
 			}
 		}
 

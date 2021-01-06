@@ -24,6 +24,7 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.util.AopTestUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,8 +45,9 @@ public class TerminologySvcDeltaR4Test extends BaseJpaR4Test {
 	@AfterEach
 	public void after() {
 		myDaoConfig.setDeferIndexingForCodesystemsOfSize(new DaoConfig().getDeferIndexingForCodesystemsOfSize());
+		TermDeferredStorageSvcImpl termDeferredStorageSvc = AopTestUtils.getTargetObject(myTermDeferredStorageSvc);
+		termDeferredStorageSvc.clearDeferred();
 	}
-
 
 	@Test
 	public void testAddRootConcepts() {
@@ -556,20 +558,27 @@ public class TerminologySvcDeltaR4Test extends BaseJpaR4Test {
 		assertEquals(true, runInTransaction(() -> myTermSvc.findCode("http://foo/cs", "codeAAA").isPresent()));
 
 		// Remove CodeA
+		runInTransaction(()->{
+			ourLog.info("About to remove CodeA. Have codes:\n * {}", myTermConceptDao.findAll().stream().map(t->t.toString()).collect(Collectors.joining("\n * ")));
+		});
+
+
 		myCaptureQueriesListener.clear();
 		runInTransaction(()->{
 			CustomTerminologySet delta2 = new CustomTerminologySet();
 			delta2.addRootConcept("codeA");
 			myTermCodeSystemStorageSvc.applyDeltaCodeSystemsRemove("http://foo/cs", delta2);
 		});
-		myCaptureQueriesListener.logAllQueriesForCurrentThread();
+		myCaptureQueriesListener.logAllQueries();
 
-		ourLog.info("*** Done removing");
+		runInTransaction(()->{
+			ourLog.info("Done removing. Have codes:\n * {}", myTermConceptDao.findAll().stream().map(t->t.toString()).collect(Collectors.joining("\n * ")));
+		});
 
 		assertEquals(false, runInTransaction(() -> myTermSvc.findCode("http://foo/cs", "codeB").isPresent()));
 		assertEquals(false, runInTransaction(() -> myTermSvc.findCode("http://foo/cs", "codeA").isPresent()));
-		assertEquals(false, runInTransaction(() -> myTermSvc.findCode("http://foo/cs", "codeAA").isPresent()));
-		assertEquals(false, runInTransaction(() -> myTermSvc.findCode("http://foo/cs", "codeAAA").isPresent()));
+		assertEquals(false, runInTransaction(() -> myTermSvc.findCode("http://foo/cs", "codeAA").isPresent())); //TODO GGG JA this assert fails. If you swap to `deleteByPid` it does not fail.
+		assertEquals(false, runInTransaction(() -> myTermSvc.findCode("http://foo/cs", "codeAAA").isPresent()));//And I assume this one does too.
 
 	}
 

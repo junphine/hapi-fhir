@@ -6,24 +6,24 @@
 	<groupId>ca.uhn.hapi.fhir</groupId>
 	<artifactId>hapi-fhir</artifactId>
 	<packaging>pom</packaging>
-	<version>5.2.0-SNAPSHOT</version>
+	<version>5.3.0-SNAPSHOT</version>
 	<name>HAPI-FHIR</name>
 	<description>An open-source implementation of the FHIR specification in Java.</description>
 	<url>https://hapifhir.io</url>
 
 	<organization>
-		<name>University Health Network</name>
-		<url>http://www.uhn.ca</url>
+		<name>Smile CDR, Inc.</name>
+		<url>https://smilecdr.com</url>
 	</organization>
 
 	<inceptionYear>2014</inceptionYear>
 
 	<issueManagement>
 		<system>GitHub</system>
-		<url>https://github.com/jamesagnew/hapi-fhir/issues/</url>
+		<url>https://github.com/hapifhir/hapi-fhir/issues/</url>
 	</issueManagement>
 
-	<!-- <distributionManagement>
+	<distributionManagement>
 		<snapshotRepository>
 			<id>ossrh</id>
 			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
@@ -34,14 +34,14 @@
 		</repository>
 		<site>
 			<id>git.server</id>
-			<url>scm:git:git@github.com:jamesagnew/hapi-fhir.git</url>
+			<url>scm:git:git@github.com:hapifhir/hapi-fhir.git</url>
 		</site>
 	</distributionManagement>
- -->
+
 	<scm>
-		<connection>scm:git:git@github.com:jamesagnew/hapi-fhir.git</connection>
-		<url>scm:git:git@github.com:jamesagnew/hapi-fhir.git</url>
-		<developerConnection>scm:git:git@github.com:jamesagnew/hapi-fhir.git</developerConnection>
+		<connection>scm:git:git@github.com:hapifhir/hapi-fhir.git</connection>
+		<url>scm:git:git@github.com:hapifhir/hapi-fhir.git</url>
+		<developerConnection>scm:git:git@github.com:hapifhir/hapi-fhir.git</developerConnection>
 	</scm>
 
 	<repositories>
@@ -102,6 +102,599 @@
 		</dependency>
 	</dependencies>
 
+	<developers>
+		<developer>
+			<id>jamesagnew</id>
+			<name>James Agnew</name>
+			<organization>Smile CDR</organization>
+		</developer>
+		<developer>
+			<id>grahamegrieve</id>
+			<name>Grahame Grieve</name>
+			<organization>Health Intersections</organization>
+		</developer>
+		<developer>
+			<id>dmuylwyk</id>
+			<name>Diederik Muylwyk</name>
+			<organization>Smile CDR</organization>
+		</developer>
+		<developer>
+			<id>fil512</id>
+			<name>Ken Stevens</name>
+			<organization>Smile CDR</organization>
+		</developer>
+		<developer>
+			<id>yogthos</id>
+			<name>Dmitri Sotnikov</name>
+			<organization>University Health Network</organization>
+		</developer>
+		<developer>
+			<id></id>
+			<name>Lisa Wong</name>
+			<organization>University Health Network</organization>
+		</developer>
+		<developer>
+			<id>jmandel</id>
+			<name>Josh Mandel</name>
+			<organization>Boston Children's Hospital</organization>
+		</developer>
+		<developer>
+			<id>lmds</id>
+			<name>Laura MacDougall Sookraj</name>
+			<organization>University Health Network</organization>
+		</developer>
+		<developer>
+			<id>t106uhn</id>
+			<name>Neal Acharya</name>
+			<organization>University Health Network</organization>
+		</developer>
+		<developer>
+			<id>davidhay25</id>
+			<name>David Hay</name>
+			<organization>Orion Health</organization>
+		</developer>
+		<developer>
+			<id>sweetnavelorange</id>
+			<name>James Butler</name>
+			<organization>Orion Health</organization>
+		</developer>
+		<developer>
+			<id>suranga</id>
+			<name>Suranga Nath Kasthurirathne</name>
+			<organization>OpenMRS / Regenstrief Center for Biomedical Informatics</organization>
+		</developer>
+		<developer>
+			<id>dougmartin</id>
+			<name>Doug Martin</name>
+			<organization>Regenstrief Center for Biomedical Informatics</organization>
+		</developer>
+		<developer>
+			<id>akley</id>
+			<name>Alexander Kley</name>
+		</developer>
+		<developer>
+			<id>preston</id>
+			<name>Preston Lee</name>
+			<organization>Arizona State University</organization>
+		</developer>
+		<developer>
+			<id>jjathman</id>
+			<name>Joe Athman</name>
+		</developer>
+		<developer>
+			<id>petromykhailysyn</id>
+			<name>Petro Mykhailyshyn</name>
+		</developer>
+		<developer>
+			<id>tahurac</id>
+			<name>Tahura Chaudhry</name>
+			<organization>University Health Network</organization>
+		</developer>
+		<developer>
+			<id>b.debeaubien</id>
+			<name>Bill de Beaubien</name>
+			<organization>Systems Made Simple</organization>
+		</developer>
+		<developer>
+			<id>twilson650</id>
+			<name>Tom Wilson</name>
+		</developer>
+		<developer>
+			<id>esteban-aliverti</id>
+			<name>Esteban Aliverti</name>
+		</developer>
+		<developer>
+			<id>mochaholic</id>
+			<name>Mohammad Jafari</name>
+			<organization>Edmond Scientific Company</organization>
+		</developer>
+		<developer>
+			<id>joel-costigliola</id>
+			<name>Joel Costigliola</name>
+			<organization>JCOS-Technologies</organization>
+		</developer>
+		<developer>
+			<id>pukkaone</id>
+			<name>Chin Huang</name>
+		</developer>
+		<developer>
+			<id>SingingTree</id>
+			<name>Bryce Van Dyk</name>
+		</developer>
+		<developer>
+			<id>botunge</id>
+			<name>Thomas Andersen</name>
+		</developer>
+		<developer>
+			<id>samlanfranchi</id>
+			<name>Sam Lanfranchi</name>
+		</developer>
+		<developer>
+			<id>jkiddo</id>
+			<name>Jens Kristian Villadsen</name>
+		</developer>
+		<developer>
+			<id>cmikeb1</id>
+			<name>C. Mike Bylund</name>
+		</developer>
+		<developer>
+			<id>nrpeterson</id>
+			<name>Nick Peterson</name>
+		</developer>
+		<developer>
+			<id>petervanhoute</id>
+			<name>Peter Van Houte</name>
+		</developer>
+		<developer>
+			<id>SRiviere</id>
+			<name>Sebastien Riviere</name>
+		</developer>
+		<developer>
+			<id>karlmdavis</id>
+			<name>Karl M. Davis</name>
+			<organization>CMS</organization>
+		</developer>
+		<developer>
+			<id>matt-blanchette</id>
+			<name>Matt Blanchette</name>
+		</developer>
+		<developer>
+			<id>petromykhailysyn</id>
+			<name>Petro Mykhaylyshyn</name>
+		</developer>
+		<developer>
+			<id>adam-carbone</id>
+			<name>Adam Carbone</name>
+		</developer>
+		<developer>
+			<id>joelsch</id>
+			<name>Joel Schneider</name>
+		</developer>
+		<developer>
+			<id>euvitudo</id>
+			<name>Phillip Warner</name>
+		</developer>
+		<developer>
+			<id>subhrajyotim</id>
+			<name>Subhro</name>
+		</developer>
+		<developer>
+			<id>mion00</id>
+			<name>Carlo Mion</name>
+		</developer>
+		<developer>
+			<id>kiwiandroiddev</id>
+			<name>Matt Clarke</name>
+			<organization>Orion Health</organization>
+		</developer>
+		<developer>
+			<id>FilipDomazet</id>
+			<name>Filip Domazet</name>
+		</developer>
+		<developer>
+			<id>bdenton</id>
+			<name>Bill Denton</name>
+			<organization>Akana, Inc</organization>
+		</developer>
+		<developer>
+			<id>hnnesv</id>
+			<name>Hannes Venter</name>
+			<organization>Jembi Health Systems</organization>
+		</developer>
+		<developer>
+			<id>vadi2</id>
+			<name>Vadim Peretokin</name>
+			<organization>Firely</organization>
+		</developer>
+		<developer>
+			<id>lawley</id>
+			<name>Michael Lawley</name>
+			<organization>CSIRO</organization>
+		</developer>
+		<developer>
+			<id>CarthageKing</id>
+			<name>CarthageKing</name>
+		</developer>
+		<developer>
+			<id>gijsbert802</id>
+			<name>Gijsbert van den Brink</name>
+		</developer>
+		<developer>
+			<id>rqg0717</id>
+			<name>James Ren</name>
+		</developer>
+		<developer>
+			<id>Robbert1</id>
+			<name>Robbert van Waveren</name>
+		</developer>
+		<developer>
+			<id>daliboz</id>
+			<name>Jenny Syed</name>
+			<organization>Cerner Corporation</organization>
+		</developer>
+		<developer>
+			<id>sekaijin</id>
+			<name>sekaijin</name>
+		</developer>
+		<developer>
+			<id>hugosoares</id>
+			<name>Hugo Soares</name>
+		</developer>
+		<developer>
+			<id>SRiviere</id>
+			<name>Sebastien Riviere</name>
+		</developer>
+		<developer>
+			<id>jodue</id>
+			<name>jodue</name>
+		</developer>
+		<developer>
+			<id>joelsch</id>
+			<name>Joel Schneider</name>
+			<organization>National Marrow Donor Program</organization>
+		</developer>
+		<developer>
+			<id>dangerousben</id>
+			<name>Ben Spencer</name>
+		</developer>
+		<developer>
+			<id>maclema</id>
+			<name>maclema</name>
+		</developer>
+		<developer>
+			<id>ohr</id>
+			<name>Christian Ohr</name>
+			<organization>InterComponentWare AG</organization>
+		</developer>
+		<developer>
+			<id>eug48</id>
+			<name>Eugene Lubarsky</name>
+		</developer>
+		<developer>
+			<id>SarenCurrie</id>
+			<name>Saren Currie</name>
+		</developer>
+		<developer>
+			<id>dconlan</id>
+			<name>dconlan</name>
+		</developer>
+		<developer>
+			<id>psbrandt</id>
+			<name>Pascal Brandt</name>
+		</developer>
+		<developer>
+			<id>InfiniteLoop90</id>
+			<name>Clayton Bodendein</name>
+		</developer>
+		<developer>
+			<id>rhausam</id>
+			<name>Rob Hausam</name>
+		</developer>
+		<developer>
+			<id>patrick-werner</id>
+			<name>Patrick Werner</name>
+		</developer>
+		<developer>
+			<id>malcolmm83</id>
+			<name>Malcolm McRoberts</name>
+		</developer>
+		<developer>
+			<id>mouellet</id>
+			<name>Mathieu Ouellet</name>
+		</developer>
+		<developer>
+			<id>JiajingLiang</id>
+			<name>Jiajing Liang</name>
+		</developer>
+		<developer>
+			<id>jamesdaily</id>
+			<name>James Daily</name>
+		</developer>
+		<developer>
+			<id>darktyko</id>
+			<name>Kyle Meadows</name>
+		</developer>
+		<developer>
+			<id>Tastelezz</id>
+			<name>Gaetano Gallo</name>
+		</developer>
+		<developer>
+			<id>sjanic</id>
+			<name>sjanic</name>
+		</developer>
+		<developer>
+			<id>c-schuler</id>
+			<name>Chris Schuler</name>
+		</developer>
+		<developer>
+			<id>javajeff</id>
+			<name>Jeff Chung</name>
+		</developer>
+		<developer>
+			<id>anoush-bch</id>
+			<name>Anoush Mouradian</name>
+		</developer>
+		<developer>
+			<id>splatch</id>
+			<name>Łukasz Dywicki</name>
+		</developer>
+		<developer>
+			<id>anthonys123</id>
+			<name>Anthony Sute</name>
+		</developer>
+		<developer>
+			<id>johnpoth</id>
+			<name>John Poth</name>
+			<organization>Red Hat</organization>
+		</developer>
+		<developer>
+			<id>t4deon</id>
+			<name>Andreas Keil</name>
+		</developer>
+		<developer>
+			<id>RuthAlk</id>
+			<name>Ruth Alkema</name>
+		</developer>
+		<developer>
+			<id>Tastelezz</id>
+			<name>Gaetano Gallo</name>
+			<organization>InterComponentWare AG</organization>
+		</developer>
+		<developer>
+			<id>jasonaown</id>
+			<name>Jason Owen</name>
+		</developer>
+		<developer>
+			<id>hdconradi</id>
+			<name>Heinz-Dieter Conradi</name>
+		</developer>
+		<developer>
+			<id>kliu99</id>
+			<name>Kai Liu</name>
+		</developer>
+		<developer>
+			<id>Romanow88</id>
+			<name>Roman Doboni</name>
+		</developer>
+		<developer>
+			<id>franktao2008</id>
+			<name>Frank Tao</name>
+			<organization>Smile CDR</organization>
+		</developer>
+		<developer>
+			<id>anamariaradu10</id>
+			<name>Ana Maria Radu</name>
+			<organization>Cerner Corporation</organization>
+		</developer>
+		<developer>
+			<id>alinleonard</id>
+			<name>Alin Leonard</name>
+			<organization>Cerner Corporation</organization>
+		</developer>
+		<developer>
+			<id>jbalbien</id>
+		</developer>
+		<developer>
+			<id>volsch</id>
+			<name>Volker Schmidt</name>
+			<organization>DHIS2 / University of Oslo</organization>
+		</developer>
+		<developer>
+			<id>magnuswatn</id>
+			<name>Magnus Watn</name>
+		</developer>
+		<developer>
+			<id>Cory00</id>
+		</developer>
+		<developer>
+			<id>srdo</id>
+			<name>Stig Døssing</name>
+		</developer>
+		<developer>
+			<id>ruoat</id>
+			<name>Ari Ruotsalainen</name>
+		</developer>
+		<developer>
+			<id>stevelle</id>
+			<name>Steve Lewis</name>
+			<organization>Cambia Health Solutions</organization>
+		</developer>
+		<developer>
+			<id>restevez-chs</id>
+			<name>Ricardo Estevez</name>
+			<organization>Cambia Health Solutions</organization>
+		</developer>
+		<developer>
+			<id>zilin375</id>
+		</developer>
+		<developer>
+			<id>basecade</id>
+			<name>Anders Havn</name>
+		</developer>
+		<developer>
+			<id>zaewonyx</id>
+		</developer>
+		<developer>
+			<id>tadgh</id>
+			<name>Gary Graham</name>
+			<organization>Smile CDR</organization>
+		</developer>
+		<developer>
+			<id>nerdydrew</id>
+			<name>Drew Mitchell</name>
+		</developer>
+		<developer>
+			<id>srdo</id>
+			<name>Stig Døssing</name>
+		</developer>
+		<developer>
+			<id>gteichrow</id>
+			<name>Gary Teichrow</name>
+		</developer>
+		<developer>
+			<id>sethrylan</id>
+			<name>Seth Rylan Gainey</name>
+			<url>http://sethrylan.org/</url>
+		</developer>
+		<developer>
+			<id>uurl</id>
+			<name>Raul Estrada</name>
+		</developer>
+		<developer>
+			<id>nickrobison-usds</id>
+			<name>Nick Robison</name>
+		</developer>
+		<developer>
+			<id>fitzoh</id>
+			<name>Andrew Fitzgerald</name>
+		</developer>
+		<developer>
+			<id>dmap</id>
+			<name>David Maplesden</name>
+		</developer>
+		<developer>
+			<id>jaferkhan</id>
+			<name>Jafer Khan Shamshad</name>
+		</developer>
+		<developer>
+			<id>CodeAndChoke</id>
+			<name>Long Nguyen</name>
+		</developer>
+		<developer>
+			<id>tuomoa</id>
+			<name>Tuomo Ala-Vannesluoma</name>
+		</developer>
+		<developer>
+			<id>jelmerterwal</id>
+			<name>Jelmer ter Wal</name>
+		</developer>
+		<developer>
+			<id>jiaola</id>
+			<name>Dazhi Jiao</name>
+		</developer>
+		<developer>
+			<id>dionmcm</id>
+		</developer>
+		<developer>
+			<id>ttntrifork</id>
+			<organization>Trifork</organization>
+			<name>Tue Toft Nørgård</name>
+		</developer>
+		<developer>
+			<id>mzgtrifork</id>
+			<organization>Trifork</organization>
+			<name>Martin Zacho Grønhøj</name>
+		</developer>
+		<developer>
+			<id>augla</id>
+			<name>August Langhout</name>
+		</developer>
+		<developer>
+			<id>dgileadi</id>
+			<name>David Gileadi</name>
+		</developer>
+		<developer>
+			<id>ibrohimislam</id>
+			<name>Ibrohim Kholilul Islam</name>
+		</developer>
+		<developer>
+			<id>mkucharek</id>
+			<name>Maciej Kucharek</name>
+		</developer>
+		<developer>
+			<id>Thopap</id>
+			<name>Thomas Papke</name>
+			<organization>InterComponentWare AG</organization>
+		</developer>
+		<developer>
+			<id>Bert-R</id>
+			<name>Bert Roos</name>
+		</developer>
+		<developer>
+			<id>zilin375</id>
+			<name>Zhe Wang</name>
+			<organization>Agfa Healthcare</organization>
+		</developer>
+		<developer>
+			<id>gematik-fue</id>
+			<name>gematik FuE</name>
+		</developer>
+		<developer>
+			<id>ibacher</id>
+			<name>Ian</name>
+		</developer>
+		<developer>
+			<id>jasmdk</id>
+			<name>Jacob Stampe Mikkelsen</name>
+			<organization>Systematik A/S</organization>
+		</developer>
+		<developer>
+			<id>craigappl</id>
+			<name>Craig Appl</name>
+			<organization>ONA</organization>
+		</developer>
+		<developer>
+			<id>IanMMarshall</id>
+			<name>Ian Marshall</name>
+			<organization>Smile CDR</organization>
+		</developer>
+		<developer>
+			<id>markiantorno</id>
+			<name>Mark Iantorno</name>
+			<organization>Smile CDR</organization>
+		</developer>
+		<developer>
+			<id>sqshq</id>
+			<name>Alexander Lukyanchikov</name>
+		</developer>
+		<developer>
+			<id>abrsystematic</id>
+		</developer>
+		<developer>
+			<id>joshdcollins</id>
+			<name>Josh Collins</name>
+			<organization>Janeiro Digital</organization>
+		</developer>
+		<developer>
+			<id>ericprud</id>
+			<name>Eric Prud'hommeaux</name>
+			<organization>Janeiro Digital</organization>
+		</developer>
+		<developer>
+			<id>blangley28</id>
+			<organization>MITRE</organization>
+		</developer>
+		<developer>
+			<id>swagers</id>
+			<name>Steven Wagers</name>
+			<organization>Regenstrief Institute</organization>
+		</developer>
+		<developer>
+			<id>vladonemo</id>
+			<name>Vladimir Nemergut</name>
+		</developer>
+	</developers>
+
 	<licenses>
 		<license>
 			<name>Apache Software License 2.0</name>
@@ -111,7 +704,7 @@
 
 	<properties>
 
-		<fhir_core_version>5.1.0</fhir_core_version>
+		<fhir_core_version>5.2.0</fhir_core_version>
 		<ucum_version>1.0.3</ucum_version>
 
 		<surefire_jvm_args>-Dfile.encoding=UTF-8 -Xmx2048m</surefire_jvm_args>
@@ -127,7 +720,7 @@
 
 		<!-- Dependency Versions -->
 		<activation_api_version>1.2.0</activation_api_version>
-		<apache_karaf_version>4.0.2</apache_karaf_version>
+		<apache_karaf_version>4.2.5</apache_karaf_version>
 		<aries_spifly_version>1.2</aries_spifly_version>
 		<caffeine_version>2.7.0</caffeine_version>
 		<commons_codec_version>1.14</commons_codec_version>
@@ -140,27 +733,27 @@
 		<error_prone_annotations_version>2.3.4</error_prone_annotations_version>
 		<error_prone_core_version>2.3.4</error_prone_core_version>
 		<nullaway_version>0.7.9</nullaway_version>
-		<guava_version>28.0-jre</guava_version>
+		<guava_version>29.0-jre</guava_version>
 		<gson_version>2.8.5</gson_version>
 		<jaxb_bundle_version>2.2.11_1</jaxb_bundle_version>
 		<jaxb_api_version>2.3.1</jaxb_api_version>
 		<jaxb_core_version>2.3.0.1</jaxb_core_version>
 		<jaxb_runtime_version>2.3.1</jaxb_runtime_version>
 		<jena_version>3.16.0</jena_version>
-		<jersey_version>2.26</jersey_version>
+		<jersey_version>2.25.1</jersey_version>
 		<!-- 9.4.17 seems to have issues -->
-		<jetty_version>9.4.25.v20191220</jetty_version>
+		<jetty_version>9.4.35.v20201120</jetty_version>
 		<jsr305_version>3.0.2</jsr305_version>
-		<junit_version>5.6.2</junit_version>
+		<junit_version>5.7.0</junit_version>
 		<flyway_version>6.5.4</flyway_version>
-		<!--<hibernate_version>5.2.10.Final</hibernate_version>-->
-		<hibernate_version>5.4.14.Final</hibernate_version>
+		<hibernate_version>5.4.26.Final</hibernate_version>
+		<hibernate_search_version>6.0.0.Final</hibernate_search_version>
 		<!-- Update lucene version when you update hibernate-search version -->
-		<hibernate_search_version>5.11.5.Final</hibernate_search_version>
-		<lucene_version>5.5.5</lucene_version>
+		<lucene_version>8.7.0</lucene_version>
+		<hamcrest_version>2.2</hamcrest_version>
 		<hibernate_validator_version>6.1.5.Final</hibernate_validator_version>
 		<httpcore_version>4.4.13</httpcore_version>
-		<httpclient_version>4.5.12</httpclient_version>
+		<httpclient_version>4.5.13</httpclient_version>
 		<jackson_version>2.11.2</jackson_version>
 		<jackson_databind_version>2.11.2</jackson_databind_version>
 		<maven_assembly_plugin_version>3.1.0</maven_assembly_plugin_version>
@@ -168,17 +761,18 @@
 		<resteasy_version>4.0.0.Beta3</resteasy_version>
 		<ph_schematron_version>5.2.0</ph_schematron_version>
 		<ph_commons_version>9.3.8</ph_commons_version>
-		<plexus_compiler_api_version>2.8.5</plexus_compiler_api_version>
+		<plexus_compiler_api_version>2.8.8</plexus_compiler_api_version>
 		<servicemix_saxon_version>9.8.0-15</servicemix_saxon_version>
 		<servicemix_xmlresolver_version>1.2_5</servicemix_xmlresolver_version>
-		<slf4j_version>1.7.28</slf4j_version>
-		<spring_version>5.2.3.RELEASE</spring_version>
+		<slf4j_version>1.7.30</slf4j_version>
+		<log4j_to_slf4j_version>2.11.1</log4j_to_slf4j_version>
+		<spring_version>5.3.2</spring_version>
 		<!-- FYI: Spring Data JPA 2.1.9 causes test failures due to unexpected cascading deletes -->
-		<spring_data_version>2.2.0.RELEASE</spring_data_version>
+		<spring_data_version>2.4.2</spring_data_version>
 		<spring_batch_version>4.2.3.RELEASE</spring_batch_version>
-		<spring_boot_version>2.2.6.RELEASE</spring_boot_version>
-		<spring_retry_version>1.2.2.RELEASE</spring_retry_version>			
-  		<spring_security_version>5.2.2.RELEASE</spring_security_version>
+		<spring_boot_version>2.4.1</spring_boot_version>
+		<spring_retry_version>1.2.2.RELEASE</spring_retry_version>
+
 		<stax2_api_version>3.1.4</stax2_api_version>
 		<thymeleaf-version>3.0.11.RELEASE</thymeleaf-version>
 		<woodstox_core_asl_version>4.4.1</woodstox_core_asl_version>
@@ -495,7 +1089,7 @@
 			<dependency>
 				<groupId>net.ttddyy</groupId>
 				<artifactId>datasource-proxy</artifactId>
-				<version>1.5.1</version>
+				<version>1.7</version>
 			</dependency>
 			<dependency>
 				<groupId>org.antlr</groupId>
@@ -576,12 +1170,12 @@
 			</dependency>
 			<dependency>
 				<groupId>org.apache.lucene</groupId>
-				<artifactId>lucene-highlighter</artifactId>
+				<artifactId>lucene-analyzers-phonetic</artifactId>
 				<version>${lucene_version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.lucene</groupId>
-				<artifactId>lucene-analyzers-phonetic</artifactId>
+				<artifactId>lucene-backward-codecs</artifactId>
 				<version>${lucene_version}</version>
 			</dependency>
 			<dependency>
@@ -660,9 +1254,9 @@
 				<version>3.1.0</version>
 			</dependency>
 			<dependency>
-				<groupId>org.codehaus.woodstox</groupId>
-				<artifactId>woodstox-core-asl</artifactId>
-				<version>${woodstox_core_asl_version}</version>
+				<groupId>com.fasterxml.woodstox</groupId>
+				<artifactId>woodstox-core</artifactId>
+				<version>6.2.3</version>
 			</dependency>
 			<dependency>
 				<groupId>org.ebaysf.web</groupId>
@@ -740,6 +1334,12 @@
 				<version>${ucum_version}</version>
 			</dependency>
 			<dependency>
+				<groupId>org.rauschig</groupId>
+				<artifactId>jarchivelib</artifactId>
+				<version>1.0.0</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
 				<groupId>org.fusesource.jansi</groupId>
 				<artifactId>jansi</artifactId>
 				<version>1.18</version>
@@ -794,16 +1394,10 @@
 				<artifactId>jscience</artifactId>
 				<version>4.3.1</version>
 			</dependency>
-			<!-- TODO: remove this once we're fully switched over to hamcrest 2.2 -->
-			<dependency>
-				<groupId>org.hamcrest</groupId>
-				<artifactId>java-hamcrest</artifactId>
-				<version>2.0.0.0</version>
-			</dependency>
 			<dependency>
 				<groupId>org.hamcrest</groupId>
 				<artifactId>hamcrest</artifactId>
-				<version>2.2</version>
+				<version>${hamcrest_version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.hibernate</groupId>
@@ -831,18 +1425,34 @@
 				<version>${hibernate_validator_version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.hibernate</groupId>
-				<artifactId>hibernate-search-orm</artifactId>
+				<groupId>org.apache.logging.log4j</groupId>
+				<artifactId>log4j-to-slf4j</artifactId>
+				<version>${log4j_to_slf4j_version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.hibernate.search</groupId>
+				<artifactId>hibernate-search-mapper-orm</artifactId>
+				<version>${hibernate_search_version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>org.apache.logging.log4j</groupId>
+						<artifactId>log4j-api</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>org.elasticsearch.client</groupId>
+				<artifactId>elasticsearch-rest-high-level-client</artifactId>
+				<version>7.10.0</version>
+			</dependency>
+			<dependency>
+				<groupId>org.hibernate.search</groupId>
+				<artifactId>hibernate-search-backend-elasticsearch</artifactId>
 				<version>${hibernate_search_version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.hibernate</groupId>
-				<artifactId>hibernate-search-elasticsearch</artifactId>
-				<version>${hibernate_search_version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.hibernate</groupId>
-				<artifactId>hibernate-search-engine</artifactId>
+				<groupId>org.hibernate.search</groupId>
+				<artifactId>hibernate-search-backend-lucene</artifactId>
 				<version>${hibernate_search_version}</version>
 			</dependency>
 			<dependency>
@@ -875,6 +1485,11 @@
 				<scope>test</scope>
 			</dependency>
 			<dependency>
+				<groupId>org.junit-pioneer</groupId>
+				<artifactId>junit-pioneer</artifactId>
+				<version>1.1.0</version>
+			</dependency>
+			<dependency>
 				<groupId>org.mariadb.jdbc</groupId>
 				<artifactId>mariadb-java-client</artifactId>
 				<version>2.5.1</version>
@@ -882,7 +1497,7 @@
 			<dependency>
 				<groupId>org.mockito</groupId>
 				<artifactId>mockito-core</artifactId>
-				<version>3.3.3</version>
+				<version>3.6.28</version>
 			</dependency>
 			<dependency>
 				<groupId>org.mockito</groupId>
@@ -892,7 +1507,7 @@
 			<dependency>
 				<groupId>org.postgresql</groupId>
 				<artifactId>postgresql</artifactId>
-				<version>42.2.9</version>
+				<version>42.2.18</version>
 			</dependency>
 			<dependency>
 				<groupId>org.quartz-scheduler</groupId>
@@ -912,6 +1527,11 @@
 			<dependency>
 				<groupId>org.slf4j</groupId>
 				<artifactId>jcl-over-slf4j</artifactId>
+				<version>${slf4j_version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>log4j-over-slf4j</artifactId>
 				<version>${slf4j_version}</version>
 			</dependency>
 			<dependency>
@@ -1066,9 +1686,22 @@
 				<version>2.4.0</version>
 			</dependency>
 			<dependency>
-				<groupId>pl.allegro.tech</groupId>
-				<artifactId>embedded-elasticsearch</artifactId>
-				<version>2.10.0</version>
+				<groupId>org.testcontainers</groupId>
+				<artifactId>testcontainers</artifactId>
+				<version>1.15.1</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.testcontainers</groupId>
+				<artifactId>elasticsearch</artifactId>
+				<version>1.15.1</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.testcontainers</groupId>
+				<artifactId>junit-jupiter</artifactId>
+				<version>1.15.1</version>
+				<scope>test</scope>
 			</dependency>
 			<dependency>
 				<groupId>xpp3</groupId>
@@ -1133,7 +1766,7 @@
 					<artifactId>gemnasium-maven-plugin</artifactId>
 					<version>0.2.0</version>
 					<configuration>
-						<projectSlug>github.com/jamesagnew/hapi-fhir</projectSlug>
+						<projectSlug>github.com/hapifhir/hapi-fhir</projectSlug>
 					</configuration>
 				</plugin>
 				<plugin>
@@ -1185,7 +1818,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-dependency-plugin</artifactId>
-					<version>3.0.2</version>
+					<version>3.1.2</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -1215,7 +1848,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-failsafe-plugin</artifactId>
-					<version>3.0.0-M4</version>
+					<version>3.0.0-M5</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -1242,7 +1875,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-surefire-plugin</artifactId>
-					<version>3.0.0-M3</version>
+					<version>3.0.0-M5</version>
 					<configuration>
 						<redirectTestOutputToFile>true</redirectTestOutputToFile>
 						<runOrder>random</runOrder>
@@ -1498,8 +2131,8 @@
 								<copy todir="target/site/apidocs-jpaserver">
 									<fileset dir="hapi-fhir-jpaserver-base/target/site/apidocs"/>
 								</copy>
-								<copy todir="target/site/apidocs-jpaserver-empi">
-									<fileset dir="hapi-fhir-jpaserver-empi/target/site/apidocs"/>
+								<copy todir="target/site/apidocs-jpaserver-mdm">
+									<fileset dir="hapi-fhir-jpaserver-mdm/target/site/apidocs"/>
 								</copy>
 								<copy todir="target/site/apidocs-jpaserver-batch">
 									<fileset dir="hapi-fhir-jpaserver-batch/target/site/apidocs"/>
@@ -1510,8 +2143,8 @@
 								<copy todir="target/site/apidocs-server">
 									<fileset dir="hapi-fhir-server/target/site/apidocs"/>
 								</copy>
-								<copy todir="target/site/apidocs-server-empi">
-									<fileset dir="hapi-fhir-server-empi/target/site/apidocs"/>
+								<copy todir="target/site/apidocs-server-mdm">
+									<fileset dir="hapi-fhir-server-mdm/target/site/apidocs"/>
 								</copy>
 								<copy todir="target/site/xref-jpaserver">
 									<fileset dir="hapi-fhir-jpaserver-base/target/site/xref"/>
@@ -1597,9 +2230,9 @@
 								<replace dir="target/site" summary="true">
 									<include name="*.html"/>
 									<replacetoken>
-										<![CDATA[<a href="https://github.com/jamesagnew/hapi-fhir/" title="GitHub Project" class="externalLink">GitHub Project</a>]]></replacetoken>
+										<![CDATA[<a href="https://github.com/hapifhir/hapi-fhir/" title="GitHub Project" class="externalLink">GitHub Project</a>]]></replacetoken>
 									<replacevalue>
-										<![CDATA[<a href="https://github.com/jamesagnew/hapi-fhir/" title="GitHub Project"  class="externalLink"><i class="fa fa-github"></i> GitHub Project</a>]]></replacevalue>
+										<![CDATA[<a href="https://github.com/hapifhir/hapi-fhir/" title="GitHub Project"  class="externalLink"><i class="fa fa-github"></i> GitHub Project</a>]]></replacevalue>
 								</replace>
 								<replace dir="target/site" summary="true">
 									<include name="*.html"/>
@@ -1729,7 +2362,7 @@
 					<content>\${siteMainDirectory}</content>
 					<tryUpdate>true</tryUpdate>
 					<scmBranch>gh-pages</scmBranch>
-					<pubScmUrl>scm:git:git@github.com:jamesagnew/hapi-fhir.git</pubScmUrl>
+					<pubScmUrl>scm:git:git@github.com:hapifhir/hapi-fhir.git</pubScmUrl>
 				</configuration>
 				<executions>
 					<execution>
@@ -1776,7 +2409,7 @@
 				<configuration>
 					<feedType>atom_1.0</feedType>
 					<issueLinkTemplatePerSystem>
-						<default>https://github.com/jamesagnew/hapi-fhir/issues/%ISSUE%</default>
+						<default>https://github.com/hapifhir/hapi-fhir/issues/%ISSUE%</default>
 					</issueLinkTemplatePerSystem>
 					<escapeHTML>false</escapeHTML>
 				</configuration>
@@ -1917,26 +2550,21 @@
 				<module>hapi-tinder-test</module>
 				<module>hapi-fhir-client</module>
 				<module>hapi-fhir-server</module>
-				<module>hapi-fhir-server-empi</module>
+				<module>hapi-fhir-server-mdm</module>
 				<module>hapi-fhir-converter</module>
 				<module>hapi-fhir-validation</module>
 				<!--<module>hapi-fhir-narrativegenerator</module>-->
-				
-				<!-- 
 				<module>hapi-fhir-structures-dstu2</module>
 				<module>hapi-fhir-structures-hl7org-dstu2</module>
 				<module>hapi-fhir-validation-resources-dstu2</module>
 				<module>hapi-fhir-structures-dstu2.1</module>
 				<module>hapi-fhir-validation-resources-dstu2.1</module>
 				<module>hapi-fhir-structures-dstu3</module>
-				<module>hapi-fhir-validation-resources-dstu3</module> 
-				-->
+				<module>hapi-fhir-validation-resources-dstu3</module>
 				<module>hapi-fhir-structures-r4</module>
 				<module>hapi-fhir-validation-resources-r4</module>
 				<module>hapi-fhir-structures-r5</module>
 				<module>hapi-fhir-validation-resources-r5</module>
-				<module>hapi-fhir-igpacks</module>
-				<module>hapi-fhir-elasticsearch-6</module>
 				<module>hapi-fhir-jpaserver-api</module>
 				<module>hapi-fhir-jpaserver-model</module>
 				<module>hapi-fhir-jpaserver-searchparam</module>
@@ -1945,14 +2573,14 @@
 				<module>hapi-fhir-jaxrsserver-example</module>
 				<module>hapi-fhir-jpaserver-batch</module>
 				<module>hapi-fhir-jpaserver-base</module>
-				<module>hapi-fhir-jpaserver-empi</module>
 				<module>hapi-fhir-jpaserver-migrate</module>
+				<module>hapi-fhir-jpaserver-mdm</module>
 				<module>restful-server-example</module>
 				<module>hapi-fhir-testpage-overlay</module>
 				<module>hapi-fhir-jpaserver-uhnfhirtest</module>
 				<module>hapi-fhir-client-okhttp</module>
 				<module>hapi-fhir-android</module>
-				<!-- <module>hapi-fhir-cli</module> -->
+				<module>hapi-fhir-cli</module>
 				<module>hapi-fhir-dist</module>
 				<!--<module>osgi</module>-->
 				<!--<module>osgi/hapi-fhir-karaf-features</module>
@@ -1964,11 +2592,9 @@
 				<module>example-projects/hapi-fhir-jpaserver-dynamic</module>
 				<module>example-projects/hapi-fhir-jpaserver-example-postgres</module>
 				-->
-				<!-- 
 				<module>tests/hapi-fhir-base-test-jaxrsserver-kotlin</module>
 				<module>tests/hapi-fhir-base-test-mindeps-client</module>
 				<module>tests/hapi-fhir-base-test-mindeps-server</module>
-				-->
 				<module>hapi-fhir-spring-boot</module>
 				<!--<module>hapi-fhir-osgi-core</module>-->
 			</modules>
@@ -2076,28 +2702,6 @@
 								</path>
 							</annotationProcessorPaths>
 						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-		<profile>
-			<id>OWASP</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.owasp</groupId>
-						<artifactId>dependency-check-maven</artifactId>
-						<version>6.0.2</version>
-						<configuration>
-							<failBuildOnCVSS>7</failBuildOnCVSS>
-						</configuration>
-						<executions>
-							<execution>
-								<goals>
-									<goal>check</goal>
-								</goals>
-							</execution>
-						</executions>
 					</plugin>
 				</plugins>
 			</build>

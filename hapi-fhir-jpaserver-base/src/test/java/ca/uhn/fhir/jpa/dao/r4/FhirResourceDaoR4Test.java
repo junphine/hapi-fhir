@@ -1,11 +1,12 @@
 package ca.uhn.fhir.jpa.dao.r4;
 
+import ca.uhn.fhir.interceptor.model.RequestPartitionId;
 import ca.uhn.fhir.jpa.api.config.DaoConfig;
 import ca.uhn.fhir.jpa.api.dao.IFhirResourceDao;
 import ca.uhn.fhir.jpa.dao.BaseHapiFhirDao;
 import ca.uhn.fhir.jpa.dao.BaseHapiFhirResourceDao;
 import ca.uhn.fhir.jpa.dao.JpaResourceDao;
-import ca.uhn.fhir.jpa.entity.Search;
+import ca.uhn.fhir.jpa.entity.TermConcept;
 import ca.uhn.fhir.jpa.model.entity.ResourceEncodingEnum;
 import ca.uhn.fhir.jpa.model.entity.ResourceHistoryTable;
 import ca.uhn.fhir.jpa.model.entity.ResourceIndexedSearchParamString;
@@ -49,6 +50,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.hamcrest.Matchers;
 import org.hamcrest.core.StringContains;
+import org.hibernate.search.mapper.orm.Search;
+import org.hibernate.search.mapper.orm.session.SearchSession;
 import org.hl7.fhir.instance.model.api.IAnyResource;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.instance.model.api.IIdType;
@@ -124,6 +127,7 @@ import java.util.concurrent.Future;
 import static org.apache.commons.lang3.StringUtils.countMatches;
 import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.containsString;
@@ -285,8 +289,42 @@ public class FhirResourceDaoR4Test extends BaseJpaR4Test {
 			assertEquals(BaseHapiFhirDao.INDEX_STATUS_INDEXED, tableOpt.get().getIndexStatus().longValue());
 			assertThat(myResourceIndexedSearchParamTokenDao.countForResourceId(id1.getIdPartAsLong()), not(greaterThan(0)));
 		});
+	}
+
+	@Test
+	public void testTermConceptReindexingDoesntDuplicateData() {
+		myDaoConfig.setSchedulingDisabled(true);
 
 
+		CodeSystem cs = new CodeSystem();
+		cs.setId("nhin-use");
+		cs.setUrl("http://zoop.com");
+		cs.setContent(CodeSystem.CodeSystemContentMode.COMPLETE);
+		cs.addConcept().setCode("zoop1").setDisplay("zoop_disp1").setDefinition("zoop_defi1");
+		cs.addConcept().setCode("zoop2").setDisplay("zoop_disp2").setDefinition("zoop_defi2");
+		cs.addConcept().setCode("zoop3").setDisplay("zoop_disp3").setDefinition("zoop_defi3");
+
+		IIdType id1 = myCodeSystemDao.create(cs).getId().toUnqualifiedVersionless();
+
+		runInTransaction(() -> {
+			assertEquals(3L, myTermConceptDao.count());
+
+			SearchSession session = Search.session(myEntityManager);
+			List<TermConcept> termConcepts = session.search(TermConcept.class).where(f -> f.matchAll()).fetchAllHits();
+			assertEquals(3, termConcepts.size());
+		});
+
+		myResourceReindexingSvc.markAllResourcesForReindexing();
+		myResourceReindexingSvc.forceReindexingPass();
+		myTerminologyDeferredStorageSvc.saveAllDeferred();
+
+		runInTransaction(() -> {
+			assertEquals(3L, myTermConceptDao.count());
+
+			SearchSession session = Search.session(myEntityManager);
+			List<TermConcept> termConcepts = session.search(TermConcept.class).where(f -> f.matchAll()).fetchAllHits();
+			assertEquals(3, termConcepts.size());
+		});
 	}
 
 	@Test
@@ -2963,21 +3001,82 @@ public class FhirResourceDaoR4Test extends BaseJpaR4Test {
 			assertTrue(next.getResource().getIdElement().hasIdPart());
 		}
 	}
-
+	
 	@Test()
 	public void testSortByComposite() {
-		Observation o = new Observation();
-		o.getCode().setText("testSortByComposite");
-		myObservationDao.create(o, mySrd);
+		
+		IIdType pid0;
+		IIdType oid1;
+		IIdType oid2;
+		IIdType oid3;
+		IIdType oid4;
+		{
+			Patient patient = new Patient();
+			patient.addIdentifier().setSystem("urn:system").setValue("001");
+			patient.addName().setFamily("Tester").addGiven("Joe");
+			pid0 = myPatientDao.create(patient, mySrd).getId().toUnqualifiedVersionless();
+		}
+		{
+			Observation obs = new Observation();
+			obs.addIdentifier().setSystem("urn:system").setValue("FOO");
+			obs.getSubject().setReferenceElement(pid0);
+			obs.getCode().addCoding().setCode("2345-7").setSystem("http://loinc.org");
+			obs.setValue(new StringType("200"));
+			
+			oid1 = myObservationDao.create(obs, mySrd).getId().toUnqualifiedVersionless();
+			
+			ourLog.info("Observation: \n" + myFhirCtx.newJsonParser().setPrettyPrint(true).encodeResourceToString(obs));
+		}
+		
+		{
+			Observation obs = new Observation();
+			obs.addIdentifier().setSystem("urn:system").setValue("FOO");
+			obs.getSubject().setReferenceElement(pid0);
+			obs.getCode().addCoding().setCode("2345-7").setSystem("http://loinc.org");
+			obs.setValue(new StringType("300"));
+			
+			oid2 = myObservationDao.create(obs, mySrd).getId().toUnqualifiedVersionless();
+			
+			ourLog.info("Observation: \n" + myFhirCtx.newJsonParser().setPrettyPrint(true).encodeResourceToString(obs));
+		}
+		
+		{
+			Observation obs = new Observation();
+			obs.addIdentifier().setSystem("urn:system").setValue("FOO");
+			obs.getSubject().setReferenceElement(pid0);
+			obs.getCode().addCoding().setCode("2345-7").setSystem("http://loinc.org");
+			obs.setValue(new StringType("150"));
+			
+			oid3 = myObservationDao.create(obs, mySrd).getId().toUnqualifiedVersionless();
+			
+			ourLog.info("Observation: \n" + myFhirCtx.newJsonParser().setPrettyPrint(true).encodeResourceToString(obs));
+		}
+		
+		{
+			Observation obs = new Observation();
+			obs.addIdentifier().setSystem("urn:system").setValue("FOO");
+			obs.getSubject().setReferenceElement(pid0);
+			obs.getCode().addCoding().setCode("2345-7").setSystem("http://loinc.org");
+			obs.setValue(new StringType("250"));
+			
+			oid4 = myObservationDao.create(obs, mySrd).getId().toUnqualifiedVersionless();
+			
+			ourLog.info("Observation: \n" + myFhirCtx.newJsonParser().setPrettyPrint(true).encodeResourceToString(obs));
+		}
+
 
 		SearchParameterMap pm = new SearchParameterMap();
-		pm.setSort(new SortSpec(Observation.SP_CODE_VALUE_CONCEPT));
-		try {
-			myObservationDao.search(pm).size();
-			fail();
-		} catch (InvalidRequestException e) {
-			assertEquals("This server does not support _sort specifications of type COMPOSITE - Can't serve _sort=code-value-concept", e.getMessage());
-		}
+		pm.setSort(new SortSpec(Observation.SP_CODE_VALUE_STRING));
+		
+		
+		IBundleProvider found = myObservationDao.search(pm);
+		
+		List<IIdType> list = toUnqualifiedVersionlessIds(found);
+		assertEquals(4, list.size());
+		assertEquals(oid3, list.get(0));
+		assertEquals(oid1, list.get(1));
+		assertEquals(oid4, list.get(2));
+		assertEquals(oid2, list.get(3));
 	}
 
 	@Test
@@ -3871,8 +3970,8 @@ public class FhirResourceDaoR4Test extends BaseJpaR4Test {
 		String uuid = UUID.randomUUID().toString();
 
 		runInTransaction(() -> {
-			Search search = new Search();
-			SearchCoordinatorSvcImpl.populateSearchEntity(map, "Encounter", uuid, normalized, search);
+			ca.uhn.fhir.jpa.entity.Search search = new ca.uhn.fhir.jpa.entity.Search();
+			SearchCoordinatorSvcImpl.populateSearchEntity(map, "Encounter", uuid, normalized, search, RequestPartitionId.allPartitions());
 			search.setStatus(SearchStatusEnum.FAILED);
 			search.setFailureCode(500);
 			search.setFailureMessage("FOO");

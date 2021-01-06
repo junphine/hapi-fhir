@@ -4,7 +4,7 @@ package ca.uhn.fhir.jpa.dao.predicate;
  * #%L
  * HAPI FHIR JPA Server
  * %%
- * Copyright (C) 2014 - 2020 University Health Network
+ * Copyright (C) 2014 - 2021 Smile CDR, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -100,7 +100,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Set;
-import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -126,7 +125,7 @@ class PredicateBuilderReference extends BasePredicateBuilder {
 	@Autowired
 	private IInterceptorBroadcaster myInterceptorBroadcaster;
 
-	PredicateBuilderReference(LegacySearchBuilder theSearchBuilder, PredicateBuilder thePredicateBuilder) {
+	public PredicateBuilderReference(LegacySearchBuilder theSearchBuilder, PredicateBuilder thePredicateBuilder) {
 		super(theSearchBuilder);
 		myPredicateBuilder = thePredicateBuilder;
 	}

@@ -4,7 +4,7 @@ package ca.uhn.fhir.jpa.dao;
  * #%L
  * HAPI FHIR JPA Server
  * %%
- * Copyright (C) 2014 - 2020 University Health Network
+ * Copyright (C) 2014 - 2021 Smile CDR, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -142,10 +142,15 @@ public class HistoryBuilder {
 		List<Predicate> predicates = new ArrayList<>();
 
 		if (!thePartitionId.isAllPartitions()) {
-			if (thePartitionId.getPartitionId() != null) {
-				predicates.add(theCriteriaBuilder.equal(theFrom.get("myPartitionIdValue").as(Integer.class), thePartitionId.getPartitionId()));
-			} else {
+			if (thePartitionId.isDefaultPartition()) {
 				predicates.add(theCriteriaBuilder.isNull(theFrom.get("myPartitionIdValue").as(Integer.class)));
+			} else if (thePartitionId.hasDefaultPartitionId()) {
+				predicates.add(theCriteriaBuilder.or(
+					theCriteriaBuilder.isNull(theFrom.get("myPartitionIdValue").as(Integer.class)),
+					theFrom.get("myPartitionIdValue").as(Integer.class).in(thePartitionId.getPartitionIdsWithoutDefault())
+				));
+			} else {
+				predicates.add(theFrom.get("myPartitionIdValue").as(Integer.class).in(thePartitionId.getPartitionIds()));
 			}
 		}
 

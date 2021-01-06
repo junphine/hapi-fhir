@@ -3,6 +3,7 @@ package ca.uhn.fhir.jpa.provider.r4;
 import ca.uhn.fhir.context.support.IValidationSupport;
 import ca.uhn.fhir.jpa.api.dao.DaoRegistry;
 import ca.uhn.fhir.jpa.api.svc.ISearchCoordinatorSvc;
+import ca.uhn.fhir.jpa.dao.data.IPartitionDao;
 import ca.uhn.fhir.jpa.dao.r4.BaseJpaR4Test;
 import ca.uhn.fhir.jpa.provider.DiffProvider;
 import ca.uhn.fhir.jpa.provider.GraphQLProvider;
@@ -37,6 +38,7 @@ import org.hl7.fhir.r4.model.Patient;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.context.ContextLoader;
 import org.springframework.web.context.WebApplicationContext;
@@ -52,8 +54,11 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.slf4j.LoggerFactory.getLogger;
 
 public abstract class BaseResourceProviderR4Test extends BaseJpaR4Test {
+	private static final Logger ourLog = getLogger(BaseResourceProviderR4Test.class);
+
 
 	protected static IValidationSupport myValidationSupport;
 	protected static CloseableHttpClient ourHttpClient;
@@ -65,15 +70,15 @@ public abstract class BaseResourceProviderR4Test extends BaseJpaR4Test {
 	protected static Server ourServer;
 	private static DatabaseBackedPagingProvider ourPagingProvider;
 	private static GenericWebApplicationContext ourWebApplicationContext;
-	private static SubscriptionMatcherInterceptor ourSubscriptionMatcherInterceptor;
 	protected IGenericClient myClient;
 	@Autowired
 	protected SubscriptionLoader mySubscriptionLoader;
 	@Autowired
 	protected DaoRegistry myDaoRegistry;
+	@Autowired
+	protected IPartitionDao myPartitionDao;
 	ResourceCountCache myResourceCountsCache;
 	private TerminologyUploaderProvider myTerminologyUploaderProvider;
-	private boolean ourRestHookSubscriptionInterceptorRequested;
 
 	public BaseResourceProviderR4Test() {
 		super();
@@ -163,12 +168,12 @@ public abstract class BaseResourceProviderR4Test extends BaseJpaR4Test {
 			WebApplicationContext wac = WebApplicationContextUtils.getWebApplicationContext(subsServletHolder.getServlet().getServletConfig().getServletContext());
 			myValidationSupport = wac.getBean(IValidationSupport.class);
 			mySearchCoordinatorSvc = wac.getBean(ISearchCoordinatorSvc.class);
-			ourSubscriptionMatcherInterceptor = wac.getBean(SubscriptionMatcherInterceptor.class);
+			SubscriptionMatcherInterceptor ourSubscriptionMatcherInterceptor = wac.getBean(SubscriptionMatcherInterceptor.class);
 
 			confProvider.setSearchParamRegistry(ourSearchParamRegistry);
 
 			myFhirCtx.getRestfulClientFactory().setServerValidationMode(ServerValidationModeEnum.NEVER);
-			myFhirCtx.getRestfulClientFactory().setSocketTimeout(5000000);
+			myFhirCtx.getRestfulClientFactory().setSocketTimeout(20000);
 
 			PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager(5000, TimeUnit.MILLISECONDS);
 			HttpClientBuilder builder = HttpClientBuilder.create();

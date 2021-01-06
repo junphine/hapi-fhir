@@ -4,7 +4,7 @@ package ca.uhn.fhir.test.utilities;
  * #%L
  * HAPI FHIR Test Utilities
  * %%
- * Copyright (C) 2014 - 2020 University Health Network
+ * Copyright (C) 2014 - 2021 Smile CDR, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -115,7 +115,7 @@ public interface ITestDataBuilder {
 
 	default Consumer<IBaseResource> withId(String theId) {
 		return t -> {
-			assertThat(theId, matchesPattern("[a-zA-Z0-9]+"));
+			assertThat(theId, matchesPattern("[a-zA-Z0-9-]+"));
 			t.setId(theId);
 		};
 	}

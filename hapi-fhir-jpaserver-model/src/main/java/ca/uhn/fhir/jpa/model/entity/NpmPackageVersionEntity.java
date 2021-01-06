@@ -4,7 +4,7 @@ package ca.uhn.fhir.jpa.model.entity;
  * #%L
  * HAPI FHIR Model
  * %%
- * Copyright (C) 2014 - 2020 University Health Network
+ * Copyright (C) 2014 - 2021 Smile CDR, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,6 +54,7 @@ import java.util.List;
 public class NpmPackageVersionEntity {
 
 	public static final int VERSION_ID_LENGTH = 200;
+	public static final int PACKAGE_DESC_LENGTH = 200;
 	public static final int FHIR_VERSION_LENGTH = 10;
 
 	@SequenceGenerator(name = "SEQ_NPM_PACKVER", sequenceName = "SEQ_NPM_PACKVER")
@@ -74,9 +75,9 @@ public class NpmPackageVersionEntity {
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "SAVED_TIME", nullable = false)
 	private Date mySavedTime;
-	@Column(name = "PKG_DESC", nullable = true, length = 200)
+	@Column(name = "PKG_DESC", nullable = true, length = PACKAGE_DESC_LENGTH)
 	private String myDescription;
-	@Column(name = "DESC_UPPER", nullable = true, length = 200)
+	@Column(name = "DESC_UPPER", nullable = true, length = PACKAGE_DESC_LENGTH)
 	private String myDescriptionUpper;
 	@Column(name = "CURRENT_VERSION", nullable = false)
 	private boolean myCurrentVersion;

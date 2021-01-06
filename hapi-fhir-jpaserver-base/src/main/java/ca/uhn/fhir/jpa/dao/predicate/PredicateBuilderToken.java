@@ -4,7 +4,7 @@ package ca.uhn.fhir.jpa.dao.predicate;
  * #%L
  * HAPI FHIR JPA Server
  * %%
- * Copyright (C) 2014 - 2020 University Health Network
+ * Copyright (C) 2014 - 2021 Smile CDR, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -73,7 +73,7 @@ class PredicateBuilderToken extends BasePredicateBuilder implements IPredicateBu
 	@Autowired
 	private ModelConfig myModelConfig;
 
-	PredicateBuilderToken(LegacySearchBuilder theSearchBuilder, PredicateBuilder thePredicateBuilder) {
+	public PredicateBuilderToken(LegacySearchBuilder theSearchBuilder, PredicateBuilder thePredicateBuilder) {
 		super(theSearchBuilder);
 		myPredicateBuilder = thePredicateBuilder;
 	}
@@ -151,7 +151,7 @@ class PredicateBuilderToken extends BasePredicateBuilder implements IPredicateBu
 			theBuilder,
 			theFrom,
 			null,
-                theRequestPartitionId);
+			theRequestPartitionId);
 	}
 
 	private Collection<Predicate> createPredicateToken(Collection<IQueryParameterType> theParameters,
@@ -205,7 +205,7 @@ class PredicateBuilderToken extends BasePredicateBuilder implements IPredicateBu
 			 */
 
 			if (modifier == TokenParamModifier.IN) {
-				codes.addAll(myTerminologySvc.expandValueSet(null, code));
+				codes.addAll(myTerminologySvc.expandValueSetIntoConceptList(null, code));
 			} else if (modifier == TokenParamModifier.ABOVE) {
 				system = determineSystemIfMissing(theSearchParam, code, system);
 				validateHaveSystemAndCodeForToken(paramName, code, system);
@@ -273,7 +273,7 @@ class PredicateBuilderToken extends BasePredicateBuilder implements IPredicateBu
 					String valueSet = valueSetUris.iterator().next();
 					ValueSetExpansionOptions options = new ValueSetExpansionOptions()
 						.setFailOnMissingCodeSystem(false);
-					List<FhirVersionIndependentConcept> candidateCodes = myTerminologySvc.expandValueSet(options, valueSet);
+					List<FhirVersionIndependentConcept> candidateCodes = myTerminologySvc.expandValueSetIntoConceptList(options, valueSet);
 					for (FhirVersionIndependentConcept nextCandidate : candidateCodes) {
 						if (nextCandidate.getCode().equals(code)) {
 							retVal = nextCandidate.getSystem();

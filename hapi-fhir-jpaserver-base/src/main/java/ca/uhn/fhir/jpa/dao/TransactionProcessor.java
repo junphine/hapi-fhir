@@ -4,7 +4,7 @@ package ca.uhn.fhir.jpa.dao;
  * #%L
  * HAPI FHIR JPA Server
  * %%
- * Copyright (C) 2014 - 2020 University Health Network
+ * Copyright (C) 2014 - 2021 Smile CDR, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,11 +42,14 @@ import java.util.stream.Collectors;
 public class TransactionProcessor extends BaseTransactionProcessor {
 
 	private static final Logger ourLog = LoggerFactory.getLogger(TransactionProcessor.class);
-
 	@PersistenceContext(type = PersistenceContextType.TRANSACTION)
 	private EntityManager myEntityManager;
 	@Autowired(required = false)
 	private HapiFhirHibernateJpaDialect myHapiFhirHibernateJpaDialect;
+
+	public void setEntityManagerForUnitTest(EntityManager theEntityManager) {
+		myEntityManager = theEntityManager;
+	}
 
 	@Override
 	protected void validateDependencies() {

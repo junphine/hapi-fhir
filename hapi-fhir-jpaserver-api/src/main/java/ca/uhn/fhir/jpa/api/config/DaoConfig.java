@@ -25,7 +25,7 @@ import java.util.TreeSet;
  * #%L
  * HAPI FHIR JPA API
  * %%
- * Copyright (C) 2014 - 2020 University Health Network
+ * Copyright (C) 2014 - 2021 Smile CDR, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -2115,6 +2115,9 @@ public class DaoConfig {
 		DISABLED
 	}
 
+	/**
+	 * This enum provides allowable options for {@link #setResourceServerIdStrategy(IdStrategyEnum)}
+	 */
 	public enum IdStrategyEnum {
 		/**
 		 * This strategy is the default strategy, and it simply uses a sequential
@@ -2127,6 +2130,9 @@ public class DaoConfig {
 		UUID
 	}
 
+	/**
+	 * This enum provides allowable options for {@link #setResourceClientIdStrategy(ClientIdStrategyEnum)}
+	 */
 	public enum ClientIdStrategyEnum {
 		/**
 		 * Clients are not allowed to supply IDs for resources that do not
@@ -2152,7 +2158,7 @@ public class DaoConfig {
 		 * to {@link IdStrategyEnum#UUID} in order to avoid any potential for conflicts. Otherwise
 		 * a database sequence will be used to generate IDs and these IDs can conflict with
 		 * client-assigned numeric IDs.
-		 * </P>
+		 * </p>
 		 */
 		ANY
 	}

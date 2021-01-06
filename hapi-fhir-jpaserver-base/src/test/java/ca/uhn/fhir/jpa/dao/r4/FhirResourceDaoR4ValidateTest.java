@@ -36,6 +36,7 @@ import org.hl7.fhir.r4.model.AllergyIntolerance;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Bundle.BundleEntryComponent;
 import org.hl7.fhir.r4.model.CanonicalType;
+import org.hl7.fhir.r4.model.CapabilityStatement;
 import org.hl7.fhir.r4.model.CodeSystem;
 import org.hl7.fhir.r4.model.CodeType;
 import org.hl7.fhir.r4.model.Coding;
@@ -56,6 +57,7 @@ import org.hl7.fhir.r4.model.Quantity;
 import org.hl7.fhir.r4.model.Questionnaire;
 import org.hl7.fhir.r4.model.QuestionnaireResponse;
 import org.hl7.fhir.r4.model.Reference;
+import org.hl7.fhir.r4.model.SearchParameter;
 import org.hl7.fhir.r4.model.StringType;
 import org.hl7.fhir.r4.model.StructureDefinition;
 import org.hl7.fhir.r4.model.UriType;
@@ -150,7 +152,7 @@ public class FhirResourceDaoR4ValidateTest extends BaseJpaR4Test {
 		obs.setValue(new Quantity().setSystem("http://cs").setCode("code99").setValue(123));
 		oo = validateAndReturnOutcome(obs);
 		ourLog.info(myFhirCtx.newJsonParser().setPrettyPrint(true).encodeResourceToString(oo));
-		assertEquals("Could not confirm that the codes provided are in the value set http://vs, and a code from this value set is required", oo.getIssueFirstRep().getDiagnostics(), encode(oo));
+		assertEquals("The code provided (http://cs#code99) is not in the value set http://vs, and a code from this value set is required: Unknown code {http://cs}code99 - Unable to expand ValueSet[http://vs]", oo.getIssueFirstRep().getDiagnostics(), encode(oo));
 
 	}
 
@@ -232,7 +234,7 @@ public class FhirResourceDaoR4ValidateTest extends BaseJpaR4Test {
 			outcome = (OperationOutcome) e.getOperationOutcome();
 			String outcomeStr = myFhirCtx.newJsonParser().setPrettyPrint(true).encodeResourceToString(outcome);
 			ourLog.info("Validation outcome: {}", outcomeStr);
-			assertThat(outcomeStr, containsString("Could not confirm that the codes provided are in the value set https://bb/ValueSet/BBDemographicAgeUnit, and a code from this value set is required"));
+			assertThat(outcomeStr, containsString("The code provided (http://unitsofmeasure.org#cm) is not in the value set https://bb/ValueSet/BBDemographicAgeUnit, and a code from this value set is required"));
 		}
 
 		// Before, the VS wasn't pre-expanded. Try again with it pre-expanded
@@ -266,7 +268,7 @@ public class FhirResourceDaoR4ValidateTest extends BaseJpaR4Test {
 			outcome = (OperationOutcome) e.getOperationOutcome();
 			String outcomeStr = myFhirCtx.newJsonParser().setPrettyPrint(true).encodeResourceToString(outcome);
 			ourLog.info("Validation outcome: {}", outcomeStr);
-			assertThat(outcomeStr, containsString("Could not confirm that the codes provided are in the value set https://bb/ValueSet/BBDemographicAgeUnit, and a code from this value set is required"));
+			assertThat(outcomeStr, containsString("The code provided (http://unitsofmeasure.org#cm) is not in the value set https://bb/ValueSet/BBDemographicAgeUnit, and a code from this value set is required: Unknown code 'http://unitsofmeasure.org#cm'"));
 		}
 
 	}
@@ -1052,7 +1054,7 @@ public class FhirResourceDaoR4ValidateTest extends BaseJpaR4Test {
 
 		// It would be ok for this to produce 0 issues, or just an information message too
 		assertEquals(1, OperationOutcomeUtil.getIssueCount(myFhirCtx, oo));
-		assertEquals("None of the codes provided are in the value set http://hl7.org/fhir/ValueSet/identifier-type (http://hl7.org/fhir/ValueSet/identifier-type), and a code should come from this value set unless it has no suitable code) (codes = http://foo#bar)", OperationOutcomeUtil.getFirstIssueDetails(myFhirCtx, oo));
+		assertEquals("None of the codes provided are in the value set http://hl7.org/fhir/ValueSet/identifier-type (http://hl7.org/fhir/ValueSet/identifier-type), and a code should come from this value set unless it has no suitable code and the validator cannot judge what is suitable) (codes = http://foo#bar)", OperationOutcomeUtil.getFirstIssueDetails(myFhirCtx, oo));
 
 	}
 
@@ -1235,6 +1237,40 @@ public class FhirResourceDaoR4ValidateTest extends BaseJpaR4Test {
 		myValidationSettings.setLocalReferenceValidationDefaultPolicy(IResourceValidator.ReferenceValidationPolicy.IGNORE);
 		myFhirCtx.setParserErrorHandler(new StrictErrorHandler());
 	}
+
+	@Test
+	public void testValidateCapabilityStatement() {
+
+		SearchParameter sp = new SearchParameter();
+		sp.setUrl("http://example.com/name");
+		sp.setId("name");
+		sp.setCode("name");
+		sp.setType(Enumerations.SearchParamType.STRING);
+		sp.setStatus(Enumerations.PublicationStatus.ACTIVE);
+		sp.addBase("Patient");
+		sp.setExpression("Patient.name");
+		mySearchParameterDao.update(sp);
+
+		CapabilityStatement cs = new CapabilityStatement();
+		cs.getText().setStatus(Narrative.NarrativeStatus.GENERATED).getDiv().setValue("<div>aaaa</div>");
+		CapabilityStatement.CapabilityStatementRestComponent rest = cs.addRest();
+		CapabilityStatement.CapabilityStatementRestResourceComponent patient = rest.addResource();
+		patient		.setType("Patient");
+		patient.addSearchParam().setName("foo").setType(Enumerations.SearchParamType.DATE).setDefinition("http://example.com/name");
+
+
+		try {
+			myCapabilityStatementDao.validate(cs, null, null, null, ValidationModeEnum.CREATE, null, mySrd);
+			fail();
+		} catch (PreconditionFailedException e) {
+			String oo = myFhirCtx.newJsonParser().setPrettyPrint(true).encodeResourceToString(e.getOperationOutcome());
+			ourLog.info(oo);
+			assertThat(oo, oo, containsString("Type mismatch - SearchParameter 'http://example.com/name' type is string, but type here is date"));
+		}
+
+
+	}
+
 
 	@Test
 	public void testValidateForCreate() {

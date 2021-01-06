@@ -4,7 +4,7 @@ package ca.uhn.fhir.jpa.entity;
  * #%L
  * HAPI FHIR JPA Server
  * %%
- * Copyright (C) 2014 - 2020 University Health Network
+ * Copyright (C) 2014 - 2021 Smile CDR, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,6 +47,7 @@ import java.util.Collection;
 import java.util.Date;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.apache.commons.lang3.StringUtils.left;
 
 @Entity
 @Table(name = "HFJ_BLK_EXPORT_JOB", uniqueConstraints = {
@@ -105,7 +106,7 @@ public class BulkExportJobEntity implements Serializable {
 	}
 
 	public void setStatusMessage(String theStatusMessage) {
-		myStatusMessage = theStatusMessage;
+		myStatusMessage = left(theStatusMessage, STATUS_MESSAGE_LEN);
 	}
 
 	public String getRequest() {

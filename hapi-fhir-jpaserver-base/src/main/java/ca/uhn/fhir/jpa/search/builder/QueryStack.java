@@ -4,7 +4,7 @@ package ca.uhn.fhir.jpa.search.builder;
  * #%L
  * HAPI FHIR JPA Server
  * %%
- * Copyright (C) 2014 - 2020 University Health Network
+ * Copyright (C) 2014 - 2021 Smile CDR, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -159,7 +159,7 @@ public class QueryStack {
 
 		Condition hashIdentityPredicate = sortPredicateBuilder.createHashIdentityPredicate(theResourceName, theParamName);
 		mySqlBuilder.addPredicate(hashIdentityPredicate);
-		mySqlBuilder.addSort(sortPredicateBuilder.getColumnValueLow(), theAscending);
+		mySqlBuilder.addSortDate(sortPredicateBuilder.getColumnValueLow(), theAscending);
 	}
 
 	public void addSortOnLastUpdated(boolean theAscending) {
@@ -170,7 +170,7 @@ public class QueryStack {
 		} else {
 			resourceTablePredicateBuilder = mySqlBuilder.addResourceTablePredicateBuilder(firstPredicateBuilder.getResourceIdColumn());
 		}
-		mySqlBuilder.addSort(resourceTablePredicateBuilder.getColumnLastUpdated(), theAscending);
+		mySqlBuilder.addSortDate(resourceTablePredicateBuilder.getColumnLastUpdated(), theAscending);
 	}
 
 
@@ -180,7 +180,7 @@ public class QueryStack {
 
 		Condition hashIdentityPredicate = sortPredicateBuilder.createHashIdentityPredicate(theResourceName, theParamName);
 		mySqlBuilder.addPredicate(hashIdentityPredicate);
-		mySqlBuilder.addSort(sortPredicateBuilder.getColumnValue(), theAscending);
+		mySqlBuilder.addSortNumeric(sortPredicateBuilder.getColumnValue(), theAscending);
 	}
 
 	public void addSortOnQuantity(String theResourceName, String theParamName, boolean theAscending) {
@@ -189,18 +189,18 @@ public class QueryStack {
 
 		Condition hashIdentityPredicate = sortPredicateBuilder.createHashIdentityPredicate(theResourceName, theParamName);
 		mySqlBuilder.addPredicate(hashIdentityPredicate);
-		mySqlBuilder.addSort(sortPredicateBuilder.getColumnValue(), theAscending);
+		mySqlBuilder.addSortNumeric(sortPredicateBuilder.getColumnValue(), theAscending);
 	}
 
 	public void addSortOnResourceId(boolean theAscending) {
 		BaseJoiningPredicateBuilder firstPredicateBuilder = mySqlBuilder.getOrCreateFirstPredicateBuilder();
 		ForcedIdPredicateBuilder sortPredicateBuilder = mySqlBuilder.addForcedIdPredicateBuilder(firstPredicateBuilder.getResourceIdColumn());
 		if (!theAscending) {
-			mySqlBuilder.addSort(sortPredicateBuilder.getColumnForcedId(), false, OrderObject.NullOrder.FIRST);
+			mySqlBuilder.addSortString(sortPredicateBuilder.getColumnForcedId(), false, OrderObject.NullOrder.FIRST);
 		} else {
-			mySqlBuilder.addSort(sortPredicateBuilder.getColumnForcedId(), true);
+			mySqlBuilder.addSortString(sortPredicateBuilder.getColumnForcedId(), true);
 		}
-		mySqlBuilder.addSort(firstPredicateBuilder.getResourceIdColumn(), theAscending);
+		mySqlBuilder.addSortNumeric(firstPredicateBuilder.getResourceIdColumn(), theAscending);
 
 	}
 
@@ -210,7 +210,7 @@ public class QueryStack {
 
 		Condition pathPredicate = sortPredicateBuilder.createPredicateSourcePaths(theResourceName, theParamName);
 		mySqlBuilder.addPredicate(pathPredicate);
-		mySqlBuilder.addSort(sortPredicateBuilder.getColumnTargetResourceId(), theAscending);
+		mySqlBuilder.addSortNumeric(sortPredicateBuilder.getColumnTargetResourceId(), theAscending);
 	}
 
 
@@ -220,7 +220,7 @@ public class QueryStack {
 
 		Condition hashIdentityPredicate = sortPredicateBuilder.createHashIdentityPredicate(theResourceName, theParamName);
 		mySqlBuilder.addPredicate(hashIdentityPredicate);
-		mySqlBuilder.addSort(sortPredicateBuilder.getColumnValueNormalized(), theAscending);
+		mySqlBuilder.addSortString(sortPredicateBuilder.getColumnValueNormalized(), theAscending);
 	}
 
 	public void addSortOnToken(String theResourceName, String theParamName, boolean theAscending) {
@@ -229,8 +229,8 @@ public class QueryStack {
 
 		Condition hashIdentityPredicate = sortPredicateBuilder.createHashIdentityPredicate(theResourceName, theParamName);
 		mySqlBuilder.addPredicate(hashIdentityPredicate);
-		mySqlBuilder.addSort(sortPredicateBuilder.getColumnSystem(), theAscending);
-		mySqlBuilder.addSort(sortPredicateBuilder.getColumnValue(), theAscending);
+		mySqlBuilder.addSortString(sortPredicateBuilder.getColumnSystem(), theAscending);
+		mySqlBuilder.addSortString(sortPredicateBuilder.getColumnValue(), theAscending);
 	}
 
 	public void addSortOnUri(String theResourceName, String theParamName, boolean theAscending) {
@@ -239,7 +239,7 @@ public class QueryStack {
 
 		Condition hashIdentityPredicate = sortPredicateBuilder.createHashIdentityPredicate(theResourceName, theParamName);
 		mySqlBuilder.addPredicate(hashIdentityPredicate);
-		mySqlBuilder.addSort(sortPredicateBuilder.getColumnValue(), theAscending);
+		mySqlBuilder.addSortString(sortPredicateBuilder.getColumnValue(), theAscending);
 	}
 
 
@@ -265,25 +265,36 @@ public class QueryStack {
 		return new PredicateBuilderCacheLookupResult<>(cacheHit, (T) retVal);
 	}
 
-	private Condition createPredicateComposite(@Nullable DbColumn theSourceJoinColumn, String theResourceName, RuntimeSearchParam theParamDef, List<? extends IQueryParameterType> theNextAnd, RequestPartitionId theRequestPartitionId) {
-		// TODO: fail if missing is set for a composite query
+ 	private Condition createPredicateComposite(@Nullable DbColumn theSourceJoinColumn, String theResourceName, RuntimeSearchParam theParamDef, List<? extends IQueryParameterType> theNextAnd, RequestPartitionId theRequestPartitionId) {
 
-		IQueryParameterType or = theNextAnd.get(0);
-		if (!(or instanceof CompositeParam<?, ?>)) {
-			throw new InvalidRequestException("Invalid type for composite param (must be " + CompositeParam.class.getSimpleName() + ": " + or.getClass());
+ 		Condition orCondidtion = null;
+		for (IQueryParameterType next : theNextAnd) {
+			
+			if (!(next instanceof CompositeParam<?, ?>)) {
+				throw new InvalidRequestException("Invalid type for composite param (must be " + CompositeParam.class.getSimpleName() + ": " + next.getClass());
+			}
+			CompositeParam<?, ?> cp = (CompositeParam<?, ?>) next;
+	
+			RuntimeSearchParam left = theParamDef.getCompositeOf().get(0);
+			IQueryParameterType leftValue = cp.getLeftValue();
+			Condition leftPredicate = createPredicateCompositePart(theSourceJoinColumn, theResourceName, left, leftValue, theRequestPartitionId);
+	
+			RuntimeSearchParam right = theParamDef.getCompositeOf().get(1);
+			IQueryParameterType rightValue = cp.getRightValue();
+			Condition rightPredicate = createPredicateCompositePart(theSourceJoinColumn, theResourceName, right, rightValue, theRequestPartitionId);
+	
+			Condition andCondition = toAndPredicate(leftPredicate, rightPredicate);
+			
+			if (orCondidtion == null) {
+				orCondidtion = toOrPredicate(andCondition);
+			} else {
+				orCondidtion = toOrPredicate(orCondidtion, andCondition);
+			}
 		}
-		CompositeParam<?, ?> cp = (CompositeParam<?, ?>) or;
-
-		RuntimeSearchParam left = theParamDef.getCompositeOf().get(0);
-		IQueryParameterType leftValue = cp.getLeftValue();
-		Condition leftPredicate = createPredicateCompositePart(theSourceJoinColumn, theResourceName, left, leftValue, theRequestPartitionId);
-
-		RuntimeSearchParam right = theParamDef.getCompositeOf().get(1);
-		IQueryParameterType rightValue = cp.getRightValue();
-		Condition rightPredicate = createPredicateCompositePart(theSourceJoinColumn, theResourceName, right, rightValue, theRequestPartitionId);
-
-		return toAndPredicate(leftPredicate, rightPredicate);
+		
+		return orCondidtion;
 	}
+
 
 	private Condition createPredicateCompositePart(@Nullable DbColumn theSourceJoinColumn, String theResourceName, RuntimeSearchParam theParam, IQueryParameterType theParamValue, RequestPartitionId theRequestPartitionId) {
 
@@ -728,7 +739,7 @@ public class QueryStack {
 			codePredicates.add(singleCode);
 		}
 
-		return join.combineWithRequestPartitionIdPredicate(theRequestPartitionId, ComboCondition.or(codePredicates.toArray(new Condition[0])));
+		return join.combineWithRequestPartitionIdPredicate(theRequestPartitionId, toOrPredicate(codePredicates));
 	}
 
 	public Condition createPredicateTag(@Nullable DbColumn theSourceJoinColumn, List<List<IQueryParameterType>> theList, String theParamName, RequestPartitionId theRequestPartitionId) {

@@ -4,16 +4,12 @@ import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.context.FhirVersionEnum;
 import ca.uhn.fhir.context.support.DefaultProfileValidationSupport;
 import ca.uhn.fhir.context.support.IValidationSupport;
-import ca.uhn.fhir.context.support.ValidationSupportContext;
 import ca.uhn.fhir.validation.IInstanceValidatorModule;
 import ca.uhn.fhir.validation.IValidationContext;
 import org.apache.commons.lang3.Validate;
-
 import org.hl7.fhir.exceptions.FHIRException;
 import org.hl7.fhir.exceptions.PathEngineException;
-import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r5.model.Base;
-import org.hl7.fhir.r5.model.Resource;
 import org.hl7.fhir.r5.model.TypeDetails;
 import org.hl7.fhir.r5.model.ValueSet;
 import org.hl7.fhir.r5.utils.FHIRPathEngine;
@@ -54,9 +50,11 @@ public class FhirInstanceValidator extends BaseValidatorBridge implements IInsta
 	 * @param theValidationSupport The validation support
 	 */
 	public FhirInstanceValidator(IValidationSupport theValidationSupport) {
-		
-		myValidationSupport = theValidationSupport;
-		
+		if (theValidationSupport.getFhirContext().getVersion().getVersion() == FhirVersionEnum.DSTU2) {
+			myValidationSupport = new HapiToHl7OrgDstu2ValidatingSupportWrapper(theValidationSupport);
+		} else {
+			myValidationSupport = theValidationSupport;
+		}
 	}
 
 	/**
@@ -209,25 +207,7 @@ public class FhirInstanceValidator extends BaseValidatorBridge implements IInsta
 	protected VersionSpecificWorkerContextWrapper provideWorkerContext() {
 		VersionSpecificWorkerContextWrapper wrappedWorkerContext = myWrappedWorkerContext;
 		if (wrappedWorkerContext == null) {
-			VersionSpecificWorkerContextWrapper.IVersionTypeConverter converter;
-
-			switch (myValidationSupport.getFhirContext().getVersion().getVersion()) {
-				
-				case R4: {
-					converter = new VersionTypeConverterR4();
-					break;
-				}
-
-				case R5: {
-					converter = VersionSpecificWorkerContextWrapper.IDENTITY_VERSION_TYPE_CONVERTER;
-					break;
-				}
-
-				default:
-					throw new IllegalStateException();
-			}
-
-			wrappedWorkerContext = new VersionSpecificWorkerContextWrapper(new ValidationSupportContext(myValidationSupport), converter);
+			wrappedWorkerContext = VersionSpecificWorkerContextWrapper.newVersionSpecificWorkerContextWrapper(myValidationSupport);
 		}
 		myWrappedWorkerContext = wrappedWorkerContext;
 		return wrappedWorkerContext;
@@ -288,7 +268,7 @@ public class FhirInstanceValidator extends BaseValidatorBridge implements IInsta
 		}
 
 		@Override
-		public List<Base> executeFunction(Object appContext, String functionName, List<List<Base>> parameters) {
+		public List<Base> executeFunction(Object appContext, List<Base> focus, String functionName, List<List<Base>> parameters) {
 			return null;
 		}
 

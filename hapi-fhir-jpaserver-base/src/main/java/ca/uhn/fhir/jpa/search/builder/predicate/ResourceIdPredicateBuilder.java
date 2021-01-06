@@ -4,7 +4,7 @@ package ca.uhn.fhir.jpa.search.builder.predicate;
  * #%L
  * HAPI FHIR JPA Server
  * %%
- * Copyright (C) 2014 - 2020 University Health Network
+ * Copyright (C) 2014 - 2021 Smile CDR, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -115,12 +115,15 @@ public class ResourceIdPredicateBuilder extends BasePredicateBuilder {
 			List<Long> resourceIds = ResourcePersistentId.toLongList(allOrPids);
 			if (theSourceJoinColumn == null) {
 				BaseJoiningPredicateBuilder queryRootTable = super.getOrCreateQueryRootTable();
+				Condition predicate;
 				switch (operation) {
 					default:
 					case eq:
-						return queryRootTable.createPredicateResourceIds(false, resourceIds);
+						predicate = queryRootTable.createPredicateResourceIds(false, resourceIds);
+						return queryRootTable.combineWithRequestPartitionIdPredicate(theRequestPartitionId, predicate);
 					case ne:
-						return queryRootTable.createPredicateResourceIds(true, resourceIds);
+						predicate = queryRootTable.createPredicateResourceIds(true, resourceIds);
+						return queryRootTable.combineWithRequestPartitionIdPredicate(theRequestPartitionId, predicate);
 				}
 			} else {
 				return QueryStack.toEqualToOrInPredicate(theSourceJoinColumn, generatePlaceholders(resourceIds), operation == SearchFilterParser.CompareOperation.ne);

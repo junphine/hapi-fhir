@@ -4,7 +4,7 @@ package ca.uhn.fhir.jpa.model.entity;
  * #%L
  * HAPI FHIR Model
  * %%
- * Copyright (C) 2014 - 2020 University Health Network
+ * Copyright (C) 2014 - 2021 Smile CDR, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -124,6 +124,11 @@ public class SearchParamPresent extends BasePartitionable implements Serializabl
 
 	public void setPartitionSettings(PartitionSettings thePartitionSettings) {
 		myPartitionSettings = thePartitionSettings;
+	}
+
+	public static long calculateHashPresence(PartitionSettings thePartitionSettings, PartitionablePartitionId theRequestPartitionId, String theResourceType, String theParamName, Boolean thePresent) {
+		RequestPartitionId requestPartitionId = PartitionablePartitionId.toRequestPartitionId(theRequestPartitionId);
+		return calculateHashPresence(thePartitionSettings, requestPartitionId, theResourceType, theParamName, thePresent);
 	}
 
 	public static long calculateHashPresence(PartitionSettings thePartitionSettings, RequestPartitionId theRequestPartitionId, String theResourceType, String theParamName, Boolean thePresent) {

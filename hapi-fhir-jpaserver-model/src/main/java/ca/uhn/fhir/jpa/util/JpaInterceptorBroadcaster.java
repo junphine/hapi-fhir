@@ -4,7 +4,7 @@ package ca.uhn.fhir.jpa.util;
  * #%L
  * HAPI FHIR Model
  * %%
- * Copyright (C) 2014 - 2020 University Health Network
+ * Copyright (C) 2014 - 2021 Smile CDR, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,7 +39,8 @@ public class JpaInterceptorBroadcaster {
 			retVal = theInterceptorBroadcaster.callHooks(thePointcut, theParams);
 		}
 		if (theRequestDetails != null && retVal) {
-			theRequestDetails.getInterceptorBroadcaster().callHooks(thePointcut, theParams);
+			IInterceptorBroadcaster interceptorBroadcaster = theRequestDetails.getInterceptorBroadcaster();
+			interceptorBroadcaster.callHooks(thePointcut, theParams);
 		}
 		return retVal;
 	}
@@ -54,7 +55,8 @@ public class JpaInterceptorBroadcaster {
 			retVal = theInterceptorBroadcaster.callHooksAndReturnObject(thePointcut, theParams);
 		}
 		if (theRequestDetails != null && retVal == null) {
-			retVal = theRequestDetails.getInterceptorBroadcaster().callHooksAndReturnObject(thePointcut, theParams);
+			IInterceptorBroadcaster interceptorBroadcaster = theRequestDetails.getInterceptorBroadcaster();
+			retVal = interceptorBroadcaster.callHooksAndReturnObject(thePointcut, theParams);
 		}
 		return retVal;
 	}

@@ -4,7 +4,7 @@ package ca.uhn.fhir.jpa.bulk.job;
  * #%L
  * HAPI FHIR JPA Server
  * %%
- * Copyright (C) 2014 - 2020 University Health Network
+ * Copyright (C) 2014 - 2021 Smile CDR, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -69,7 +69,7 @@ public class BulkExportJobConfig {
 	public Step createBulkExportEntityStep() {
 		return myStepBuilderFactory.get("createBulkExportEntityStep")
 			.tasklet(createBulkExportEntityTasklet())
-			.listener(bulkExportJobStartedListener())
+			.listener(bulkExportCreateEntityStepListener())
 			.build();
 	}
 
@@ -90,6 +90,7 @@ public class BulkExportJobConfig {
 			.reader(bulkItemReader())
 			.processor(myPidToIBaseResourceProcessor)
 			.writer(resourceToFileWriter())
+			.listener(bulkExportGenrateResourceFilesStepListener())
 			.build();
 	}
 
@@ -108,8 +109,14 @@ public class BulkExportJobConfig {
 
 	@Bean
 	@JobScope
-	public BulkExportJobStartedListener bulkExportJobStartedListener() {
-		return new BulkExportJobStartedListener();
+	public BulkExportCreateEntityStepListener bulkExportCreateEntityStepListener() {
+		return new BulkExportCreateEntityStepListener();
+	}
+
+	@Bean
+	@JobScope
+	public BulkExportGenerateResourceFilesStepListener bulkExportGenrateResourceFilesStepListener() {
+		return new BulkExportGenerateResourceFilesStepListener();
 	}
 
 	@Bean

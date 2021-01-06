@@ -4,7 +4,7 @@ package ca.uhn.fhir.jpa.searchparam;
  * #%L
  * HAPI FHIR Search Parameters
  * %%
- * Copyright (C) 2014 - 2020 University Health Network
+ * Copyright (C) 2014 - 2021 Smile CDR, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,7 +54,7 @@ public class MatchUrlService {
 
 	public SearchParameterMap translateMatchUrl(String theMatchUrl, RuntimeResourceDefinition theResourceDefinition, Flag... theFlags) {
 		SearchParameterMap paramMap = new SearchParameterMap();
-		List<NameValuePair> parameters = translateMatchUrl(theMatchUrl);
+		List<NameValuePair> parameters = UrlUtil.translateMatchUrl(theMatchUrl);
 
 		ArrayListMultimap<String, QualifiedParamList> nameToParamLists = ArrayListMultimap.create();
 		for (NameValuePair next : parameters) {
@@ -145,10 +145,6 @@ public class MatchUrlService {
 			}
 		}
 		return paramMap;
-	}
-
-	public List<NameValuePair> translateMatchUrl(String theMatchUrl) {
-		return UrlUtil.translateMatchUrl(theMatchUrl);
 	}
 
 	private IQueryParameterAnd<?> newInstanceAnd(String theParamType) {

@@ -15,6 +15,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.time.DateUtils;
 import org.fhir.ucum.UcumService;
+import org.hl7.fhir.convertors.VersionConvertor_10_50;
 import org.hl7.fhir.exceptions.FHIRException;
 import org.hl7.fhir.exceptions.TerminologyServiceException;
 import org.hl7.fhir.instance.model.api.IBaseResource;
@@ -28,10 +29,11 @@ import org.hl7.fhir.r5.model.StructureDefinition;
 import org.hl7.fhir.r5.model.ValueSet;
 import org.hl7.fhir.r5.terminologies.ValueSetExpander;
 import org.hl7.fhir.r5.utils.IResourceValidator;
+import org.hl7.fhir.utilities.TimeTracker;
 import org.hl7.fhir.utilities.TranslationServices;
-import org.hl7.fhir.utilities.cache.BasePackageCacheManager;
-import org.hl7.fhir.utilities.cache.NpmPackage;
 import org.hl7.fhir.utilities.i18n.I18nBase;
+import org.hl7.fhir.utilities.npm.BasePackageCacheManager;
+import org.hl7.fhir.utilities.npm.NpmPackage;
 import org.hl7.fhir.utilities.validation.ValidationMessage;
 import org.hl7.fhir.utilities.validation.ValidationOptions;
 import org.slf4j.Logger;
@@ -39,8 +41,6 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -123,7 +123,7 @@ public class VersionSpecificWorkerContextWrapper extends I18nBase implements IWo
 	}
 
 	@Override
-	public int loadFromPackage(NpmPackage pi, IContextResourceLoader loader) throws FileNotFoundException, IOException, FHIRException {
+	public int loadFromPackage(NpmPackage pi, IContextResourceLoader loader) throws FHIRException {
 		throw new UnsupportedOperationException();
 	}
 
@@ -133,13 +133,13 @@ public class VersionSpecificWorkerContextWrapper extends I18nBase implements IWo
 	}
 
 	@Override
-	public int loadFromPackageAndDependencies(NpmPackage pi, IContextResourceLoader loader, BasePackageCacheManager pcm) throws FileNotFoundException, IOException, FHIRException {
+	public int loadFromPackageAndDependencies(NpmPackage pi, IContextResourceLoader loader, BasePackageCacheManager pcm) throws FHIRException {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public boolean hasPackage(String id, String ver) {
-		return false;
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
@@ -150,6 +150,11 @@ public class VersionSpecificWorkerContextWrapper extends I18nBase implements IWo
 	@Override
 	public IWorkerContext setClientRetryCount(int value) {
 		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public TimeTracker clock() {
+		return null;
 	}
 
 	@Override
@@ -649,6 +654,63 @@ public class VersionSpecificWorkerContextWrapper extends I18nBase implements IWo
 		return retVal;
 	}
 
+    @Nonnull
+    public static VersionSpecificWorkerContextWrapper newVersionSpecificWorkerContextWrapper(IValidationSupport theValidationSupport) {
+		 IVersionTypeConverter converter;
+
+        switch (theValidationSupport.getFhirContext().getVersion().getVersion()) {
+            case DSTU2:
+            case DSTU2_HL7ORG: {
+                converter = new IVersionTypeConverter() {
+                    @Override
+                    public Resource toCanonical(IBaseResource theNonCanonical) {
+							  Resource retVal = VersionConvertor_10_50.convertResource((org.hl7.fhir.dstu2.model.Resource) theNonCanonical);
+                        if (theNonCanonical instanceof org.hl7.fhir.dstu2.model.ValueSet) {
+                            org.hl7.fhir.dstu2.model.ValueSet valueSet = (org.hl7.fhir.dstu2.model.ValueSet) theNonCanonical;
+                            if (valueSet.hasCodeSystem() && valueSet.getCodeSystem().hasSystem()) {
+                                if (!valueSet.hasCompose()) {
+                                    ValueSet valueSetR5 = (ValueSet) retVal;
+                                    valueSetR5.getCompose().addInclude().setSystem(valueSet.getCodeSystem().getSystem());
+                                }
+                            }
+                        }
+                        return retVal;
+                    }
+
+                    @Override
+                    public IBaseResource fromCanonical(Resource theCanonical) {
+							  return VersionConvertor_10_50.convertResource(theCanonical);
+                    }
+                };
+                break;
+            }
+
+            case DSTU2_1: {
+                converter = new VersionTypeConverterDstu21();
+                break;
+            }
+
+            case DSTU3: {
+                converter = new VersionTypeConverterDstu3();
+                break;
+            }
+
+            case R4: {
+                converter = new VersionTypeConverterR4();
+                break;
+            }
+
+            case R5: {
+                converter = IDENTITY_VERSION_TYPE_CONVERTER;
+                break;
+            }
+
+            default:
+                throw new IllegalStateException();
+        }
+
+		 return new VersionSpecificWorkerContextWrapper(new ValidationSupportContext(theValidationSupport), converter);
+    }
 }
 
 

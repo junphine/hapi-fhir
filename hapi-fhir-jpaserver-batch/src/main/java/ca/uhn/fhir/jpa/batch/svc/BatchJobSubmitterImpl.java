@@ -4,7 +4,7 @@ package ca.uhn.fhir.jpa.batch.svc;
  * #%L
  * HAPI FHIR JPA Server - Batch Task Processor
  * %%
- * Copyright (C) 2014 - 2020 University Health Network
+ * Copyright (C) 2014 - 2021 Smile CDR, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,12 +49,12 @@ public class BatchJobSubmitterImpl implements IBatchJobSubmitter {
 	public JobExecution runJob(Job theJob, JobParameters theJobParameters) throws JobParametersInvalidException{
 		try {
 			return myJobLauncher.run(theJob, theJobParameters);
-		} catch (JobExecutionAlreadyRunningException | JobRestartException | JobInstanceAlreadyCompleteException theE) {
-			ourLog.warn("Job {} was already running, ignoring the call to start.", theJob.getName());
+		} catch (JobExecutionAlreadyRunningException | JobRestartException | JobInstanceAlreadyCompleteException e) {
+			ourLog.warn("Job {} was already running, ignoring the call to start: {}", theJob.getName(), e.toString());
 			return myJobRepository.getLastJobExecution(theJob.getName(), theJobParameters);
-		} catch (JobParametersInvalidException theE) {
-			ourLog.error("Job Parameters passed to this job were invalid: {}", theE.getMessage());
-			throw theE;
+		} catch (JobParametersInvalidException e) {
+			ourLog.error("Job Parameters passed to this job were invalid: {}", e.getMessage());
+			throw e;
 		}
 	}
 }

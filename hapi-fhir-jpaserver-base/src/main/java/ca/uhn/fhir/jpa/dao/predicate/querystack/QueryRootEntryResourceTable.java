@@ -4,7 +4,7 @@ package ca.uhn.fhir.jpa.dao.predicate.querystack;
  * #%L
  * HAPI FHIR JPA Server
  * %%
- * Copyright (C) 2014 - 2020 University Health Network
+ * Copyright (C) 2014 - 2021 Smile CDR, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -63,8 +63,8 @@ class QueryRootEntryResourceTable extends QueryRootEntry {
 			}
 			addPredicate(myCriteriaBuilder.isNull(getRoot().get("myDeleted")));
 			if (!myRequestPartitionId.isAllPartitions()) {
-				if (myRequestPartitionId.getPartitionId() != null) {
-					addPredicate(myCriteriaBuilder.equal(getRoot().get("myPartitionIdValue").as(Integer.class), myRequestPartitionId.getPartitionId()));
+				if (!myRequestPartitionId.isDefaultPartition()) {
+					addPredicate(getRoot().get("myPartitionIdValue").as(Integer.class).in(myRequestPartitionId.getPartitionIds()));
 				} else {
 					addPredicate(myCriteriaBuilder.isNull(getRoot().get("myPartitionIdValue").as(Integer.class)));
 				}

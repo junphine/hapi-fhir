@@ -37,6 +37,7 @@ import ca.uhn.fhir.jpa.model.entity.BaseHasResource;
 import ca.uhn.fhir.jpa.model.entity.BaseTag;
 import ca.uhn.fhir.jpa.model.entity.ForcedId;
 import ca.uhn.fhir.jpa.model.entity.IBaseResourceEntity;
+import ca.uhn.fhir.jpa.model.entity.PartitionablePartitionId;
 import ca.uhn.fhir.jpa.model.entity.ResourceEncodingEnum;
 import ca.uhn.fhir.jpa.model.entity.ResourceHistoryProvenanceEntity;
 import ca.uhn.fhir.jpa.model.entity.ResourceHistoryTable;
@@ -150,7 +151,7 @@ import static org.apache.commons.lang3.StringUtils.trim;
  * #%L
  * HAPI FHIR JPA Server
  * %%
- * Copyright (C) 2014 - 2020 University Health Network
+ * Copyright (C) 2014 - 2021 Smile CDR, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -962,7 +963,7 @@ public abstract class BaseHapiFhirDao<T extends IBaseResource> extends BaseStora
 
 		// 7. Add partition information
 		if (myPartitionSettings.isPartitioningEnabled()) {
-			RequestPartitionId partitionId = theEntity.getPartitionId();
+			PartitionablePartitionId partitionId = theEntity.getPartitionId();
 			if (partitionId != null && partitionId.getPartitionId() != null) {
 				PartitionEntity persistedPartition = myPartitionLookupSvc.getPartitionById(partitionId.getPartitionId());
 				retVal.setUserData(Constants.RESOURCE_PARTITION_ID, persistedPartition.toRequestPartitionId());
@@ -1030,8 +1031,8 @@ public abstract class BaseHapiFhirDao<T extends IBaseResource> extends BaseStora
 
 			entity.setDeleted(theDeletedTimestampOrNull);
 			entity.setUpdated(theDeletedTimestampOrNull);
-			entity.setNarrativeTextParsedIntoWords(null);
-			entity.setContentTextParsedIntoWords(null);
+			entity.setNarrativeText(null);
+			entity.setContentText(null);
 			entity.setHashSha256(null);
 			entity.setIndexStatus(INDEX_STATUS_INDEXED);
 			changed = populateResourceIntoEntity(theRequest, theResource, entity, true);
@@ -1057,8 +1058,8 @@ public abstract class BaseHapiFhirDao<T extends IBaseResource> extends BaseStora
 
 					newParams.populateResourceTableSearchParamsPresentFlags(entity);
 					entity.setIndexStatus(INDEX_STATUS_INDEXED);
-					populateFullTextFields(myContext, theResource, entity);
 				}
+				populateFullTextFields(myContext, theResource, entity);
 			} else {
 
 				changed = populateResourceIntoEntity(theRequest, theResource, entity, false);
@@ -1480,11 +1481,11 @@ public abstract class BaseHapiFhirDao<T extends IBaseResource> extends BaseStora
 
 	public static void populateFullTextFields(final FhirContext theContext, final IBaseResource theResource, ResourceTable theEntity) {
 		if (theEntity.getDeleted() != null) {
-			theEntity.setNarrativeTextParsedIntoWords(null);
-			theEntity.setContentTextParsedIntoWords(null);
+			theEntity.setNarrativeText(null);
+			theEntity.setContentText(null);
 		} else {
-			theEntity.setNarrativeTextParsedIntoWords(parseNarrativeTextIntoWords(theResource));
-			theEntity.setContentTextParsedIntoWords(parseContentTextIntoWords(theContext, theResource));
+			theEntity.setNarrativeText(parseNarrativeTextIntoWords(theResource));
+			theEntity.setContentText(parseContentTextIntoWords(theContext, theResource));
 		}
 	}
 

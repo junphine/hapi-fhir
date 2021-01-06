@@ -4,7 +4,7 @@ package ca.uhn.fhir.rest.server.interceptor.auth;
  * #%L
  * HAPI FHIR - Server Framework
  * %%
- * Copyright (C) 2014 - 2020 University Health Network
+ * Copyright (C) 2014 - 2021 Smile CDR, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -215,7 +215,8 @@ public class RuleBuilder implements IAuthRuleBuilder {
 				if (theResource != null) {
 					RequestPartitionId partitionId = (RequestPartitionId) theResource.getUserData(Constants.RESOURCE_PARTITION_ID);
 					if (partitionId != null) {
-						if (!myTenantIds.contains(partitionId.getPartitionName())) {
+						String partitionNameOrNull = partitionId.getFirstPartitionNameOrNull();
+						if (partitionNameOrNull == null || !myTenantIds.contains(partitionNameOrNull)) {
 							return !myOutcome;
 						}
 					}

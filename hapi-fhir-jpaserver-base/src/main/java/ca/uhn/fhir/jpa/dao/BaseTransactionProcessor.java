@@ -4,7 +4,7 @@ package ca.uhn.fhir.jpa.dao;
  * #%L
  * HAPI FHIR JPA Server
  * %%
- * Copyright (C) 2014 - 2020 University Health Network
+ * Copyright (C) 2014 - 2021 Smile CDR, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -103,6 +103,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.TreeSet;
 
 import static ca.uhn.fhir.util.StringUtil.toUtf8String;
 import static org.apache.commons.lang3.StringUtils.defaultString;
@@ -1020,7 +1021,14 @@ public abstract class BaseTransactionProcessor {
 	}
 
 	private IFhirResourceDao getDaoOrThrowException(Class<? extends IBaseResource> theClass) {
-		return myDaoRegistry.getResourceDao(theClass);
+		IFhirResourceDao<? extends IBaseResource> dao = myDaoRegistry.getResourceDaoOrNull(theClass);
+		if (dao == null) {
+			Set<String> types = new TreeSet<>(myDaoRegistry.getRegisteredDaoTypes());
+			String type = myContext.getResourceType(theClass);
+			String msg = myContext.getLocalizer().getMessage(BaseTransactionProcessor.class, "unsupportedResourceType", type, types.toString());
+			throw new InvalidRequestException(msg);
+		}
+		return dao;
 	}
 
 
