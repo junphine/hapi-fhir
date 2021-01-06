@@ -51,7 +51,7 @@ public class FhirInstanceValidator extends BaseValidatorBridge implements IInsta
 	 */
 	public FhirInstanceValidator(IValidationSupport theValidationSupport) {
 		if (theValidationSupport.getFhirContext().getVersion().getVersion() == FhirVersionEnum.DSTU2) {
-			myValidationSupport = new HapiToHl7OrgDstu2ValidatingSupportWrapper(theValidationSupport);
+			myValidationSupport = (theValidationSupport);
 		} else {
 			myValidationSupport = theValidationSupport;
 		}

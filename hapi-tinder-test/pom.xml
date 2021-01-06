@@ -19,39 +19,17 @@
 			<artifactId>hapi-fhir-base</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>ca.uhn.hapi.fhir</groupId>
-			<artifactId>hapi-fhir-structures-dstu2</artifactId>
-			<version>${project.version}</version>
-		</dependency>
+		
 		<!-- Because Tinder is a part of the HAPI FHIR build process (it generates a bunch of the actual HAPI structure code), but also uses HAPI FHIR in order to run (e.g. to load ValueSet resources), we keep 
 			the dependencies for the structures a version behind the main library. This is weird, but it works. -->
-		<dependency>
-			<groupId>ca.uhn.hapi.fhir</groupId>
-			<artifactId>hapi-fhir-structures-dstu2.1</artifactId>
-			<version>${project.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>ca.uhn.hapi.fhir</groupId>
-					<artifactId>hapi-fhir-base</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
+		
 		<dependency>
 			<groupId>ca.uhn.hapi.fhir</groupId>
 			<artifactId>hapi-fhir-structures-dstu3</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>ca.uhn.hapi.fhir</groupId>
-			<artifactId>hapi-fhir-structures-hl7org-dstu2</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>ca.uhn.hapi.fhir</groupId>
-			<artifactId>hapi-fhir-validation-resources-dstu2</artifactId>
-			<version>${project.version}</version>
-		</dependency>
+		
+		
 		<dependency>
 			<groupId>ca.uhn.hapi.fhir</groupId>
 			<artifactId>hapi-fhir-validation-resources-dstu3</artifactId>
@@ -126,37 +104,7 @@
 					</dependency>
 				</dependencies>
 				<executions>
-				<!-- 
-					<execution>
-						<id>custom-structs</id>
-						<goals>
-							<goal>generate-structures</goal>
-						</goals>
-						<configuration>
-							<package>ca.uhn.test.customstructs</package>
-							<profileHttpBase>http://foo</profileHttpBase>
-							<version>dstu</version>
-							<resourceProfileFiles>
-								<resourceProfileFile>
-									<profileFile>${project.basedir}/src/test/resources/profile/patient.xml</profileFile>
-									<profileSourceUrl>http://foo1</profileSourceUrl>
-								</resourceProfileFile>
-								<resourceProfileFile>
-									<profileFile>${project.basedir}/src/test/resources/profile/organization.xml</profileFile>
-									<profileSourceUrl>http://foo1</profileSourceUrl>
-								</resourceProfileFile>
-							</resourceProfileFiles>
-							<resourceValueSetFiles>
-								<resourceValueSetFile>
-									<valueSetFile>${project.basedir}/src/test/resources/valueset/valueset-cgta-patientidpool.xml</valueSetFile>
-								</resourceValueSetFile>
-								<resourceValueSetFile>
-									<valueSetFile>${project.basedir}/src/test/resources/valueset/valueset-cgta-provideridpool.xml</valueSetFile>
-								</resourceValueSetFile>
-							</resourceValueSetFiles>
-						</configuration>
-					</execution>
-				-->
+				
 					<execution>
 						<id>generalstructs</id>
 						<goals>
@@ -164,7 +112,7 @@
 						</goals>
 						<configuration>
 							<package>ca.uhn.test.realstructs</package>
-							<version>dstu2</version>
+							<version>dstu3</version>
 							<baseResourceNames>
 								<baseResourceName>patient</baseResourceName>
 								<baseResourceName>valueset</baseResourceName>
@@ -178,24 +126,7 @@
 							<buildDatatypes>true</buildDatatypes>
 						</configuration>
 					</execution>
-					<execution>
-						<id>generic_multi_dstu2</id>
-						<goals>
-							<goal>generate-multi-files</goal>
-						</goals>
-						<configuration>
-							<version>dstu2</version>
-							<generateResources>true</generateResources>
-							<templateFile>${project.basedir}/src/test/resources/templates/resource_test.vm</templateFile>
-							<targetSourceDirectory>${project.build.directory}/generated-sources/tinder</targetSourceDirectory>
-							<targetPackage>ca.uhn.test.generic.multi</targetPackage>
-							<filenameSuffix>ResourceTest.java</filenameSuffix>
-							<includeResources>
-								<includeResource>patient</includeResource>
-								<includeResource>organization</includeResource>
-							</includeResources>
-						</configuration>
-					</execution>
+					
 					<execution>
 						<id>generic_multi_dstu3</id>
 						<goals>
@@ -240,7 +171,7 @@
 							<goal>generate-multi-files</goal>
 						</goals>
 						<configuration>
-							<version>dstu2</version>
+							<version>dstu3</version>
 							<generateResources>true</generateResources>
 							<resourceSource>spreadsheet</resourceSource>
 							<templateFile>${project.basedir}/src/test/resources/templates/resource_map.vm</templateFile>
@@ -256,25 +187,7 @@
 							</includeResources>
 						</configuration>
 					</execution>
-					<execution>
-						<id>generic_single_dstu2</id>
-						<goals>
-							<goal>generate-single-file</goal>
-						</goals>
-						<configuration>
-							<version>dstu2</version>
-							<generateResources>true</generateResources>
-							<templateFile>${project.basedir}/src/test/resources/templates/resource_test_beans_java.vm</templateFile>
-							<targetSourceDirectory>${project.build.directory}/generated-sources/tinder</targetSourceDirectory>
-							<targetPackage>ca.uhn.test.generic.single</targetPackage>
-							<packageBase>ca.uhn.test.generic.multi</packageBase>
-							<targetFile>TestConfigDstu2.java</targetFile>
-							<includeResources>
-								<includeResource>patient</includeResource>
-								<includeResource>organization</includeResource>
-							</includeResources>
-						</configuration>
-					</execution>
+					
 					<execution>
 						<id>generic_single_r4</id>
 						<goals>
@@ -301,13 +214,13 @@
 							<goal>generate-single-file</goal>
 						</goals>
 						<configuration>
-							<version>dstu2</version>
+							<version>dstu3</version>
 							<generateDatatypes>true</generateDatatypes>
 							<templateFile>${project.basedir}/src/test/resources/templates/composite_map.vm</templateFile>
 							<velocityPath>${project.basedir}/src/test/resources/macros</velocityPath>
 							<targetResourceDirectory>${project.build.directory}/generated-resources/tinder</targetResourceDirectory>
 							<targetFolder>maps</targetFolder>
-							<targetFile>Datatypes_Dstu2.json</targetFile>
+							<targetFile>Datatypes_Dstu3.json</targetFile>
 							<includeResources>
 								<includeResource>patient</includeResource>
 								<includeResource>organization</includeResource>
