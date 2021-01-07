@@ -61,6 +61,12 @@
 			<artifactId>hapi-fhir-validation-resources-r4</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		
+		<dependency>
+			<groupId>ca.uhn.hapi.fhir</groupId>
+			<artifactId>hapi-fhir-structures-dstu3</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>ca.uhn.hapi.fhir</groupId>
 			<artifactId>hapi-fhir-validation-resources-dstu3</artifactId>
@@ -92,18 +98,22 @@
 		<dependency>
 			<groupId>org.mariadb.jdbc</groupId>
 			<artifactId>mariadb-java-client</artifactId>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.microsoft.sqlserver</groupId>
 			<artifactId>mssql-jdbc</artifactId>
+			<scope>test</scope>
 		</dependency>
 
 		<dependency>
@@ -246,7 +256,14 @@
 			<artifactId>awaitility</artifactId>
 			<scope>test</scope>
 		</dependency>
-
+		<!-- https://mvnrepository.com/artifact/org.rauschig/jarchivelib -->
+		<dependency>
+		    <groupId>org.rauschig</groupId>
+		    <artifactId>jarchivelib</artifactId>
+		    <version>0.7.1</version>
+		    <scope>test</scope>
+		</dependency>
+		
 	</dependencies>
 
 	<build>

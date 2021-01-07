@@ -33,6 +33,9 @@ import ca.uhn.fhir.jpa.subscription.channel.subscription.IChannelNamer;
 import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r4.model.Subscription;
+import org.hl7.fhir.r5.model.Enumerations.PublicationStatus;
+import org.hl7.fhir.r5.model.Enumerations.SubscriptionState;
+import org.hl7.fhir.r5.model.Reference;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -64,10 +67,10 @@ public class MdmSubscriptionLoader {
 		List<IBaseResource> subscriptions;
 		List<String> mdmResourceTypes = myMdmSettings.getMdmRules().getMdmTypes();
 		switch (myFhirContext.getVersion().getVersion()) {
-			case DSTU3:
+			case R5:
 				subscriptions = mdmResourceTypes
 					.stream()
-					.map(resourceType -> buildMdmSubscriptionDstu3(MDM_SUBSCIPRION_ID_PREFIX + resourceType, resourceType+"?"))
+					.map(resourceType -> buildMdmSubscriptionR5(MDM_SUBSCIPRION_ID_PREFIX + resourceType, resourceType+"?"))
 					.collect(Collectors.toList());
 				break;
 			case R4:
@@ -95,17 +98,21 @@ public class MdmSubscriptionLoader {
 		}
 	}
 
-	private org.hl7.fhir.dstu3.model.Subscription buildMdmSubscriptionDstu3(String theId, String theCriteria) {
-		org.hl7.fhir.dstu3.model.Subscription retval = new org.hl7.fhir.dstu3.model.Subscription();
+	private org.hl7.fhir.r5.model.Subscription buildMdmSubscriptionR5(String theId, String theCriteria) {
+		org.hl7.fhir.r5.model.Subscription retval = new org.hl7.fhir.r5.model.Subscription();
 		retval.setId(theId);
 		retval.setReason("MDM");
-		retval.setStatus(org.hl7.fhir.dstu3.model.Subscription.SubscriptionStatus.REQUESTED);
-		retval.setCriteria(theCriteria);
+		retval.setStatus(SubscriptionState.REQUESTED);
+		//retval.setCriteria(theCriteria);
 		retval.getMeta().addTag().setSystem(MdmConstants.SYSTEM_MDM_MANAGED).setCode(MdmConstants.CODE_HAPI_MDM_MANAGED);
-		org.hl7.fhir.dstu3.model.Subscription.SubscriptionChannelComponent channel = retval.getChannel();
-		channel.setType(org.hl7.fhir.dstu3.model.Subscription.SubscriptionChannelType.MESSAGE);
-		channel.setEndpoint("channel:" + myChannelNamer.getChannelName(IMdmSettings.EMPI_CHANNEL_NAME, new ChannelProducerSettings()));
-		channel.setPayload("application/json");
+		org.hl7.fhir.r5.model.SubscriptionTopic channel = new org.hl7.fhir.r5.model.SubscriptionTopic();
+		channel.setId(theCriteria);
+		channel.setStatus(PublicationStatus.ACTIVE);		
+		Reference topicRef = new Reference(channel);
+		retval.setTopic(topicRef);
+		retval.getChannelType().setCode(Subscription.SubscriptionChannelType.MESSAGE.toCode());
+		retval.getEndpointElement().setValue("channel:" + myChannelNamer.getChannelName(IMdmSettings.EMPI_CHANNEL_NAME, new ChannelProducerSettings()));
+		retval.getContentTypeElement().setValue("application/json");
 		return retval;
 	}
 

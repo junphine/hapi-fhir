@@ -122,8 +122,8 @@
             <groupId>ca.uhn.hapi.fhir</groupId>
             <artifactId>hapi-fhir-testpage-overlay</artifactId>
             <version>${project.version}</version>
-            <!-- <classifier>classes</classifier> -->
-			<!-- <scope>provided</scope> -->
+            <!-- <classifier>classes</classifier>  -->
+            <!-- <scope>provided</scope> -->
         </dependency>
         
         <dependency>
@@ -354,8 +354,7 @@
             <!-- This is to run the integration tests -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-failsafe-plugin</artifactId>
-                <version>3.0.0-M5</version>
+                <artifactId>maven-failsafe-plugin</artifactId>                
                 <configuration>
                     <redirectTestOutputToFile>true</redirectTestOutputToFile>
                 </configuration>

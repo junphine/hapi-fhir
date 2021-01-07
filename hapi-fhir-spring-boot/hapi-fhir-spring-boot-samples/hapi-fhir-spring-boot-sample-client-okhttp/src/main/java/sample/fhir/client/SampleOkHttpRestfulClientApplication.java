@@ -22,7 +22,7 @@ package sample.fhir.client;
 
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.client.interceptor.LoggingInterceptor;
-import org.hl7.fhir.dstu3.model.CapabilityStatement;
+import org.hl7.fhir.r4.model.CapabilityStatement;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;

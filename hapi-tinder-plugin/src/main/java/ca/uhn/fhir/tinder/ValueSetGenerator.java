@@ -102,8 +102,9 @@ public class ValueSetGenerator {
 				ca.uhn.fhir.model.dstu2.resource.ValueSet nextVs = (ca.uhn.fhir.model.dstu2.resource.ValueSet) nextEntry.getResource();
 				parseValueSet(nextVs);
 			}
-		} else {
-			throw new IllegalStateException("Fhir version not supported");
+		} 		
+		else {
+			//-throw new IllegalStateException("Fhir version not supported");
 		}
 
 		if (myResourceValueSetFiles != null) {

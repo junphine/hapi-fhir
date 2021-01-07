@@ -1,12 +1,14 @@
 package ca.uhn.fhir.jpa.empi;
 
 import ca.uhn.fhir.context.FhirContext;
-import ca.uhn.fhir.empi.api.IEmpiSettings;
-import ca.uhn.fhir.empi.rules.config.EmpiRuleValidator;
-import ca.uhn.fhir.empi.rules.config.EmpiSettings;
-import ca.uhn.fhir.jpa.empi.config.EmpiConsumerConfig;
-import ca.uhn.fhir.jpa.empi.config.EmpiSubmitterConfig;
+import ca.uhn.fhir.mdm.api.IMdmSettings;
+import ca.uhn.fhir.mdm.rules.config.MdmRuleValidator;
+import ca.uhn.fhir.mdm.rules.config.MdmSettings;
+import ca.uhn.fhir.jpa.mdm.config.MdmConsumerConfig;
+import ca.uhn.fhir.jpa.mdm.config.MdmSubmitterConfig;
 import ca.uhn.fhir.jpa.starter.AppProperties;
+import ca.uhn.fhir.jpa.subscription.channel.config.SubscriptionChannelConfig;
+import ca.uhn.fhir.jpa.subscription.submit.config.SubscriptionSubmitterConfig;
 import ca.uhn.fhir.rest.server.util.ISearchParamRetriever;
 import com.google.common.base.Charsets;
 import org.apache.commons.io.IOUtils;
@@ -26,20 +28,21 @@ import java.io.IOException;
  */
 @Configuration
 @Conditional(EmpiConfigCondition.class)
-@Import({EmpiConsumerConfig.class, EmpiSubmitterConfig.class})
+
+@Import({SubscriptionSubmitterConfig.class, SubscriptionChannelConfig.class,MdmConsumerConfig.class, MdmSubmitterConfig.class})
 public class EmpiConfig {
 
   @Bean
-  EmpiRuleValidator empiRuleValidator(FhirContext theFhirContext, ISearchParamRetriever theSearchParamRetriever) {
-    return new EmpiRuleValidator(theFhirContext, theSearchParamRetriever);
+  MdmRuleValidator empiRuleValidator(FhirContext theFhirContext, ISearchParamRetriever theSearchParamRetriever) {
+    return new MdmRuleValidator(theFhirContext, theSearchParamRetriever);
   }
 
   @Bean
-  IEmpiSettings empiSettings(@Autowired EmpiRuleValidator theEmpiRuleValidator, AppProperties appProperties) throws IOException {
+  IMdmSettings empiSettings(@Autowired MdmRuleValidator theEmpiRuleValidator, AppProperties appProperties) throws IOException {
     DefaultResourceLoader resourceLoader = new DefaultResourceLoader();
     Resource resource = resourceLoader.getResource("empi-rules.json");
     String json = IOUtils.toString(resource.getInputStream(), Charsets.UTF_8);
-    return new EmpiSettings(theEmpiRuleValidator).setEnabled(appProperties.getEmpi_enabled()).setScriptText(json);
+    return new MdmSettings(theEmpiRuleValidator).setEnabled(appProperties.getEmpi_enabled()).setScriptText(json);
   }
 
 }

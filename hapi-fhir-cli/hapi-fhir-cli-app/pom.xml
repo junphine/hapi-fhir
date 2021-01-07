@@ -23,19 +23,7 @@
 			<version>${project.version}</version>
 			<type>jar</type>
 		</dependency>
-		<dependency>
-			<groupId>ca.uhn.hapi.fhir</groupId>
-			<artifactId>hapi-fhir-cli-jpaserver</artifactId>
-			<version>${project.version}</version>
-			<type>war</type>
-		</dependency>
-		<dependency>
-			<groupId>ca.uhn.hapi.fhir</groupId>
-			<artifactId>hapi-fhir-cli-jpaserver</artifactId>
-			<version>${project.version}</version>
-			<type>jar</type>
-			<classifier>classes</classifier>
-		</dependency>
+		
 		<dependency>
 			<groupId>ca.uhn.hapi.fhir</groupId>
 			<artifactId>hapi-fhir-testpage-overlay</artifactId>
@@ -63,19 +51,10 @@
 						<id>copy</id>
 						<phase>process-resources</phase>
 						<goals>
-							<goal>copy</goal>
+							<goal>copy-dependencies</goal>
 						</goals>
-						<configuration>
-							<artifactItems>
-								<artifactItem>
-									<groupId>ca.uhn.hapi.fhir</groupId>
-									<artifactId>hapi-fhir-cli-jpaserver</artifactId>
-									<type>war</type>
-									<overWrite>true</overWrite>
-									<outputDirectory>target/classes</outputDirectory>
-									<destFileName>hapi-fhir-cli-jpaserver.war</destFileName>
-								</artifactItem>
-							</artifactItems>
+						<configuration>		
+							<includeScope>compile</includeScope>					
 							<!-- other configurations here -->
 						</configuration>
 					</execution>

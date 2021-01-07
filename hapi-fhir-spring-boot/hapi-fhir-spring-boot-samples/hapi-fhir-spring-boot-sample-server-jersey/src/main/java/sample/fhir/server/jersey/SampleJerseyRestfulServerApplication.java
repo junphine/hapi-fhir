@@ -30,6 +30,7 @@ import org.springframework.context.annotation.Bean;
 public class SampleJerseyRestfulServerApplication {
 
     public static void main(String[] args) {
+    	System.setProperty("spring.batch.job.enabled", "false");
         SpringApplication.run(SampleJerseyRestfulServerApplication.class, args);
     }
 
