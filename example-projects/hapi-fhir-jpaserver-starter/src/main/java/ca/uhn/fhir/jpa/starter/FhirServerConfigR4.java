@@ -32,6 +32,10 @@ public class FhirServerConfigR4 extends BaseJavaConfigR4 {
    */
   @Autowired
   AppProperties appProperties;
+  
+  
+  @Autowired
+  Properties jpaProperties;
 
   @Override
   public DatabaseBackedPagingProvider databaseBackedPagingProvider() {
@@ -42,7 +46,8 @@ public class FhirServerConfigR4 extends BaseJavaConfigR4 {
   }
 
   @Autowired
-  private ConfigurableEnvironment configurableEnvironment;
+  private ConfigurableEnvironment configurableEnvironment;  
+ 
 
   @Override
   @Bean()
@@ -56,7 +61,7 @@ public class FhirServerConfigR4 extends BaseJavaConfigR4 {
       throw new ConfigurationException("Could not set the data source due to a configuration issue", e);
     }
 
-    retVal.setJpaProperties(EnvironmentHelper.getHibernateProperties(configurableEnvironment));
+    retVal.setJpaProperties(EnvironmentHelper.getHibernateProperties(jpaProperties,configurableEnvironment));
     return retVal;
   }
 

@@ -3,6 +3,7 @@ package ca.uhn.example.config;
 import org.apache.ignite.Ignite;
 import org.apache.ignite.Ignition;
 import org.apache.ignite.cache.CacheMode;
+import org.apache.ignite.cache.FullTextQueryIndex;
 import org.apache.ignite.cache.QueryEntity;
 import org.apache.ignite.cache.QueryIndex;
 import org.apache.ignite.cache.QueryIndexType;
@@ -12,6 +13,7 @@ import org.apache.ignite.configuration.ClientConfiguration;
 import org.apache.ignite.configuration.IgniteConfiguration;
 import org.apache.ignite.springdata22.repository.config.EnableIgniteRepositories;
 import org.hl7.fhir.instance.model.api.IBaseResource;
+import org.hl7.fhir.instance.model.api.IPrimitiveType;
 import org.hl7.fhir.r4.model.BaseResource;
 import org.hl7.fhir.r4.model.IdType;
 import org.hl7.fhir.r4.model.Meta;
@@ -20,12 +22,21 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import ca.uhn.example.model.VersionedId;
+import ca.uhn.fhir.context.BaseRuntimeChildDatatypeDefinition;
+import ca.uhn.fhir.context.BaseRuntimeChildDefinition;
 import ca.uhn.fhir.context.FhirContext;
+import ca.uhn.fhir.context.RuntimeChildPrimitiveDatatypeDefinition;
 import ca.uhn.fhir.context.RuntimeResourceDefinition;
+import ca.uhn.fhir.context.RuntimeSearchParam;
+import ca.uhn.fhir.model.api.annotation.DatatypeDef;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author cjz
@@ -78,10 +89,47 @@ public class IgniteAppCfg {
 		ccfg2.setSqlSchema(myFhirContext.getVersion().getVersion().name());
 		ccfg2.setCacheMode(CacheMode.PARTITIONED);
 		
-		//ccfg2.setQueryEntity(createResourceQueryEntity(resourceType));
-
-		RuntimeResourceDefinition def = myFhirContext.getResourceDefinition(resourceName);
-		def.getId();
+		QueryEntity queryEntity = createResourceQueryEntity(resourceType);
+		try {
+			RuntimeResourceDefinition def = myFhirContext.getResourceDefinition(resourceName);
+			String id = def.getId();
+			
+			Map<String,String> fieldTypeMap = new HashMap<>();
+			for(BaseRuntimeChildDefinition child: def.getChildren()) {
+				if(child instanceof BaseRuntimeChildDatatypeDefinition) {
+					BaseRuntimeChildDatatypeDefinition rchild = (BaseRuntimeChildDatatypeDefinition) child;
+					if(rchild.getMax()<=1) {
+						if(IPrimitiveType.class.isAssignableFrom(rchild.getDatatype())) {
+							DatatypeDef dataTypeDef = rchild.getDatatype().getAnnotation(DatatypeDef.class);
+							if(dataTypeDef!=null && dataTypeDef.name()!=null) {
+								fieldTypeMap.put(rchild.getElementName(), String.class.getName());
+							}
+						}
+					}
+				}
+				else {
+					if(child.getMax()<=1 && child instanceof RuntimeChildPrimitiveDatatypeDefinition) {
+						fieldTypeMap.put(child.getElementName(), String.class.getName());
+					}
+					
+				}
+				
+			}
+			for(RuntimeSearchParam param: def.getSearchParams()) {
+				String field = param.getName();
+				if(field!=null) {
+					if(fieldTypeMap.containsKey(field)) {
+						queryEntity.addQueryField(field, String.class.getName(), null);
+						queryEntity.getIndexes().add(new QueryIndex(field,false));
+					}
+				}
+			}
+		
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+		ccfg2.setQueryEntity(queryEntity);
 		return ccfg2;
 	}
 
@@ -99,8 +147,7 @@ public class IgniteAppCfg {
 		ccfg2.setBackups(0);
 		ccfg2.setQueryEntity(createVersionedQueryEntity(resourceType));
 
-		RuntimeResourceDefinition def = myFhirContext.getResourceDefinition(resourceName);
-		def.getId();
+		
 		return ccfg2;
 	}
 	
@@ -110,14 +157,17 @@ public class IgniteAppCfg {
      * @return Cache type metadata.
      */
     private static QueryEntity createResourceQueryEntity(Class<? extends BaseResource> resourceType) {
+    	List<QueryIndex> indexes = new ArrayList<>();
     	QueryEntity entity = new QueryEntity()
             .setValueType(resourceType.getName())
             .setKeyType(String.class.getName())            
-            .addQueryField("id", IdType.class.getName(), null)
+            .addQueryField("id", String.class.getName(), null)
             .addQueryField("text", String.class.getName(), null)
             .setKeyFieldName("id")
-            .setIndexes(Arrays.asList(
-                new QueryIndex("text")));
+            .setIndexes(indexes);
+    	
+    	//indexes.add(new QueryIndex("text"));
+    	indexes.add(new FullTextQueryIndex("text"));
     	
     	return entity;
     }

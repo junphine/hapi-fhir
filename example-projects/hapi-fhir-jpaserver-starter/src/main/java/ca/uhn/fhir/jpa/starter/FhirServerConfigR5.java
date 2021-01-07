@@ -12,6 +12,8 @@ import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 
+import java.util.Properties;
+
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
@@ -29,6 +31,9 @@ public class FhirServerConfigR5 extends BaseJavaConfigR5 {
    */
   @Autowired
   AppProperties appProperties;
+  
+  @Autowired
+  Properties jpaProperties;
 
   @Override
   public DatabaseBackedPagingProvider databaseBackedPagingProvider() {
@@ -53,7 +58,7 @@ public class FhirServerConfigR5 extends BaseJavaConfigR5 {
       throw new ConfigurationException("Could not set the data source due to a configuration issue", e);
     }
 
-    retVal.setJpaProperties(EnvironmentHelper.getHibernateProperties(configurableEnvironment));
+    retVal.setJpaProperties(EnvironmentHelper.getHibernateProperties(jpaProperties,configurableEnvironment));
     return retVal;
   }
 

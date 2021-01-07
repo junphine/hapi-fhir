@@ -5,10 +5,17 @@ import ca.uhn.fhir.jpa.binstore.DatabaseBlobBinaryStorageSvcImpl;
 import ca.uhn.fhir.jpa.binstore.IBinaryStorageSvc;
 import ca.uhn.fhir.jpa.model.config.PartitionSettings;
 import ca.uhn.fhir.jpa.model.entity.ModelConfig;
+import ca.uhn.fhir.jpa.search.HapiLuceneAnalysisConfigurer;
 import ca.uhn.fhir.jpa.subscription.channel.subscription.SubscriptionDeliveryHandlerFactory;
 import ca.uhn.fhir.jpa.subscription.match.deliver.email.IEmailSender;
 import ca.uhn.fhir.jpa.subscription.match.deliver.email.JavaMailEmailSender;
 import com.google.common.base.Strings;
+
+import org.hibernate.dialect.H2Dialect;
+import org.hibernate.search.backend.lucene.cfg.LuceneBackendSettings;
+import org.hibernate.search.backend.lucene.cfg.LuceneIndexSettings;
+import org.hibernate.search.engine.cfg.BackendSettings;
+import org.hibernate.search.mapper.orm.cfg.HibernateOrmMapperSettings;
 import org.hl7.fhir.r4.model.Subscription;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,6 +23,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import java.util.Optional;
+import java.util.Properties;
 
 /**
  * This is the primary configuration file for the example server
@@ -197,4 +205,30 @@ public class FhirServerConfigCommon {
 
     return null;
   }
+  
+	@Bean
+	public Properties jpaProperties() {
+		Properties extraProperties = new Properties();
+	
+		//Regular Hibernate Settings
+		extraProperties.put("hibernate.dialect", "org.hibernate.dialect.PostgreSQL10Dialect");
+		extraProperties.put("hibernate.format_sql", "true");
+		extraProperties.put("hibernate.show_sql", "true");
+		extraProperties.put("hibernate.hbm2ddl.auto", "update");
+		extraProperties.put("hibernate.jdbc.batch_size", "20");
+		extraProperties.put("hibernate.cache.use_query_cache", "false");
+		extraProperties.put("hibernate.cache.use_second_level_cache", "false");
+		extraProperties.put("hibernate.cache.use_structured_entries", "false");
+		extraProperties.put("hibernate.cache.use_minimal_puts", "false");
+	
+		extraProperties.put(BackendSettings.backendKey(LuceneBackendSettings.ANALYSIS_CONFIGURER), HapiLuceneAnalysisConfigurer.class.getName());
+		extraProperties.put(BackendSettings.backendKey(LuceneIndexSettings.DIRECTORY_TYPE), "local-filesystem");
+		extraProperties.put(BackendSettings.backendKey(LuceneIndexSettings.DIRECTORY_ROOT), "target/lucenefiles");
+		extraProperties.put(BackendSettings.backendKey(LuceneBackendSettings.LUCENE_VERSION), "LUCENE_CURRENT");
+		if (System.getProperty("lowmem") != null) {
+			extraProperties.put(HibernateOrmMapperSettings.ENABLED, "false");
+		}
+	
+		return extraProperties;
+	}
 }

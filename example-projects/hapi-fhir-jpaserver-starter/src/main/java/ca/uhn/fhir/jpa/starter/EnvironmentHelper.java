@@ -12,34 +12,14 @@ import java.util.Properties;
 
 public class EnvironmentHelper {
 
-  public static Properties getHibernateProperties(ConfigurableEnvironment environment) {
-    Properties properties = new Properties();
-
-    if (environment.getProperty("spring.jpa.properties.hibernate.dialect", String.class) == null) {
-      properties.put("hibernate.dialect", "org.hibernate.dialect.PostgreSQL10Dialect");
-      properties.put("hibernate.search.model_mapping", "ca.uhn.fhir.jpa.search.LuceneSearchMappingFactory");
-      properties.put("hibernate.format_sql", "false");
-      properties.put("hibernate.show_sql", "true");
-      properties.put("hibernate.hbm2ddl.auto", "update");
-      properties.put("hibernate.jdbc.batch_size", "20");
-      properties.put("hibernate.cache.use_query_cache", "false");
-      properties.put("hibernate.cache.use_second_level_cache", "false");
-      properties.put("hibernate.cache.use_structured_entries", "false");
-      properties.put("hibernate.cache.use_minimal_puts", "false");
-      properties.put("hibernate.search.default.directory_provider", "filesystem");
-      properties.put("hibernate.search.default.indexBase", "target/lucenefiles");
-      properties.put("hibernate.search.lucene_version", "LUCENE_CURRENT");
-    } else {
-      String[] names = {"hibernate.dialect","hibernate.search.model_mapping","hibernate.format_sql","hibernate.show_sql"
-    		  ,"hibernate.hbm2ddl.auto","hibernate.jdbc.batch_size"
-    		  ,"hibernate.cache.use_query_cache","hibernate.cache.use_second_level_cache","hibernate.cache.use_structured_entries", "hibernate.cache.use_minimal_puts"
-    		  ,"hibernate.search.default.directory_provider","hibernate.search.default.indexBase","hibernate.search.lucene_version"
-      };
-      for(String name: names) {
-        properties.put(name, environment.getProperty("spring.jpa.properties."+name, String.class));       
-      }
-    }
-    return properties;
+  public static Properties getHibernateProperties(Properties properties, ConfigurableEnvironment environment) {
+	  Map<String,Object> jpaProp = getPropertiesStartingWith(environment, "spring.jpa.properties.");
+	  for(Map.Entry<String,Object> nameValue: jpaProp.entrySet()) {
+		  String name = nameValue.getKey().substring("spring.jpa.properties.".length());
+		  properties.put(name, nameValue.getValue());       
+	  }
+	   
+      return properties;
   }
 
   public static Map<String, Object> getPropertiesStartingWith(ConfigurableEnvironment aEnv,
