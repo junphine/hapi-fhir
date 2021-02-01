@@ -1,14 +1,15 @@
 package ca.uhn.example.provider;
 
-import org.hl7.fhir.r4.model.ContactPoint;
 import org.hl7.fhir.r4.model.ContactPoint.ContactPointUse;
-import org.hl7.fhir.r4.model.IdType;
 import org.hl7.fhir.r4.model.*;
 
-import ca.uhn.example.model.MyOrganization;
-import ca.uhn.fhir.model.primitive.CodeDt;
+import ca.uhn.example.model.Dataset;
+
+import ca.uhn.fhir.rest.annotation.Create;
 import ca.uhn.fhir.rest.annotation.IdParam;
 import ca.uhn.fhir.rest.annotation.Read;
+import ca.uhn.fhir.rest.annotation.ResourceParam;
+import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.server.IResourceProvider;
 import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
 
@@ -20,14 +21,14 @@ import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
  * See the MyOrganization definition to see how the custom resource 
  * definition works.
  */
-public class OrganizationResourceProvider implements IResourceProvider {
+public class DatasetResourceProvider implements IResourceProvider {
 
 	/**
 	 * The getResourceType method comes from IResourceProvider, and must be overridden to indicate what type of resource this provider supplies.
 	 */
 	@Override
-	public Class<MyOrganization> getResourceType() {
-		return MyOrganization.class;
+	public Class<Dataset> getResourceType() {
+		return Dataset.class;
 	}
 
 	/**
@@ -38,7 +39,7 @@ public class OrganizationResourceProvider implements IResourceProvider {
 	 * @return Returns a resource matching this identifier, or null if none exists.
 	 */
 	@Read()
-	public MyOrganization getResourceById(@IdParam IdType theId) {
+	public Dataset getResourceById(@IdParam IdType theId) {
 		
 		/*
 		 * We only support one organization, so the follwing
@@ -49,17 +50,18 @@ public class OrganizationResourceProvider implements IResourceProvider {
 			throw new ResourceNotFoundException(theId);
 		}
 		
-		MyOrganization retVal = new MyOrganization();
+		Dataset retVal = new Dataset();
 		retVal.setId("1");
-		retVal.addIdentifier().setSystem("urn:example:orgs").setValue("FooOrganization");
-		retVal.addAddress().addLine("123 Fake Street").setCity("Toronto");
-		retVal.addTelecom().setUse(ContactPointUse.WORK).setValue("1-888-123-4567");
+		retVal.getMeta().setVersionId("2");
+		//retVal.addIdentifier().setSystem("urn:example:orgs").setValue("FooOrganization");
+		//retVal.addAddress().addLine("123 Fake Street").setCity("Toronto");
+		//retVal.addTelecom().setUse(ContactPointUse.WORK).setValue("1-888-123-4567");
 		
 		// Populate the first, primitive extension
 		retVal.setBillingCode(new CodeType("00102-1"));
 		
 		// The second extension is repeatable and takes a block type
-		MyOrganization.EmergencyContact contact = new MyOrganization.EmergencyContact();
+		Dataset.EmergencyContact contact = new Dataset.EmergencyContact();
 		contact.setActive(new BooleanType(true));
 		contact.setContact(new ContactPoint());
 		retVal.getEmergencyContact().add(contact);
@@ -67,5 +69,19 @@ public class OrganizationResourceProvider implements IResourceProvider {
 		return retVal;
 	}
 
+
+	/**
+	 * The "@Create" annotation indicates that this method implements "create=type", which adds a 
+	 * new instance of a resource to the server.
+	 */
+	@Create()
+	public MethodOutcome createResource(@ResourceParam Dataset theDataset) {
+		
+		String id = theDataset.getId();
+		id = "new";
+
+		// Let the caller know the ID of the newly created resource
+		return new MethodOutcome(new IdType(id));
+	}
 
 }

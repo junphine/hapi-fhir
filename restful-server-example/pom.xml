@@ -17,15 +17,15 @@
 
 	<name>HAPI FHIR Sample RESTful Server</name>
 
-	<repositories>
+	<!-- <repositories>
 		<repository>
 			<id>oss-snapshots</id>
 			<snapshots>
-				<enabled>true</enabled>
+				<enabled>false</enabled>
 			</snapshots>
 			<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
 		</repository>
-	</repositories>
+	</repositories> -->
 
 	<dependencies>
 
@@ -49,6 +49,17 @@
 			<artifactId>hapi-fhir-structures-r4</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.fhir</groupId>
+		    <artifactId>ucum</artifactId>
+		    <version>1.0.3</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.github.ben-manes.caffeine</groupId>
+			<artifactId>caffeine</artifactId>
+			<optional>true</optional>
+		</dependency>
 
 		<!-- This dependency is used for the "FHIR Tester" web app overlay -->
 		<dependency>
@@ -62,8 +73,8 @@
 			<groupId>ca.uhn.hapi.fhir</groupId>
 			<artifactId>hapi-fhir-testpage-overlay</artifactId>
 			<version>${project.version}</version>
-			<classifier>classes</classifier>
-			<scope>provided</scope>		
+			<!-- <classifier>classes</classifier>
+			<scope>provided</scope>		 -->
 		</dependency>
 
 		<!-- 
@@ -143,8 +154,8 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<configuration>
-					<source>1.7</source>
-					<target>1.7</target>
+					<source>1.8</source>
+					<target>1.8</target>
 				</configuration>
 			</plugin>
 			

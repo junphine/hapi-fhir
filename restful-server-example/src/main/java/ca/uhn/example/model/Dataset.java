@@ -4,31 +4,30 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.fhir.ucum.UcumException;
-import org.hl7.fhir.instance.model.api.IBaseElement;
 import org.hl7.fhir.r4.model.BackboneElement;
 import org.hl7.fhir.r4.model.BooleanType;
 import org.hl7.fhir.r4.model.CodeType;
 import org.hl7.fhir.r4.model.ContactPoint;
-import org.hl7.fhir.r4.model.Organization;
+import org.hl7.fhir.r4.model.DomainResource;
+import org.hl7.fhir.r4.model.Resource;
+import org.hl7.fhir.r4.model.ResourceType;
 import org.hl7.fhir.r4.model.StringType;
 
 import ca.uhn.fhir.model.api.BaseIdentifiableElement;
 import ca.uhn.fhir.model.api.IElement;
-import ca.uhn.fhir.model.api.IExtension;
 import ca.uhn.fhir.model.api.annotation.Block;
 import ca.uhn.fhir.model.api.annotation.Child;
 import ca.uhn.fhir.model.api.annotation.Description;
 import ca.uhn.fhir.model.api.annotation.Extension;
 import ca.uhn.fhir.model.api.annotation.ResourceDef;
-import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.util.ElementUtil;
 
 /**
  * This is an example of a customized model class. Essentially we have taken the
  * built-in Organization resource class, and extended with a custom extension.
  */
-@ResourceDef(name = "Organization")
-public class MyOrganization extends Organization {
+@ResourceDef(name = "Dataset")
+public class Dataset extends Resource {
 
 	/* *****************************
 	 * Fields
@@ -172,6 +171,20 @@ public class MyOrganization extends Organization {
 		}
 
 		
+	}
+
+	
+
+	@Override
+	public ResourceType getResourceType() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Resource copy() {
+		// TODO Auto-generated method stub
+		return this;
 	}
 	
 }

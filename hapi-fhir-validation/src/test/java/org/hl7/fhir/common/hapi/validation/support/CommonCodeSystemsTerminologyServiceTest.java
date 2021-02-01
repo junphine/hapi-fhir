@@ -86,12 +86,7 @@ public class CommonCodeSystemsTerminologyServiceTest {
 		assertEquals(498, cs.getConcept().size());
 	}
 
-	@Test
-	public void testFetchCodeSystemBuiltIn_Iso3166_DSTU3() {
-		CommonCodeSystemsTerminologyService svc = new CommonCodeSystemsTerminologyService(FhirContext.forCached(FhirVersionEnum.DSTU3));
-		org.hl7.fhir.dstu3.model.CodeSystem cs = (org.hl7.fhir.dstu3.model.CodeSystem) svc.fetchCodeSystem(CommonCodeSystemsTerminologyService.COUNTRIES_CODESYSTEM_URL);
-		assertEquals(498, cs.getConcept().size());
-	}
+	
 
 	@Test
 	public void testFetchCodeSystemBuiltIn_Iso3166_R5() {
@@ -100,13 +95,7 @@ public class CommonCodeSystemsTerminologyServiceTest {
 		assertEquals(498, cs.getConcept().size());
 	}
 
-	@Test
-	public void testFetchCodeSystemBuiltIn_Iso3166_DSTU2() {
-		CommonCodeSystemsTerminologyService svc = new CommonCodeSystemsTerminologyService(FhirContext.forCached(FhirVersionEnum.DSTU2));
-		IBaseResource cs = svc.fetchCodeSystem(CommonCodeSystemsTerminologyService.COUNTRIES_CODESYSTEM_URL);
-		assertEquals(null, cs);
-	}
-
+	
 	@Test
 	public void testFetchCodeSystemBuiltIn_Iso_R4() {
 		CodeSystem cs = (CodeSystem) mySvc.fetchCodeSystem(CommonCodeSystemsTerminologyService.CURRENCIES_CODESYSTEM_URL);
@@ -119,16 +108,7 @@ public class CommonCodeSystemsTerminologyServiceTest {
 		assertEquals(null, cs);
 	}
 
-	@Test
-	public void testFetchCodeSystemUrlDstu3() {
-		try {
-			CommonCodeSystemsTerminologyService.getCodeSystemUrl(new org.hl7.fhir.dstu3.model.CodeSystem());
-
-			fail();
-		} catch (IllegalArgumentException e) {
-			assertEquals("Can not handle version: DSTU3", e.getMessage());
-		}
-	}
+	
 
 
 }

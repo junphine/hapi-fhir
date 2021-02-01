@@ -4,8 +4,8 @@ import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.parser.IParser;
 import ca.uhn.fhir.validation.FhirValidator;
 import ca.uhn.fhir.validation.ValidationResult;
-import org.hl7.fhir.dstu3.model.Encounter;
-import org.hl7.fhir.dstu3.model.OperationOutcome;
+import org.hl7.fhir.r4.model.Encounter;
+import org.hl7.fhir.r4.model.OperationOutcome;
 
 public class Example20_ValidateResource {
 	public static void main(String[] args) {
@@ -15,7 +15,7 @@ public class Example20_ValidateResource {
 		enc.addIdentifier().setSystem("http://acme.org/encNums").setValue("12345");
 		
 		// Create a new validator
-		FhirContext ctx = FhirContext.forDstu3();
+		FhirContext ctx = FhirContext.forR4();
 		FhirValidator validator = ctx.newValidator();
 		
 		// Did we succeed?

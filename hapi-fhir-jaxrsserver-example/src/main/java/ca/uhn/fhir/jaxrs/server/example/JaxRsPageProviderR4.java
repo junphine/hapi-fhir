@@ -13,15 +13,15 @@ import ca.uhn.fhir.rest.server.IPagingProvider;
 @Path("/")
 @Stateless
 @Produces({ MediaType.APPLICATION_JSON, Constants.CT_FHIR_JSON, Constants.CT_FHIR_XML })
-public class JaxRsPageProviderDstu3 extends AbstractJaxRsPageProvider {
+public class JaxRsPageProviderR4 extends AbstractJaxRsPageProvider {
 
-    public JaxRsPageProviderDstu3() {
+    public JaxRsPageProviderR4() {
         super(FhirContext.forDstu3());
     }
     
 	@Override
 	public IPagingProvider getPagingProvider() {
-		return JaxRsPatientRestProviderDstu3.PAGE_PROVIDER;
+		return JaxRsPatientRestProviderR4.PAGE_PROVIDER;
 	}
 
 }

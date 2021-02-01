@@ -52,9 +52,9 @@ public class JaxRsPatientProviderR4Test {
 		//@formatter:off
 		jerseyServlet.setInitParameter("resteasy.resources",
 				StringUtils.join(Arrays.asList(
-						JaxRsConformanceProviderDstu3.class.getCanonicalName(),
-						JaxRsPatientRestProviderDstu3.class.getCanonicalName(),
-						JaxRsPageProviderDstu3.class.getCanonicalName()
+						JaxRsConformanceProviderR4.class.getCanonicalName(),
+						//JaxRsPatientRestProviderDstu3.class.getCanonicalName(),
+						JaxRsPageProviderR4.class.getCanonicalName()
 					), ","));
 		//@formatter:on
 		JettyUtil.startServer(jettyServer);
